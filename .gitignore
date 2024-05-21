@@ -2,6 +2,7 @@
 .aswb
 .idea
 .ijwb
+!.ijwb/.bazelproject
 .project
 .classpath
 .settings
