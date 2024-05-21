@@ -1,0 +1,20 @@
+# IDEs and editors
+.aswb
+.idea
+.ijwb
+.project
+.classpath
+.settings
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# System Files
+.DS_Store
+
+# Bazel generated output
+bazel-*
