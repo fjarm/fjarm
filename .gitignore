@@ -1,7 +1,7 @@
 # IDEs and editors
 .aswb
 .idea
-.ijwb
+.ijwb/*
 !.ijwb/.bazelproject
 .project
 .classpath
