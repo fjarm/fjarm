@@ -7,6 +7,26 @@ external dependencies when using the Bazel build system.
 that it depends on. This is analogous to familiar concepts in other dependency management systems, such as a Maven
 artifact, an npm package, a Go module, or a Cargo crate."
 
+## Bazel lockfile
+
+The lockfile feature in Bazel records specific versions or dependencies of libraries or packages required by a project.
+It enhances build efficiency by allowing Bazel to skip the resolution process when there are no changes in project
+dependencies.
+
+The `MODULE.bazel.lock` file is created or updated during the build process, specifically after module resolution and
+extension evaluation. Importantly, it only includes dependencies that are included in the current invocation of the
+build.
+
+The lockfile can be controlled by the flag `--lockfile_mode` to customize the behavior of Bazel when the project state
+differs from the lockfile. The available modes are:
+
+* `update` (Default): If the project state matches the lockfile, the resolution result is immediately returned from the 
+lockfile. Otherwise, resolution is executed, and the lockfile is updated to reflect the current state.
+* `error`: If the project state matches the lockfile, the resolution result is returned from the lockfile. Otherwise,
+Bazel throws an error indicating the variations between the project and the lockfile. This mode is particularly useful
+when you want to ensure that your project's dependencies remain unchanged, and any differences are treated as errors.
+* `off`: The lockfile is not checked at all.
+
 ## Module tags and extensions
 
 Modules can also specify customized pieces of data called tags, which are consumed by module extensions after module
