@@ -18,4 +18,5 @@
 .DS_Store
 
 # Bazel generated output
-./bazel-*
+bazel-*
+!./docs/bazel-*.md
