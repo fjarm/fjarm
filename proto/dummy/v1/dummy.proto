@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package dummy.v1;
+
+message GetHelloRequest {
+    string input = 1;
+}
+
+message GetHelloResponse {
+    string status = 1;
+    string output = 2;
+}
