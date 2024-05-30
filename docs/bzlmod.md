@@ -40,6 +40,7 @@ respecting the dependency graph built out of Bazel modules.
 
 * [Bazel external dependencies overview](https://bazel.build/external/overview)
 * [Bazel modules user guide](https://bazel.build/external/module)
+* [Bazel module extensions overview](https://bazel.build/external/extension)
 * [Bazel lockfile overview](https://bazel.build/external/lockfile)
 * [Full list of directives available in MODULE.bazel](https://bazel.build/rules/lib/globals/module)
 * [Bazel central registry](https://registry.bazel.build/)
