@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package dummy.v1;
+
+import "google/protobuf/empty.proto";
+import "proto/dummy/v1/dummy.proto";
+
+service DummyService {
+    rpc GetHello(google.protobuf.Empty) returns (dummy.v1.GetHelloResponse);
+}
