@@ -2,11 +2,13 @@ syntax = "proto3";
 
 package dummy.v1;
 
+import "buf/validate/validate.proto";
+
 message GetHelloRequest {
     string input = 1;
 }
 
 message GetHelloResponse {
     string status = 1;
-    string output = 2;
+    string output = 2[(buf.validate.field).string.min_len = 1];
 }

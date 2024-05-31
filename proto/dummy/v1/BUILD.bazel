@@ -9,7 +9,7 @@ proto_library(
         "//visibility:public",
     ],
     deps = [
-        "@com_google_protobuf//:empty_proto",
+        "@buf_deps//buf/validate:validate_proto",
     ],
 )
 
@@ -22,7 +22,8 @@ proto_library(
         "//visibility:public",
     ],
     deps = [
-        ":dummy_proto_lib",
+        ":dummy_proto",
+        "@buf_deps//buf/validate:validate_proto",
         "@com_google_protobuf//:empty_proto",
     ],
 )
