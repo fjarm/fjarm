@@ -2,6 +2,7 @@ module(name = "fjarm", version = "20240521.0.0")
 
 bazel_dep(name = "rules_proto", version = "6.0.0")
 bazel_dep(name = "toolchains_protoc", version = "0.3.0")
+bazel_dep(name = "rules_buf", version = "0.3.0")
 
 # Optional: choose a version of protoc rather than the latest.
 protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
@@ -12,4 +13,12 @@ protoc.toolchain(
     # Pin to any version of protoc
     version = "v27.0",
 )
-use_repo(protoc, "com_google_protobuf")
+use_repo(protoc, "com_google_protobuf", "toolchains_protoc_hub")
+register_toolchains("@toolchains_protoc_hub//:all")
+
+buf = use_extension("@rules_buf//buf:extensions.bzl", "buf")
+# TODO(2024-05-31): Unused since we're not defining any targets from rules_buf. Consider removing.
+# buf.toolchains(version = "v1.32.2", sha256 = "90fc6d90d4b777f6f21fc73258d4c2bcbcbd750bb77f14eeaae125c68a2931cc")
+buf.dependency(module = "buf.build/bufbuild/protovalidate:46a4cf4ba1094a34bcd89a6c67163b4b")
+# Allow references to labels under @buf_deps
+use_repo(buf, "buf_deps")
