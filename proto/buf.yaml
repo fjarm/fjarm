@@ -1,6 +1,9 @@
 version: v2
 modules:
     - path: dummy
+deps:
+    - buf.build/bufbuild/protovalidate:46a4cf4ba1094a34bcd89a6c67163b4b
+    - buf.build/protocolbuffers/wellknowntypes:409ee3f23673455597f9fe23d75eb7a1
 lint:
     use:
         - DEFAULT
