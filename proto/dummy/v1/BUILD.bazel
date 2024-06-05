@@ -1,4 +1,5 @@
 load("@rules_proto//proto:defs.bzl", "proto_library")
+load("@rules_buf//buf:defs.bzl", "buf_lint_test")
 
 proto_library(
     name = "dummy_proto",
@@ -10,6 +11,14 @@ proto_library(
     ],
     deps = [
         "@buf_deps//buf/validate:validate_proto",
+    ],
+)
+
+buf_lint_test(
+    name = "dummy_lint",
+    config = "//proto:buf.yaml",
+    targets = [
+        ":dummy_proto",
     ],
 )
 
@@ -25,5 +34,13 @@ proto_library(
         ":dummy_proto",
         "@buf_deps//buf/validate:validate_proto",
         "@com_google_protobuf//:empty_proto",
+    ],
+)
+
+buf_lint_test(
+    name = "dummy_service_lint",
+    config = "//proto:buf.yaml",
+    targets = [
+        ":dummy_service_proto",
     ],
 )

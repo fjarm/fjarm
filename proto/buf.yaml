@@ -1,9 +1,17 @@
 version: v2
-modules:
-    - path: dummy
 deps:
-    - buf.build/bufbuild/protovalidate:46a4cf4ba1094a34bcd89a6c67163b4b
-    - buf.build/protocolbuffers/wellknowntypes:409ee3f23673455597f9fe23d75eb7a1
+  - buf.build/bufbuild/protovalidate
+  - buf.build/protocolbuffers/wellknowntypes
 lint:
-    use:
-        - DEFAULT
+  use:
+    - DEFAULT
+  except:
+    - ENUM_FIRST_VALUE_ZERO
+    # TODO(2024-06-03): Remove this when buf_lint_test targets can support relative roots
+    - PACKAGE_DIRECTORY_MATCH
+    - PACKAGE_NO_IMPORT_CYCLE
+    - PROTOVALIDATE
+breaking:
+  except:
+    - EXTENSION_NO_DELETE
+    - FIELD_SAME_DEFAULT
