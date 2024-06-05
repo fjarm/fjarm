@@ -23,8 +23,28 @@ use_repo(protoc, "com_google_protobuf", "toolchains_protoc_hub")
 register_toolchains("@toolchains_protoc_hub//:all")
 
 buf = use_extension("@rules_buf//buf:extensions.bzl", "buf")
-# TODO(2024-06-04): Remove once rules_buf removes dependencies on @com_google_protobuf//:protoc
+# Required: Provides the Buf plugin to the `protoc` compiler
 buf.toolchains(version = "v1.32.2", sha256 = "90fc6d90d4b777f6f21fc73258d4c2bcbcbd750bb77f14eeaae125c68a2931cc")
 buf.dependency(module = "buf.build/bufbuild/protovalidate:46a4cf4ba1094a34bcd89a6c67163b4b")
 # Allow references to labels under @buf_deps
 use_repo(buf, "buf_deps")
+
+bazel_dep(name = "rules_java", version = "7.6.1")
+bazel_dep(name = "rules_jvm_external", version = "6.1")
+
+maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
+maven.install(
+    artifacts = [
+        # This line is an example coordinate, you'd copy-paste your actual dependencies here
+        # from your build.gradle or pom.xml file.
+        "com.google.protobuf:protobuf-java:4.27.0",
+    ],
+    duplicate_version_warning = "error",
+    fail_if_repin_required = True,
+    lock_file = "//:maven_install.json",
+    repositories = [
+        "https://maven.google.com",
+        "https://repo1.maven.org/maven2",
+    ],
+)
+use_repo(maven, "maven", "unpinned_maven")
