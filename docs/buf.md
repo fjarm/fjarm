@@ -11,6 +11,7 @@ The Buf features we're particularly interested in are:
 * Accessing `.proto` files from the Buf Schema Registry, specifically:
   * [protovalidate](https://github.com/bufbuild/protovalidate)) for schema validation
   * [wellknowntypes](https://buf.build/protocolbuffers/wellknowntypes) to potentially replace those provided by [toolchains_protoc](./rules-proto.md)
+* Linting `.proto` files
 * Detecting breaking changes to `.proto` files
 
 ## Known issues
