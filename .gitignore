@@ -18,5 +18,7 @@
 .DS_Store
 
 # Bazel generated output
-bazel-*
-!./docs/bazel-*.md
+bazel-bin
+bazel-fjarm
+bazel-out
+bazel-testlogs
