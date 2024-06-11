@@ -20,7 +20,7 @@ protoc.toolchain(
     version = "v27.0",
 )
 use_repo(protoc, "com_google_protobuf", "toolchains_protoc_hub")
-register_toolchains("@toolchains_protoc_hub//:all")
+register_toolchains("//tools/toolchains:all")
 
 buf = use_extension("@rules_buf//buf:extensions.bzl", "buf")
 # Required: Provides the Buf plugin to the `protoc` compiler
@@ -35,9 +35,8 @@ bazel_dep(name = "rules_jvm_external", version = "6.1")
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
     artifacts = [
-        # This line is an example coordinate, you'd copy-paste your actual dependencies here
-        # from your build.gradle or pom.xml file.
         "com.google.protobuf:protobuf-java:4.27.0",
+        "com.google.protobuf:protobuf-kotlin:4.27.0",
     ],
     duplicate_version_warning = "error",
     fail_if_repin_required = True,
