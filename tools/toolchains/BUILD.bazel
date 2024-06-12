@@ -1,4 +1,5 @@
 load("@rules_proto//proto:defs.bzl", "proto_lang_toolchain")
+load("@rules_kotlin//kotlin:core.bzl", "define_kt_toolchain")
 
 proto_lang_toolchain(
     name = "protoc_java_toolchain",
@@ -8,10 +9,9 @@ proto_lang_toolchain(
     toolchain_type = "@rules_java//java/proto:toolchain_type",
 )
 
-proto_lang_toolchain(
-    name = "protoc_kotlin_toolchain",
-    command_line = "--java_out=%s --kotlin_out=%s",
-    progress_message = "Generating Kotlin proto_library %{label}",
-    runtime = "@maven//:com_google_protobuf_protobuf_kotlin",
-    toolchain_type = "@rules_java//java/proto:toolchain_type",
+define_kt_toolchain(
+    name = "kotlin_toolchain",
+    api_version = "1.9",  # "1.1", "1.2", "1.3", "1.4", "1.5" "1.6", "1.7", "1.8", or "1.9"
+    jvm_target = "17",  # "1.6", "1.8", "9", "10", "11", "12", "13", "15", "16", "17", "18", "19", "20" or "21"
+    language_version = "1.9",  # "1.1", "1.2", "1.3", "1.4", "1.5" "1.6", "1.7", "1.8", or "1.9"
 )
