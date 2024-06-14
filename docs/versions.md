@@ -7,6 +7,7 @@ dependencies and versions in more detail.
 
 | Name | Version                                                  | Notes                            |
 | ---- |----------------------------------------------------------|----------------------------------|
+| rules_kotlin | [1.9.5](https://registry.bazel.build/modules/rules_kotlin) | Used to compile API source code that is written in pure Kotlin |
 | rules_jvm_external | [6.1](https://registry.bazel.build/modules/rules_jvm_external) | Used to manage Maven dependencies |
 | rules_java | [7.6.1](https://registry.bazel.build/modules/rules_java) | Used to configure Java toolchain |
 
