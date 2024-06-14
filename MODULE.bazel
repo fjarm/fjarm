@@ -36,18 +36,22 @@ use_repo(buf, "buf_deps")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
+    name = "maven_fjarm",
     artifacts = [
         "com.google.protobuf:protobuf-java:4.27.0",
         "com.google.protobuf:protobuf-kotlin:4.27.0",
     ],
     duplicate_version_warning = "error",
+    version_conflict_policy = "pinned",
     fail_if_repin_required = True,
+    generate_compat_repositories = True,
+    fetch_sources = True,
     lock_file = "//:maven_install.json",
     repositories = [
         "https://maven.google.com",
         "https://repo1.maven.org/maven2",
     ],
 )
-use_repo(maven, "maven", "unpinned_maven")
+use_repo(maven, "maven_fjarm", "unpinned_maven_fjarm")
 
 register_toolchains("//tools/toolchains:all")
