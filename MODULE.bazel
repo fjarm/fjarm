@@ -1,45 +1,13 @@
 module(name = "fjarm", version = "20240521.0.0")
 
-bazel_dep(name = "rules_proto", version = "6.0.0")
-bazel_dep(name = "toolchains_protoc", version = "0.3.0")
-bazel_dep(name = "rules_buf", version = "0.3.0")
-
-bazel_dep(name = "rules_java", version = "7.6.1")
 bazel_dep(name = "rules_jvm_external", version = "6.1")
 bazel_dep(name = "rules_kotlin", version = "1.9.5")
 
-# TODO(20204-06-04): Remove once rules_buf removes dependencies on @com_google_protobuf//:protoc
-#local_path_override(
-#    module_name = "rules_buf",
-#    path = "../rules_buf",
-#)
-
-# TODO(20204-06-04): Remove once rules_buf removes dependencies on @com_google_protobuf//:protoc
-protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
-protoc.toolchain(
-    # Creates a repository to satisfy well-known-types dependencies such as
-    # deps=["@com_google_protobuf//:any_proto"]
-    google_protobuf = "com_google_protobuf",
-    # Pin to any version of protoc
-    version = "v27.0",
-)
-use_repo(protoc, "com_google_protobuf", "toolchains_protoc_hub")
-
-
-buf = use_extension("@rules_buf//buf:extensions.bzl", "buf")
-# Required: Provides the Buf plugin to the `protoc` compiler
-buf.toolchains(version = "v1.32.2", sha256 = "90fc6d90d4b777f6f21fc73258d4c2bcbcbd750bb77f14eeaae125c68a2931cc")
-buf.dependency(module = "buf.build/bufbuild/protovalidate:46a4cf4ba1094a34bcd89a6c67163b4b")
-# Allow references to labels under @buf_deps
-use_repo(buf, "buf_deps")
-
-
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
-    name = "maven_fjarm",
+    name = "maven",
     artifacts = [
-        "com.google.protobuf:protobuf-java:4.27.0",
-        "com.google.protobuf:protobuf-kotlin:4.27.0",
+        "org.openapitools:openapi-generator-cli:7.6.0"
     ],
     duplicate_version_warning = "error",
     version_conflict_policy = "pinned",
@@ -52,6 +20,6 @@ maven.install(
         "https://repo1.maven.org/maven2",
     ],
 )
-use_repo(maven, "maven_fjarm", "unpinned_maven_fjarm")
+use_repo(maven, "maven", "unpinned_maven")
 
 register_toolchains("//tools/toolchains:all")
