@@ -51,13 +51,11 @@ def _openapi_generate(ctx):
         arguments = [args],
     )
 
+    files = [cli_jar_file, config_file, output_directory] + source_files + ctx.files._jdk
+
     return [
         DefaultInfo(
-            files = depset([
-                cli_jar_file,
-                config_file,
-                output_directory,
-            ] + source_files + ctx.files._jdk),
+            files = depset(files),
         ),
     ]
 
