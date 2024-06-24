@@ -5,7 +5,7 @@ bazel_dep(name = "rules_kotlin", version = "1.9.5")
 
 maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
 maven.install(
-    name = "maven",
+    name = "maven_fjarm",
     artifacts = [
         "org.openapitools:openapi-generator-cli:7.6.0"
     ],
@@ -15,11 +15,12 @@ maven.install(
     generate_compat_repositories = True,
     fetch_sources = True,
     lock_file = "//:maven_install.json",
+    strict_visibility_value = ["//visibility:public"],
     repositories = [
         "https://maven.google.com",
         "https://repo1.maven.org/maven2",
     ],
 )
-use_repo(maven, "maven", "unpinned_maven")
+use_repo(maven, "maven_fjarm", "unpinned_maven_fjarm")
 
 register_toolchains("//tools/toolchains:all")
