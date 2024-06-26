@@ -1,8 +1,0 @@
-exports_files(
-    [
-        "openapi-generator-cli.jar",
-    ],
-    visibility = [
-        "//visibility:public",
-    ],
-)

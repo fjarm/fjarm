@@ -1,0 +1,18 @@
+version: v2
+deps:
+  - buf.build/bufbuild/protovalidate
+  - buf.build/protocolbuffers/wellknowntypes
+lint:
+  use:
+    - DEFAULT
+  rpc_allow_google_protobuf_empty_requests: true
+  except:
+    - ENUM_FIRST_VALUE_ZERO
+    # TODO(2024-06-03): Remove this when buf_lint_test targets can support relative roots
+    - PACKAGE_DIRECTORY_MATCH
+    - PACKAGE_NO_IMPORT_CYCLE
+    - PROTOVALIDATE
+breaking:
+  except:
+    - EXTENSION_NO_DELETE
+    - FIELD_SAME_DEFAULT

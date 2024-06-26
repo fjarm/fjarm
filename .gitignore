@@ -19,6 +19,6 @@
 
 # Bazel generated output
 bazel-bin
-bazel-fjarm
+bazel-fjarm**
 bazel-out
 bazel-testlogs

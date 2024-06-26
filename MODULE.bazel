@@ -1,26 +1,35 @@
 module(name = "fjarm", version = "20240521.0.0")
 
-bazel_dep(name = "rules_jvm_external", version = "6.1")
-bazel_dep(name = "rules_kotlin", version = "1.9.5")
+bazel_dep(name = "rules_proto", version = "6.0.2")
+bazel_dep(name = "rules_buf", version = "0.3.0")
+bazel_dep(name = "toolchains_protoc", version = "0.3.1")
 
-maven = use_extension("@rules_jvm_external//:extensions.bzl", "maven")
-maven.install(
-    name = "maven_fjarm",
-    artifacts = [
-        "org.openapitools:openapi-generator-cli:7.6.0"
-    ],
-    duplicate_version_warning = "error",
-    version_conflict_policy = "pinned",
-    fail_if_repin_required = True,
-    generate_compat_repositories = True,
-    fetch_sources = True,
-    lock_file = "//:maven_install.json",
-    strict_visibility_value = ["//visibility:public"],
-    repositories = [
-        "https://maven.google.com",
-        "https://repo1.maven.org/maven2",
-    ],
+# TODO(20204-06-04): Remove once rules_buf removes dependencies on @com_google_protobuf//:protoc
+local_path_override(
+    module_name = "rules_buf",
+    path = "../rules_buf",
 )
-use_repo(maven, "maven_fjarm", "unpinned_maven_fjarm")
+
+
+# TODO(20204-06-04): Remove once rules_buf removes dependencies on @com_google_protobuf//:protoc
+# Optional: choose a version of protoc rather than the latest.
+protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
+protoc.toolchain(
+    # Creates a repository to satisfy well-known-types dependencies such as
+    # deps=["@com_google_protobuf//:any_proto"]
+    google_protobuf = "com_google_protobuf",
+    # Pin to any version of protoc
+    version = "v27.0",
+)
+use_repo(protoc, "com_google_protobuf", "toolchains_protoc_hub")
+
+
+buf = use_extension("@rules_buf//buf:extensions.bzl", "buf")
+# Override the default version of buf
+# SEE: Required because it provides the Buf plugin to the `protoc` compiler
+buf.toolchains(version = "v1.34.0")
+# See https://buf.build/docs/build-systems/bazel#buf-dependencies
+buf.dependency(module = "buf.build/bufbuild/protovalidate:46a4cf4ba1094a34bcd89a6c67163b4b")
+use_repo(buf, "buf_deps")
 
 register_toolchains("//tools/toolchains:all")
