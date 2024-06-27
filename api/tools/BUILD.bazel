@@ -1,0 +1,13 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "tools",
+    srcs = [
+        "tools.go",
+    ],
+    importpath = "github.com/fjarm/fjarm/api/api/tools",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
+    ],
+)
