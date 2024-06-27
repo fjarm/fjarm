@@ -8,8 +8,6 @@ lint:
   rpc_allow_google_protobuf_empty_requests: true
   except:
     - ENUM_FIRST_VALUE_ZERO
-    # TODO(2024-06-03): Remove this when buf_lint_test targets can support relative roots
-    - PACKAGE_DIRECTORY_MATCH
     - PACKAGE_NO_IMPORT_CYCLE
     - PROTOVALIDATE
 breaking:

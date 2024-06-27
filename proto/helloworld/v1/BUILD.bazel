@@ -6,6 +6,7 @@ proto_library(
     srcs = [
         "helloworld.proto",
     ],
+    strip_import_prefix = "/proto",
     visibility = [
         "//visibility:public",
     ],
@@ -18,7 +19,7 @@ buf_lint_test(
     name = "helloworld_lint",
     config = "//proto:buf.yaml",
     targets = [
-        ":helloWorld_proto",
+        ":helloworld_proto",
     ],
 )
 
@@ -27,6 +28,7 @@ proto_library(
     srcs = [
         "helloworld_service.proto",
     ],
+    strip_import_prefix = "/proto",
     visibility = [
         "//visibility:public",
     ],

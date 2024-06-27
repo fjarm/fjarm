@@ -5,7 +5,7 @@ package helloworld.v1;
 option go_package="github.com/fjarm/fjarm/api/internal/pkg/helloworld/v1";
 
 import "google/protobuf/empty.proto";
-import "proto/helloworld/v1/helloworld.proto";
+import "helloworld/v1/helloworld.proto";
 
 service HelloWorldService {
     rpc GetHelloWorld(google.protobuf.Empty) returns (helloworld.v1.GetHelloWorldResponse);
