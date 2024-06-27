@@ -18,7 +18,4 @@
 .DS_Store
 
 # Bazel generated output
-bazel-bin
-bazel-fjarm**
-bazel-out
-bazel-testlogs
+bazel-**
