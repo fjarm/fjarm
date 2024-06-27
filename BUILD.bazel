@@ -10,6 +10,7 @@ gazelle(
 gazelle_binary(
     name = "gazelle-buf",
     languages = [
+        # SEE: https://github.com/bazelbuild/bazel-gazelle/issues/1409
         "@gazelle//language/proto",  # Built-in rule from gazelle for Protos.
         # Any languages that depend on Gazelle's proto plugin must come after it.
         "@rules_buf//gazelle/buf:buf",  # Loads the Buf extension
