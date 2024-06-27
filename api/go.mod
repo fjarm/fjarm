@@ -2,10 +2,12 @@ module github.com/fjarm/fjarm/api
 
 go 1.22.4
 
-require github.com/bufbuild/protovalidate-go v0.6.2
+require (
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240508200655-46a4cf4ba109.2
+	github.com/bufbuild/protovalidate-go v0.6.2
+)
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240508200655-46a4cf4ba109.2 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.0 // indirect
 	github.com/google/cel-go v0.20.1 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
