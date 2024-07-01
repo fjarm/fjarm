@@ -6,7 +6,7 @@ go_proto_library(
     compilers = [
         "@rules_go//proto:go_grpc",
     ],
-    importpath = "github.com/fjarm/fjarm/api/internal/pkg/helloworld/v1",
+    importpath = "github.com/fjarm/fjarm/api/pkg/helloworld/v1",
     protos = [
         "//proto/helloworld/v1:helloworld_proto",
         "//proto/helloworld/v1:helloworld_service_proto",
@@ -20,6 +20,6 @@ go_proto_library(
 go_library(
     name = "helloworld_library",
     embed = [":helloworld_service_proto"],
-    importpath = "github.com/fjarm/fjarm/api/internal/pkg/helloworld/v1",
+    importpath = "github.com/fjarm/fjarm/api/pkg/helloworld/v1",
     visibility = ["//:__subpackages__"],
 )
