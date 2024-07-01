@@ -50,3 +50,4 @@ automatically updates the `use_repo` declaration.
 ## References and links
 
 * [rules_go and Bzlmod](https://github.com/bazelbuild/rules_go/blob/master/docs/go/core/bzlmod.md)
+* [Standard Go project layout](https://github.com/golang-standards/project-layout)
