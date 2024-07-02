@@ -20,8 +20,9 @@ Refer to [these docs](https://github.com/bazelbuild/rules_go/blob/master/docs/go
 External Go dependencies are managed by the `go_deps` module extension which is provided by [Gazelle](./gazelle.md).
 
 After managing the `go.mod` file with `rules_go`'s GO SDK as described above, `go_deps` can parse this `go.mod` file and
-perform Minimal Version Selection on all transitive Go dependencies. Using `go.mod` allows non-Bazel projects to be able
-to use our Go modules.
+perform Minimal Version Selection on all transitive Go dependencies.
+
+Using `go.mod` allows non-Bazel projects to be able to use our Go modules.
 
 Example usage of `go_deps` looks like:
 ```starlark
@@ -46,6 +47,21 @@ bazel mod tidy
 ```
 
 automatically updates the `use_repo` declaration.
+
+## Known bugs
+
+When managing dependencies from local packages, a `.go` file is required for the Go SDK to recognize the folder. An
+empty file like [helloworld.go](../api/pkg/helloworld/v1/helloworld.go) will suffice.
+
+Without a `.go` file, running `bazel mod tidy` or `bazel run @rules_go//go -- mod tidy` will result in an error like:
+
+```bash
+go: finding module for package github.com/fjarm/fjarm/api/pkg/helloworld/v1
+go: github.com/fjarm/fjarm/api/internal/helloworld imports
+	github.com/fjarm/fjarm/api/pkg/helloworld/v1: cannot find module providing package github.com/fjarm/fjarm/api/pkg/helloworld/v1: module github.com/fjarm/fjarm/api/pkg/helloworld: git ls-remote -q origin in /Users/jeremymuhia/go/pkg/mod/cache/vcs/c654521993e4c008cc1aa967d731c9945b3d0480ac1fee37a0d98e76923ef749: exit status 128:
+	remote: Repository not found.
+	fatal: repository 'https://github.com/fjarm/fjarm/' not found
+```
 
 ## References and links
 
