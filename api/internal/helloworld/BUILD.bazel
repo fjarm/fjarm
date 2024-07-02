@@ -17,9 +17,7 @@ go_library(
 
 go_test(
     name = "helloworld_test",
-    srcs = [
-        "repository_test.go",
-    ],
+    srcs = ["repository_test.go"],
     embed = [
         ":helloworld",
     ],
