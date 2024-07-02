@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestRepository_GetHelloWorld(t *testing.T) {
+func TestService_GetHelloWorld(t *testing.T) {
 	tests := map[string]struct {
 		wantCode   string
 		wantOutput string
@@ -19,8 +19,8 @@ func TestRepository_GetHelloWorld(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			repo := NewRepository()
-			actual, err := repo.GetHelloWorld(context.Background(), &emptypb.Empty{})
+			svc := NewService()
+			actual, err := svc.GetHelloWorld(context.Background(), &emptypb.Empty{})
 			if err != nil {
 				t.Errorf("GetHelloWorld got unexpected error: %v", err)
 			}
