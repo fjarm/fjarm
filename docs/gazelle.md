@@ -33,9 +33,9 @@ See more in [these instructions](https://github.com/bazelbuild/rules_go/blob/mas
 
 ## Known bugs/issues
 
-Running Gazelle with `bazel run //:gazelle` can print debug messages like ([Issue #1409](https://github.com/bazelbuild/bazel-gazelle/issues/1409)):
+Running Gazelle with `bazel run //api:gazelle` can print debug messages like ([Issue #1409](https://github.com/bazelbuild/bazel-gazelle/issues/1409)):
 ```bash
-gazelle: /Users/jeremymuhia/development/fjarm_go_grpc_bazel/BUILD.bazel: unknown directive: gazelle:prefix
+gazelle: /Users/jeremymuhia/development/fjarm/api/BUILD.bazel: unknown directive: gazelle:prefix
 ```
 
 This is the result of not including Gazelle supported language rules. The fix is including the target language in the
