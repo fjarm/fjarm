@@ -53,6 +53,15 @@ gazelle_binary(
 )
 ```
 
+Sometimes Gazelle will write Go targets in the [proto](../proto) modules after running `bazel run //:gazelle`. This can
+lead to conflicts with manually defined targets in the [api](../api) modules:
+
+```bash
+gazelle: rule //api/internal/helloworld imports "github.com/fjarm/fjarm/api/pkg/helloworld/v1" which matches multiple rules: //api/pkg/helloworld/v1:helloworld_service_proto and //api/pkg/helloworld/v1:helloworld_library. # gazelle:resolve may be used to disambiguate
+```
+
+Adding a `# gazelle:resolve` tag to the top level [BUILD.bazel](../BUILD.bazel) file should fix this.
+
 ## References and links
 
 * [Gazelle docs](https://github.com/bazelbuild/bazel-gazelle)
