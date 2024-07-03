@@ -5,6 +5,7 @@ import (
 	"github.com/fjarm/fjarm/api/internal/helloworld"
 	pb "github.com/fjarm/fjarm/api/pkg/helloworld/v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log/slog"
 	"net"
 	"os"
@@ -17,6 +18,7 @@ func serve(lis net.Listener) error {
 	pb.RegisterHelloWorldServiceServer(srv, helloworld.NewService())
 	slog.Info("starting server", "addr", lis.Addr())
 
+	reflection.Register(srv)
 	if err := srv.Serve(lis); err != nil {
 		return err
 	}
