@@ -5,3 +5,6 @@ common --enable_bzlmod
 # Introduced in Bazel 7.
 # This also allows us to register toolchains other than com_google_protobuf targets.
 common --incompatible_enable_proto_toolchain_resolution
+
+# Uncomment this when running an oci_load target to avoid an `exec format error` when running the container with docker
+# run --platforms=@rules_go//go/toolchain:linux_amd64
