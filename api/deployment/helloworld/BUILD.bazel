@@ -1,4 +1,4 @@
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_push")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load", "oci_push")
 load("@rules_pkg//:pkg.bzl", "pkg_tar")
 
 # Put helloworld go_binary into a tar layer.
@@ -20,4 +20,10 @@ oci_push(
     image = ":image_dev",
     remote_tags = ["dev"],
     repository = "index.docker.io/veganafro/helloworld",
+)
+
+oci_load(
+    name = "load_dev",
+    image = ":image_dev",
+    repo_tags = ["veganafro/helloworld:local"],
 )
