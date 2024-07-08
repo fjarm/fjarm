@@ -10,4 +10,4 @@ plugins:
   - remote: buf.build/protocolbuffers/java
     out: gen
 inputs:
-  - directory: fjarm
+  - directory: helloworld

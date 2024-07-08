@@ -6,7 +6,7 @@ proto_library(
     srcs = [
         "helloworld.proto",
     ],
-    strip_import_prefix = "/proto/fjarm",
+    strip_import_prefix = "/proto/helloworld",
     visibility = [
         "//visibility:public",
     ],
@@ -18,7 +18,7 @@ proto_library(
 buf_lint_test(
     name = "helloworld_lint",
     config = "//proto:buf.yaml",
-    module = "fjarm",
+    module = "helloworld",
     targets = [
         ":helloworld_proto",
     ],
@@ -29,7 +29,7 @@ proto_library(
     srcs = [
         "helloworld_service.proto",
     ],
-    strip_import_prefix = "/proto/fjarm",
+    strip_import_prefix = "/proto/helloworld",
     visibility = [
         "//visibility:public",
     ],
@@ -43,7 +43,7 @@ proto_library(
 buf_lint_test(
     name = "helloworld_service_lint",
     config = "//proto:buf.yaml",
-    module = "fjarm",
+    module = "helloworld",
     targets = [
         ":helloworld_service_proto",
     ],
