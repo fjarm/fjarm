@@ -2,6 +2,7 @@ directories:
   # Add the directories you want added as source here
   # By default, we've added your entire workspace ('.')
   .
+  -android
 
 # Automatically includes all relevant targets under the 'directories' above
 derive_targets_from_directories: true
