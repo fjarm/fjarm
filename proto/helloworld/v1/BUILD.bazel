@@ -18,6 +18,7 @@ proto_library(
 buf_lint_test(
     name = "helloworld_lint",
     config = "//proto:buf.yaml",
+    module = "helloworld",
     targets = [
         ":helloworld_proto",
     ],
@@ -42,6 +43,7 @@ proto_library(
 buf_lint_test(
     name = "helloworld_service_lint",
     config = "//proto:buf.yaml",
+    module = "helloworld",
     targets = [
         ":helloworld_service_proto",
     ],
