@@ -1,0 +1,13 @@
+version: v2
+plugins:
+  - remote: buf.build/grpc/kotlin:v1.4.1
+    out: gen
+  - remote: buf.build/protocolbuffers/kotlin:v27.0
+    out: gen
+  # dependencies
+  - remote: buf.build/grpc/java
+    out: gen
+  - remote: buf.build/protocolbuffers/java
+    out: gen
+inputs:
+  - directory: .
