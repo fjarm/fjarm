@@ -1,6 +1,7 @@
 version: v2
 modules:
   - path: helloworld
+    name: buf.build/fjarm/helloworld
 deps:
   - buf.build/bufbuild/protovalidate:46a4cf4ba1094a34bcd89a6c67163b4b
 lint:
