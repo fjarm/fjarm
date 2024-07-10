@@ -20,6 +20,7 @@ func (svc *Service) GetHelloWorld(
 	ctx context.Context,
 	req *emptypb.Empty,
 ) (*pb.GetHelloWorldResponse, error) {
+	slog.Info("received request", "rpc", "GetHelloWorld")
 	res, err := svc.repo.getHelloWorld(ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "request failed", "err", err, "rpc", "GetHelloWorld")
