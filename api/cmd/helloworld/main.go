@@ -11,7 +11,7 @@ import (
 	"os"
 )
 
-const ip = "0.0.0.0"
+const ip = "[::]"
 
 func serve(lis net.Listener) error {
 	srv := grpc.NewServer()
