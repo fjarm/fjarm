@@ -5,9 +5,9 @@ plugins:
   - remote: buf.build/protocolbuffers/kotlin:v27.0
     out: gen
   # dependencies
-  - remote: buf.build/grpc/java
+  - remote: buf.build/grpc/java:v1.65.0
     out: gen
-  - remote: buf.build/protocolbuffers/java
+  - remote: buf.build/protocolbuffers/java:v27.0
     out: gen
 inputs:
   - directory: helloworld
