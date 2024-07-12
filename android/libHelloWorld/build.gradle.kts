@@ -9,5 +9,7 @@ java {
 }
 
 dependencies {
+    implementation(libs.grpcAndroid)
+    implementation(libs.grpcOkHttp)
     implementation(libs.helloWorldSdk)
 }
