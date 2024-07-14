@@ -1,0 +1,10 @@
+common --enable_bzlmod
+
+# SEE: https://github.com/aspect-build/toolchains_protoc/blob/31013b176dcb8ed7c86c9b629fe89965aafcc6c4/README.md
+# Enables toolchain support.
+# Introduced in Bazel 7.
+# This also allows us to register toolchains other than com_google_protobuf targets.
+common --incompatible_enable_proto_toolchain_resolution
+
+# Uncomment this when running an oci_load target to avoid an `exec format error` when running the container with docker
+# run --platforms=@rules_go//go/toolchain:linux_amd64

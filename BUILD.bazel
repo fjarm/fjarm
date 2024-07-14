@@ -1,0 +1,21 @@
+# gazelle:prefix github.com/fjarm/fjarm
+# gazelle:resolve go github.com/fjarm/fjarm/api/pkg/helloworld/v1 //api/pkg/helloworld/v1:helloworld_library
+
+load("@gazelle//:def.bzl", "gazelle", "gazelle_binary")
+
+gazelle(
+    name = "gazelle",
+    gazelle = ":gazelle-buf",
+)
+
+gazelle_binary(
+    name = "gazelle-buf",
+    languages = [
+        # SEE: https://github.com/bazelbuild/bazel-gazelle/issues/1409
+        "@gazelle//language/proto",  # Built-in rule from gazelle for Protos.
+        # Any languages that depend on Gazelle's proto plugin must come after it.
+        # "@rules_buf//gazelle/buf:buf",  # Loads the Buf extension
+        "@gazelle//language/go",  # Built-in rule from gazelle for Golang.
+    ],
+    visibility = ["//visibility:public"],
+)
