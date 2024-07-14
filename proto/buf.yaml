@@ -8,7 +8,7 @@ deps:
 lint:
   use:
     - DEFAULT
-#  rpc_allow_google_protobuf_empty_requests: true
+  rpc_allow_google_protobuf_empty_requests: true
   except:
     - ENUM_FIRST_VALUE_ZERO
     - PACKAGE_NO_IMPORT_CYCLE
