@@ -1,0 +1,19 @@
+version: v2
+modules:
+  - path: helloworld
+    name: buf.build/fjarm/helloworld
+deps:
+  # NOTE: Keep this version up to date with the pinned version in ../MODULE.bazel
+  - buf.build/bufbuild/protovalidate:46a4cf4ba1094a34bcd89a6c67163b4b
+lint:
+  use:
+    - DEFAULT
+  rpc_allow_google_protobuf_empty_requests: true
+  except:
+    - ENUM_FIRST_VALUE_ZERO
+    - PACKAGE_NO_IMPORT_CYCLE
+    - PROTOVALIDATE
+breaking:
+  except:
+    - EXTENSION_NO_DELETE
+    - FIELD_SAME_DEFAULT

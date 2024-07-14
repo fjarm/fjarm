@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package helloworld.v1;
+
+option go_package="github.com/fjarm/fjarm/api/internal/pkg/helloworld/v1";
+option java_multiple_files = true;
+option java_package="xyz.fjarm.libhelloworld.gen";
+option java_outer_classname = "HelloWorldMessage";
+
+import "buf/validate/validate.proto";
+
+message GetHelloWorldRequest {
+    string input = 1;
+}
+
+message GetHelloWorldResponse {
+    string status = 1;
+    string output = 2[(buf.validate.field).string.min_len = 1];
+}

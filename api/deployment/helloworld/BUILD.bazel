@@ -1,0 +1,29 @@
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load", "oci_push")
+load("@rules_pkg//:pkg.bzl", "pkg_tar")
+
+# Put helloworld go_binary into a tar layer.
+pkg_tar(
+    name = "tar",
+    srcs = ["//api/cmd/helloworld"],
+    visibility = ["//visibility:private"],
+)
+
+oci_image(
+    name = "image_dev",
+    base = "@alpine_base",
+    entrypoint = ["/helloworld"],
+    tars = [":tar"],
+)
+
+oci_push(
+    name = "push_dev",
+    image = ":image_dev",
+    remote_tags = ["dev"],
+    repository = "index.docker.io/veganafro/helloworld",
+)
+
+oci_load(
+    name = "load_dev",
+    image = ":image_dev",
+    repo_tags = ["veganafro/helloworld:local"],
+)
