@@ -15,5 +15,5 @@ message GetHelloWorldRequest {
 
 message GetHelloWorldResponse {
     string status = 1;
-    string output = 2[(buf.validate.field).string.min_len = 1];
+    string out = 2[(buf.validate.field).string.min_len = 1];
 }
