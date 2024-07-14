@@ -5,6 +5,7 @@ plugins:
   - remote: buf.build/protocolbuffers/kotlin:v27.0
     out: gen
   # dependencies
+  # NOTE: Keep this version up to date with the pinned version in ../android/gradle/libs.versions.toml
   - remote: buf.build/grpc/java:v1.65.0
     out: gen
   - remote: buf.build/protocolbuffers/java:v27.0
