@@ -34,6 +34,7 @@ buf = use_extension("@rules_buf//buf:extensions.bzl", "buf")
 
 # Override the default version of buf
 # SEE: Required because it provides the Buf plugin to the `protoc` compiler
+# NOTE: Keep this version up to date with the pinned version in ./.github/workflows/buf-*.yaml
 buf.toolchains(version = "v1.34.0")
 
 # SEE: https://buf.build/docs/build-systems/bazel#buf-dependencies

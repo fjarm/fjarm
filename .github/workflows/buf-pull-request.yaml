@@ -1,0 +1,31 @@
+name: Buf PR checks
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "proto/**"
+  pull_request:
+    paths:
+      - "proto/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Run `git checkout`
+      - uses: actions/checkout@v4
+        name: Checkout repo
+      # Install the `buf` CLI
+      - uses: bufbuild/buf-setup-action@v1
+        name: Install Buf CLI
+        with:
+          # NOTE: Keep this version up to date with the pinned version in ../../MODULE.bazel
+          version: "1.34.0"
+      - name: Lint all proto files
+        working-directory: ./proto
+        run: |
+          buf lint
+      - name: Detect breaking changes
+        working-directory: ./proto
+        run: |
+          buf breaking --against 'https://github.com/fjarm/fjarm.git#branch=main,subdir=proto'
