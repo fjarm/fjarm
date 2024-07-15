@@ -1,4 +1,4 @@
-name: Go PR checks
+name: Android PR checks
 on:
   push:
     branches:
