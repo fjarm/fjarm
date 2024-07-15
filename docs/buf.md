@@ -24,6 +24,11 @@ having to load the dependency in a more convoluted way.
 
 `buf lint` can be used from the [proto](../proto) folder to run lint tests on schema and RPC definitions.
 
+## [buf breaking](https://buf.build/docs/breaking/tutorial)
+
+`buf breaking --against 'https://github.com/fjarm/fjarm.git#branch=main,subdir=proto'` is used to check for breaking
+changes in `.proto` modifications.
+
 ## buf dep update
 
 `buf dep update` is used to update the `deps` section of [buf.yaml](../proto/buf.yaml), which specifies the external,
@@ -50,6 +55,7 @@ This includes `buf/validate/validate.proto`.
 * [Buf files and packages](https://buf.build/docs/reference/protobuf-files-and-packages)
 * [Buf CLI docs](https://buf.build/docs/reference/cli/buf/)
 * [Buf Schema Registry docs](https://buf.build/docs/bsr/introduction)
+* [Buf GitHub Actions](https://buf.build/docs/ci-cd/github-actions)
 
 ---
 
