@@ -20,6 +20,8 @@ jobs:
         with:
           # Avoid downloading Bazel every time.
           bazelisk-cache: true
+          # Bazelisk version to download and use
+          bazelisk-version: 1.x
           # Store build cache per workflow.
           disk-cache: ${{ github.workflow }}
           # Share repository cache between workflows.
