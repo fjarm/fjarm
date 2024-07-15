@@ -1,0 +1,32 @@
+name: Go PR checks
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "api/**"
+  pull_request:
+    paths:
+      - "api/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Run `git checkout`
+      - uses: actions/checkout@v4
+        name: Checkout repo
+      - uses: bazel-contrib/setup-bazel@0.8.5
+        name: Install Bazel CLI
+        with:
+          # Avoid downloading Bazel every time.
+          bazelisk-cache: true
+          # Store build cache per workflow.
+          disk-cache: ${{ github.workflow }}
+          # Share repository cache between workflows.
+          repository-cache: true
+      - name: Build all targets under api
+        run: |
+          bazel build //api/...
+      - name: Test all targets under api
+        run: |
+          bazel test //api/...
