@@ -1,0 +1,32 @@
+name: Android PR checks
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "android/**"
+  pull_request:
+    paths:
+      - "android/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Run `git checkout`
+      - uses: actions/checkout@v4
+        name: Checkout repo
+      - uses: actions/setup-java@v3
+        name: Set up JDK 17
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - uses: gradle/actions/setup-gradle@v3
+        name: Set up Gradle
+      - name: Build all tasks
+        working-directory: ./android
+        run: |
+          ./gradlew build
+      - name: Run all unit tests
+        working-directory: ./android
+        run: |
+          ./gradlew testDebugUnitTest
