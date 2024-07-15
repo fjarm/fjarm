@@ -15,6 +15,7 @@ const ip = "[::]"
 
 func serve(lis net.Listener) error {
 	srv := grpc.NewServer()
+
 	pb.RegisterHelloWorldServiceServer(srv, helloworld.NewService())
 	slog.Info("starting server", "addr", lis.Addr())
 
