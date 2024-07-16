@@ -1,0 +1,42 @@
+name: Buf Schema Registry push
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        description: 'Protobuf module to build and push'
+        required: true
+        type: choice
+        options:
+          - helloworld
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Run `git checkout`
+      - uses: actions/checkout@v4
+        name: Checkout repo
+      # Install the `buf` CLI
+      - uses: bufbuild/buf-setup-action@v1
+        name: Install Buf CLI
+        with:
+          # NOTE: Keep this version up to date with the pinned version in ../../MODULE.bazel
+          version: "1.34.0"
+          github_token: ${{ github.token }}
+      - name: Lint all proto files
+        working-directory: ./proto
+        run: |
+          buf lint
+      - name: Detect breaking changes
+        working-directory: ./proto
+        run: |
+          buf breaking --against 'https://github.com/fjarm/fjarm.git#branch=main,subdir=proto'
+      - name: Build module image
+        working-directory: ./proto
+        run: |
+          buf build ${{ inputs.module }}
+      - name: Push module schema
+        working-directory: ./proto
+        with:
+          buf_token: ${{ secrets.BUF_TOKEN }}
+        run: |
+          buf push ${{ inputs.module }}
