@@ -22,6 +22,7 @@ jobs:
           # NOTE: Keep this version up to date with the pinned version in ../../MODULE.bazel
           version: "1.34.0"
           github_token: ${{ github.token }}
+          buf_user: ${{ secrets.BUF_USER }}
           buf_api_token: ${{ secrets.BUF_TOKEN }}
       - name: Lint all proto files
         working-directory: ./proto
