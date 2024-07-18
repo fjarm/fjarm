@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for fjarm-helloworld on 2024-07-17T21:08:20-04:00
+# fly.toml app configuration file generated for fjarm-helloworld on 2024-07-18T10:32:51-04:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'fjarm-helloworld'
+app = 'fjarm-helloworld-dev'
 primary_region = 'ewr'
 
 [build]
