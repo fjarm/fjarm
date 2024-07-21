@@ -1,4 +1,4 @@
-name: Fly Deploy
+name: Fly deploy
 on:
   workflow_dispatch:
     inputs:
@@ -30,9 +30,9 @@ jobs:
         name: Install Fly.io CLI
         with:
           version: v0.2.91
-      - name: Deploy specified service
+      - name: Deploy selected service
         working-directory: ${{ inputs.module }}
         run: |
-          flyctl deploy --remote-only --image ${{ inputs.image }}:${{ inputs.version }}
+          flyctl deploy --yes --remote-only --image ${{ inputs.image }}:${{ inputs.version }}
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
