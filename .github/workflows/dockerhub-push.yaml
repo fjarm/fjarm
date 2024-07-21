@@ -32,6 +32,9 @@ jobs:
           bazelisk-cache: true
           # Bazelisk version to download and use
           bazelisk-version: 1.x
+          # Extra contents to write to the .bazelrc file
+          bazelrc: |
+            run --platforms=@rules_go//go/toolchain:linux_amd64
           # Store build cache per workflow.
           disk-cache: ${{ github.workflow }}
           # Share repository cache between workflows.
