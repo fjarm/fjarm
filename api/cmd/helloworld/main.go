@@ -33,11 +33,12 @@ func main() {
 	}
 
 	addr := fmt.Sprintf("%s:%s", ip, port)
-	lis, err := net.Listen("tcp", addr)
+	lis, err := net.Listen("tcp6", addr)
 	if err != nil {
 		slog.Error("failed to listen", "err", err)
 		os.Exit(1)
 	}
+	defer lis.Close()
 
 	if err = serve(lis); err != nil {
 		slog.Error("failed to serve", "err", err)
