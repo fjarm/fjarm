@@ -7,7 +7,7 @@ deps:
   - buf.build/bufbuild/protovalidate:46a4cf4ba1094a34bcd89a6c67163b4b
 lint:
   use:
-    - DEFAULT
+    - STANDARD
   rpc_allow_google_protobuf_empty_requests: true
   except:
     - ENUM_FIRST_VALUE_ZERO
