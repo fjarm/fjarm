@@ -1,0 +1,15 @@
+load("@rules_proto//proto:defs.bzl", "proto_library")
+
+proto_library(
+    name = "user_id_proto",
+    srcs = [
+        "user_id.proto",
+    ],
+    strip_import_prefix = "/proto/userservice",
+    visibility = [
+        "//visibility:public",
+    ],
+    deps = [
+        "@buf_deps//buf/validate:validate_proto",
+    ],
+)
