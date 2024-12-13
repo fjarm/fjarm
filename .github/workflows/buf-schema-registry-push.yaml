@@ -8,6 +8,7 @@ on:
         type: choice
         options:
           - helloworld
+          - userservice
 jobs:
   build:
     runs-on: ubuntu-latest
