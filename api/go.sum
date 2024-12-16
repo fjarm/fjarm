@@ -1,5 +1,7 @@
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.35.2-20240508200655-46a4cf4ba109.1 h1:ZlPNTjN/q7nNjHR96V1GxYEXQmIrEwL40pZOW5/jE8E=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.35.2-20240508200655-46a4cf4ba109.1/go.mod h1:mnHCFccv4HwuIAOHNGdiIc5ZYbBCvbTWZcodLN5wITI=
+buf.build/gen/go/fjarm/helloworld/protocolbuffers/go v1.35.2-20240709142939-8158da292ce2.1 h1:mnU6fvpMuG//TCKQ3LajcM4OOAnjlWnRSdqy3+RR8EA=
+buf.build/gen/go/fjarm/helloworld/protocolbuffers/go v1.35.2-20240709142939-8158da292ce2.1/go.mod h1:FkfReZKoW14QhwBGgNvlYn7Leq8s432a5IureG/uOD4=
 buf.build/gen/go/fjarm/userservice/protocolbuffers/go v1.35.2-20241213005309-5b5580d68379.1 h1:J3lErBIOcPos5u2NCSD20cHzJt+FvEYlyRmPe6UTmjw=
 buf.build/gen/go/fjarm/userservice/protocolbuffers/go v1.35.2-20241213005309-5b5580d68379.1/go.mod h1:yr2A6tiHaZ1RcG7/z8lxjtTAZnU5+b/lCSeVIAgkfcA=
 github.com/antlr4-go/antlr/v4 v4.13.0 h1:lxCg3LAv+EUK6t1i0y1V6/SLeUi0eKEKdhQAlS8TVTI=
