@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "df26d6a55d84543b707592178a04e424bc6d4f99b0c260157aeade1757a5063a",
+  "moduleFileHash": "e23cd822144667656dd445c0eeea93fad1f1a921463ffbb48ca616e038446a14",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -75,7 +75,7 @@
             {
               "tagName": "toolchains",
               "attributeValues": {
-                "version": "v1.34.0"
+                "version": "v1.46.0"
               },
               "devDependency": false,
               "location": {
@@ -139,9 +139,11 @@
           },
           "imports": {
             "build_buf_gen_go_bufbuild_protovalidate_protocolbuffers_go": "build_buf_gen_go_bufbuild_protovalidate_protocolbuffers_go",
+            "build_buf_gen_go_fjarm_userservice_protocolbuffers_go": "build_buf_gen_go_fjarm_userservice_protocolbuffers_go",
             "com_github_bufbuild_protovalidate_go": "com_github_bufbuild_protovalidate_go",
             "org_golang_google_grpc": "org_golang_google_grpc",
-            "org_golang_google_protobuf": "org_golang_google_protobuf"
+            "org_golang_google_protobuf": "org_golang_google_protobuf",
+            "com_github_google_uuid": "com_github_google_uuid"
           },
           "devImports": [],
           "tags": [
@@ -167,7 +169,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 60,
+            "line": 62,
             "column": 20
           },
           "imports": {
@@ -191,7 +193,7 @@
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 61,
+                "line": 63,
                 "column": 9
               }
             }
@@ -2586,7 +2588,7 @@
             "bzlFile": "@@rules_buf~//buf/internal:toolchain.bzl",
             "ruleClassName": "buf_download_releases",
             "attributes": {
-              "version": "v1.34.0",
+              "version": "v1.46.0",
               "sha256": ""
             }
           }
