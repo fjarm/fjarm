@@ -3,10 +3,12 @@ module github.com/fjarm/fjarm/api
 go 1.22.4
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.34.2-20240508200655-46a4cf4ba109.2
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.35.2-20240508200655-46a4cf4ba109.1
+	buf.build/gen/go/fjarm/userservice/protocolbuffers/go v1.35.2-20241213005309-5b5580d68379.1
 	github.com/bufbuild/protovalidate-go v0.6.2
+	github.com/google/uuid v1.6.0
 	google.golang.org/grpc v1.62.1
-	google.golang.org/protobuf v1.34.2
+	google.golang.org/protobuf v1.35.2
 )
 
 require (
