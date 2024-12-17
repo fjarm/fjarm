@@ -9,7 +9,8 @@ go_library(
     importpath = "github.com/fjarm/fjarm/api/internal/helloworld",
     visibility = ["//api:__subpackages__"],
     deps = [
-        "//api/pkg/helloworld/v1:helloworld_library",
+        "@build_buf_gen_go_fjarm_helloworld_grpc_go//helloworld/v1/helloworldv1grpc",
+        "@build_buf_gen_go_fjarm_helloworld_protocolbuffers_go//helloworld/v1:helloworld",
         "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
         "@org_golang_google_grpc//codes",
         "@org_golang_google_grpc//status",

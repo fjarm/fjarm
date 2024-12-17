@@ -52,11 +52,13 @@ go_deps.from_file(go_mod = "//api:go.mod")
 use_repo(
     go_deps,
     "build_buf_gen_go_bufbuild_protovalidate_protocolbuffers_go",
+    "build_buf_gen_go_fjarm_helloworld_grpc_go",
+    "build_buf_gen_go_fjarm_helloworld_protocolbuffers_go",
     "build_buf_gen_go_fjarm_userservice_protocolbuffers_go",
     "com_github_bufbuild_protovalidate_go",
+    "com_github_google_uuid",
     "org_golang_google_grpc",
     "org_golang_google_protobuf",
-    "com_github_google_uuid",
 )
 
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")

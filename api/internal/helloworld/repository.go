@@ -1,8 +1,8 @@
 package helloworld
 
 import (
+	pb "buf.build/gen/go/fjarm/helloworld/protocolbuffers/go/helloworld/v1"
 	"context"
-	pb "github.com/fjarm/fjarm/api/pkg/helloworld/v1"
 	"google.golang.org/grpc/codes"
 )
 

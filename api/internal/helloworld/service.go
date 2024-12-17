@@ -1,9 +1,10 @@
 package helloworld
 
 import (
+	rpc "buf.build/gen/go/fjarm/helloworld/grpc/go/helloworld/v1/helloworldv1grpc"
+	pb "buf.build/gen/go/fjarm/helloworld/protocolbuffers/go/helloworld/v1"
 	"context"
 	"github.com/bufbuild/protovalidate-go"
-	pb "github.com/fjarm/fjarm/api/pkg/helloworld/v1"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -11,7 +12,7 @@ import (
 )
 
 type Service struct {
-	pb.UnimplementedHelloWorldServiceServer
+	rpc.UnimplementedHelloWorldServiceServer
 	repo      repository
 	validator *protovalidate.Validator
 }
