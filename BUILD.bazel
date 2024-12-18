@@ -5,11 +5,11 @@ load("@gazelle//:def.bzl", "gazelle", "gazelle_binary")
 
 gazelle(
     name = "gazelle",
-    gazelle = ":gazelle-buf",
+    gazelle = ":gazelle_bin",
 )
 
 gazelle_binary(
-    name = "gazelle-buf",
+    name = "gazelle_bin",
     languages = [
         # SEE: https://github.com/bazelbuild/bazel-gazelle/issues/1409
         # "@gazelle//language/proto",  # Built-in rule from gazelle for Protos.
