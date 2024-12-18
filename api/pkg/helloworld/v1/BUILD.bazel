@@ -1,12 +1,19 @@
 load("@rules_go//go:def.bzl", "go_library", "go_test")
-load("@rules_go//proto:def.bzl", "go_proto_library")
 
 go_test(
     name = "helloworld_test",
     srcs = ["helloworld_test.go"],
+    embed = [":helloworld"],
     importpath = "github.com/fjarm/fjarm/api/pkg/helloworld/v1",
     deps = [
         "@build_buf_gen_go_fjarm_helloworld_protocolbuffers_go//helloworld/v1:helloworld",
         "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
     ],
+)
+
+go_library(
+    name = "helloworld",
+    srcs = ["helloworld.go"],
+    importpath = "github.com/fjarm/fjarm/api/pkg/helloworld/v1",
+    visibility = ["//visibility:public"],
 )
