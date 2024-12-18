@@ -1,7 +1,7 @@
 load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
-    name = "userservice_library",
+    name = "userservice",
     srcs = ["userservice.go"],
     importpath = "github.com/fjarm/fjarm/api/pkg/userservice/v1",
     visibility = ["//:__subpackages__"],
@@ -10,7 +10,7 @@ go_library(
 go_test(
     name = "userservice_test",
     srcs = ["user_id_test.go"],
-    embed = [":userservice_library"],
+    embed = [":userservice"],
     importpath = "github.com/fjarm/fjarm/api/pkg/userservice/v1",
     deps = [
         "@build_buf_gen_go_fjarm_userservice_protocolbuffers_go//userservice/v1:userservice",
