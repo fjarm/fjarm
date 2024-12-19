@@ -1,4 +1,7 @@
 name: Buf PR checks
+permissions:
+  contents: read
+  pull-requests: write
 on:
   push:
     branches:
@@ -6,6 +9,7 @@ on:
     paths:
       - "proto/**"
   pull_request:
+    types: [ opened, synchronize, reopened, labeled, unlabeled ]
     paths:
       - "proto/**"
 jobs:
@@ -16,17 +20,10 @@ jobs:
       - uses: actions/checkout@v4
         name: Checkout repo
       # Install the `buf` CLI
-      - uses: bufbuild/buf-setup-action@v1
+      - uses: bufbuild/buf-action@v1
         name: Install Buf CLI
         with:
-          # NOTE: Keep this version up to date with the pinned version in ../../MODULE.bazel
           version: "1.46.0"
+          push: false
+          token: ${{ secrets.BUF_TOKEN }}
           github_token: ${{ github.token }}
-      - name: Lint all proto files
-        working-directory: ./proto
-        run: |
-          buf lint
-      - name: Detect breaking changes
-        working-directory: ./proto
-        run: |
-          buf breaking --against 'https://github.com/fjarm/fjarm.git#branch=main,subdir=proto'
