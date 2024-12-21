@@ -2,16 +2,16 @@ syntax = "proto3";
 
 package userservice.v1;
 
+import "buf/validate/validate.proto";
+
 option go_package = "github.com/fjarm/fjarm/api/internal/pkg/userservice/v1";
 option java_multiple_files = true;
 option java_outer_classname = "UserServiceMessage";
-
-import "buf/validate/validate.proto";
 
 // Unique identifier for a given user.
 message UserId {
   // Required field that represents the user's unique identifier (UID).
   // The supplied value must be a UUID as defined by
   // [RFC 4122](https://tools.ietf.org/html/rfc4122#section-4.1.2).
-  optional string user_id = 1[(buf.validate.field).string.uuid = true];
+  optional string user_id = 1 [(buf.validate.field).string.uuid = true];
 }
