@@ -1,7 +1,7 @@
 package v1
 
 import (
-	pb "buf.build/gen/go/fjarm/userservice/protocolbuffers/go/userservice/v1"
+	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/userservice/v1"
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/google/uuid"
 	"testing"

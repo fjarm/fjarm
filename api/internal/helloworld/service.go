@@ -1,8 +1,8 @@
 package helloworld
 
 import (
-	rpc "buf.build/gen/go/fjarm/helloworld/grpc/go/helloworld/v1/helloworldv1grpc"
-	pb "buf.build/gen/go/fjarm/helloworld/protocolbuffers/go/helloworld/v1"
+	rpc "buf.build/gen/go/fjarm/fjarm/grpc/go/helloworld/v1/helloworldv1grpc"
+	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/helloworld/v1"
 	"context"
 	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/grpc/codes"

@@ -7,7 +7,7 @@ go_library(
     visibility = ["//visibility:private"],
     deps = [
         "//api/internal/helloworld",
-        "@build_buf_gen_go_fjarm_helloworld_grpc_go//helloworld/v1/helloworldv1grpc",
+        "@build_buf_gen_go_fjarm_fjarm_grpc_go//helloworld/v1/helloworldv1grpc",
         "@org_golang_google_grpc//:grpc",
         "@org_golang_google_grpc//reflection",
     ],
