@@ -29,6 +29,7 @@ jobs:
           lint: true
           format: true
           breaking: true
+          breaking_against: "https://github.com/fjarm/fjarm.git#branch=main"
           pr_comment: true
           push: false
           push_disable_create: true

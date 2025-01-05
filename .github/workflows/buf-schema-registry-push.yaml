@@ -21,5 +21,6 @@ jobs:
           lint: true
           format: true
           breaking: true
+          breaking_against: "https://github.com/fjarm/fjarm.git#branch=main"
           push: true
           push_disable_create: true
