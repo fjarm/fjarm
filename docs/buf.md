@@ -1,28 +1,16 @@
 # Buf
 
-This document provides an overview of [Buf](https://buf.build/docs/introduction) and how its capabilities can be used with Bazel.
+This document provides an overview of [Buf](https://buf.build/docs/introduction) and how its capabilities can be used to
+manage Protocol Buffer definitions defined here and upstream Protocol Buffer dependencies.
 
 "Buf builds tooling to make schema-driven, Protobuf-based API development reliable and user-friendly for service
 producers and consumers."
 
-## What rules_buf provides
-
-`rules_buf` includes a [Gazelle](./gazelle.md) extension for generating `buf_dependencies`, `buf_breaking_test`, and
-`buf_lint_test` rules out of `buf.yaml` configuration files.
-
-## buf_dependencies
-
-[buf_dependencies](https://buf.build/docs/build-systems/bazel#buf-dependencies) is a repository rule that downloads modules from the Buf Schema Registry and generates `BUILD.bazel`
-files using Gazelle.
-
-In practice, this rule allows us to download and use `.proto` messages like those defined in [googleapis](https://buf.build/googleapis/googleapis) without
-having to load the dependency in a more convoluted way.
-
-## What buf provides
+## What Buf provides
 
 ## buf lint
 
-`buf lint` can be used from the [proto](../proto) folder to run lint tests on schema and RPC definitions.
+`buf lint` can be used from the project's root directory to run lint tests on schema and RPC definitions.
 
 ## [buf breaking](https://buf.build/docs/breaking/tutorial)
 
@@ -31,48 +19,34 @@ changes in `.proto` modifications.
 
 ## buf dep update
 
-`buf dep update` is used to update the `deps` section of [buf.yaml](../proto/buf.yaml), which specifies the external,
+`buf dep update` is used to update the `deps` section of [buf.yaml](../buf.yaml), which specifies the external,
 imported `.proto` files.
 
 This includes `buf/validate/validate.proto`.
 
 ## buf generate
 
-`buf generate` generates the language Protobuf messages and RPCs specified in [buf.gen.yaml](../proto/buf.gen.yaml).
+`buf generate` generates the language Protobuf messages and RPCs specified in a `buf.gen.yaml` file.
+
+Since migrating to Buf Schema Registry's generated SDKs, this command is no longer used in any standard workflow.
+
+The single exception is to validate that the upstream SDK generation works correctly.
 
 ## buf build
 
-`buf build [DIRECTORY|MODULE]` builds the `.proto` files found in the specified module into a Buf image.
+`buf build [DIRECTORY|MODULE] --output ./[DIRECTORY|MODULE]/image.binpb` builds the `.proto` files found in the
+specified module into a Buf image. Similar to `buf generate`, this command is no longer used except to locally validate
+that the upstream SDK generation will work correctly.
 
 ## buf push
 
-`buf push [DIRECTORY|MODULE]` pushes the image associated with the module up to the Buf schema registry. 
+`buf push [DIRECTORY|MODULE]` pushes the image associated with the module up to the Buf schema registry. This should
+only be executed from the GitHub Actions UI. 
 
 ## References and links
 
-* [rules_buf GitHub repo](https://github.com/bufbuild/rules_buf?tab=readme-ov-file)
 * [Buf style guide](https://buf.build/docs/best-practices/style-guide)
 * [Buf files and packages](https://buf.build/docs/reference/protobuf-files-and-packages)
 * [Buf CLI docs](https://buf.build/docs/reference/cli/buf/)
 * [Buf Schema Registry docs](https://buf.build/docs/bsr/introduction)
 * [Buf GitHub Actions](https://buf.build/docs/ci-cd/github-actions)
-
----
-
-# Graveyard
-
-## Use cases
-
-The Buf features we're particularly interested in are:
-* Accessing `.proto` files from the Buf Schema Registry, specifically:
-  * [protovalidate](https://github.com/bufbuild/protovalidate)) for schema validation
-  * [wellknowntypes](https://buf.build/protocolbuffers/wellknowntypes) to potentially replace those provided by [toolchains_protoc](./rules-proto.md)
-* Linting `.proto` files
-* Detecting breaking changes to `.proto` files
-
-## Known issues
-
-Buf doesn't seem to support bzlmod effectively. Repos in the Buf Schema Registry that provide multiple packages do not
-work well with Gazelle ([Issue #76](https://github.com/bufbuild/rules_buf/issues/76)).
-
-Targets defined in `rules_buf` also does not support Protocol Buffer toolchains in Bazel ([Issue #74](https://github.com/bufbuild/rules_buf/issues/74)).
