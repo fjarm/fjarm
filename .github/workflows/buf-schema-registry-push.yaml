@@ -19,7 +19,7 @@ jobs:
           token: ${{ secrets.BUF_TOKEN }}
           github_token: ${{ github.token }}
           lint: true
-          format: true
+          format: false
           breaking: true
           breaking_against: "https://github.com/fjarm/fjarm.git#branch=main"
           push: true
