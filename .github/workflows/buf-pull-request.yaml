@@ -24,6 +24,11 @@ jobs:
         name: Run Buf validation
         with:
           version: "1.46.0"
-          push: false
           token: ${{ secrets.BUF_TOKEN }}
           github_token: ${{ github.token }}
+          lint: true
+          format: true
+          breaking: true
+          pr_comment: true
+          push: false
+          push_disable_create: true

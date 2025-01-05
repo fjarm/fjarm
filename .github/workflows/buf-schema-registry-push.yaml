@@ -18,3 +18,8 @@ jobs:
           version: "1.46.0"
           token: ${{ secrets.BUF_TOKEN }}
           github_token: ${{ github.token }}
+          lint: true
+          format: true
+          breaking: true
+          push: true
+          push_disable_create: true
