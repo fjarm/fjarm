@@ -1,14 +1,9 @@
 name: Buf Schema Registry push
+permissions:
+  contents: read
+  pull-requests: write
 on:
   workflow_dispatch:
-    inputs:
-      module:
-        description: 'Protobuf module to build and push'
-        required: true
-        type: choice
-        options:
-          - helloworld
-          - userservice
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -16,28 +11,10 @@ jobs:
       # Run `git checkout`
       - uses: actions/checkout@v4
         name: Checkout repo
-      # Install the `buf` CLI
-      - uses: bufbuild/buf-setup-action@v1
-        name: Install Buf CLI
+      # Install the `buf` CLI, lint and format files, detect breaking changes, and push the latest schema
+      - uses: bufbuild/buf-action@v1
+        name: Run Buf validation and push latest schema
         with:
-          # NOTE: Keep this version up to date with the pinned version in ../../MODULE.bazel
           version: "1.46.0"
+          token: ${{ secrets.BUF_TOKEN }}
           github_token: ${{ github.token }}
-          buf_user: ${{ secrets.BUF_USER }}
-          buf_api_token: ${{ secrets.BUF_TOKEN }}
-      - name: Lint all proto files
-        working-directory: ./proto
-        run: |
-          buf lint
-      - name: Detect breaking changes
-        working-directory: ./proto
-        run: |
-          buf breaking --against 'https://github.com/fjarm/fjarm.git#branch=main,subdir=proto'
-      - name: Build module image
-        working-directory: ./proto
-        run: |
-          buf build ${{ inputs.module }}
-      - name: Push module schema
-        working-directory: ./proto
-        run: |
-          buf push ${{ inputs.module }}
