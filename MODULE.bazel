@@ -6,7 +6,8 @@ module(
 bazel_dep(name = "rules_go", version = "0.48.1")
 bazel_dep(name = "gazelle", version = "0.37.0")
 bazel_dep(name = "rules_oci", version = "2.0.0-beta1")
-bazel_dep(name = "rules_pkg", version = "0.10.1")
+bazel_dep(name = "aspect_bazel_lib", version = "2.10.0")
+bazel_dep(name = "platforms", version = "0.0.10")
 
 go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
 
@@ -29,14 +30,19 @@ use_repo(
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 oci.pull(
     name = "alpine_base",
-    # SEE: https://hub.docker.com/layers/library/alpine/3.20/images/sha256-dabf91b69c191a1a0a1628fd6bdd029c0c4018041c7f052870bb13c5a222ae76
-    digest = "sha256:b89d9c93e9ed3597455c90a0b88a8bbb5cb7188438f70953fede212a0c4394e0",
+    # SEE: https://hub.docker.com/layers/library/alpine/latest/images/sha256-1f390db9d9746cc317e16a98a8be2854c599abcbf04d45b6320b040e72034e33
+    digest = "sha256:b97e2a89d0b9e4011bb88c02ddf01c544b8c781acf1f4d559e7c8f12f1047ac3",
     image = "docker.io/library/alpine",
     platforms = [
         "linux/amd64",
-        "linux/arm64",
+        "linux/arm64/v8",
     ],
 )
-use_repo(oci, "alpine_base", "alpine_base_linux_amd64", "alpine_base_linux_arm64")
+use_repo(
+    oci,
+    "alpine_base",
+    "alpine_base_linux_amd64",
+    "alpine_base_linux_arm64_v8",
+)
 
 register_toolchains("//tools/toolchains:all")

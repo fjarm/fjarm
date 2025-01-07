@@ -1,29 +1,66 @@
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_load", "oci_push")
-load("@rules_pkg//:pkg.bzl", "pkg_tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_load", "oci_push")
+load("@aspect_bazel_lib//lib:expand_template.bzl", "expand_template")
+load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 
-# Put helloworld go_binary into a tar layer.
-pkg_tar(
-    name = "tar",
-    srcs = ["//api/cmd/helloworld"],
+# Put the cross compiled helloworld go_binary's into a tar layer.
+tar(
+    name = "helloworld_linux_amd64_tar",
+    srcs = ["//api/cmd/helloworld:helloworld_linux_amd64"],
+    visibility = ["//visibility:private"],
+)
+
+tar(
+    name = "helloworld_linux_arm64_tar",
+    srcs = ["//api/cmd/helloworld:helloworld_linux_arm64"],
     visibility = ["//visibility:private"],
 )
 
 oci_image(
-    name = "image_dev",
-    base = "@alpine_base",
-    entrypoint = ["/helloworld"],
-    tars = [":tar"],
+    name = "helloworld_alpine_base_linux_amd64",
+    base = "@alpine_base_linux_amd64",
+    entrypoint = ["api/cmd/helloworld/helloworld_linux_amd64"],
+    tars = [":helloworld_linux_amd64_tar"],
+)
+
+oci_image(
+    name = "helloworld_alpine_base_linux_arm64_v8",
+    base = "@alpine_base_linux_arm64_v8",
+    entrypoint = ["api/cmd/helloworld/helloworld_linux_arm64"],
+    tars = [":helloworld_linux_arm64_tar"],
+)
+
+oci_image_index(
+    name = "helloworld_image_index",
+    images = [
+        ":helloworld_alpine_base_linux_amd64",
+        ":helloworld_alpine_base_linux_arm64_v8",
+    ],
+)
+
+# Use the value of --embed_label under --stamp, otherwise use a deterministic constant
+# value to ensure cache hits for actions that depend on this.
+expand_template(
+    name = "stamped",
+    out = "_stamped.tags.txt",
+    data = ["helloworld.tmpl"],
+    stamp_substitutions = {
+        "{{COMMIT}}": "{{STABLE_GIT_COMMIT}}",
+    },
+    template = "helloworld.tmpl",
 )
 
 oci_push(
-    name = "push_dev",
-    image = ":image_dev",
-    remote_tags = ["dev"],
+    name = "helloworld_push",
+    image = ":helloworld_image_index",
+    remote_tags = ":stamped",
     repository = "index.docker.io/veganafro/helloworld",
 )
 
 oci_load(
-    name = "load_dev",
-    image = ":image_dev",
+    name = "helloworld_load",
+    image = select({
+        "@platforms//cpu:arm64": ":helloworld_alpine_base_linux_arm64_v8",
+        "@platforms//cpu:x86_64": ":helloworld_alpine_base_linux_amd64",
+    }),
     repo_tags = ["veganafro/helloworld:local"],
 )
