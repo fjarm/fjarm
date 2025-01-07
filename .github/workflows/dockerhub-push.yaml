@@ -7,11 +7,7 @@ on:
         required: true
         type: choice
         options:
-          - helloworld:push_dev
-      version:
-        description: 'SemVer string to attach as a tag'
-        required: true
-        type: string
+          - helloworld:helloworld_push
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -32,9 +28,6 @@ jobs:
           bazelisk-cache: true
           # Bazelisk version to download and use
           bazelisk-version: 1.x
-          # Extra contents to write to the .bazelrc file
-          bazelrc: |
-            run --platforms=@rules_go//go/toolchain:linux_amd64
           # Store build cache per workflow.
           disk-cache: ${{ github.workflow }}
           # Share repository cache between workflows.
@@ -44,4 +37,4 @@ jobs:
           bazel build //api/...
       - name: Run oci_push target
         run: |
-          bazel run //api/deployment/${{ inputs.module }} -- --tag ${{ inputs.version }}
+          bazel run //api/deployment/${{ inputs.module }} --config=release
