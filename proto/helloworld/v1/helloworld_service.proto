@@ -7,7 +7,8 @@ import "helloworld/v1/helloworld.proto";
 
 option go_package = "github.com/fjarm/fjarm/api/internal/pkg/helloworld/v1";
 option java_multiple_files = true;
-option java_package = "xyz.fjarm.libhelloworld.gen";
+option java_outer_classname = "HelloworldServiceProto";
+option java_package = "xyz.fjarm.helloworld.v1";
 
 service HelloWorldService {
   rpc GetHelloWorld(google.protobuf.Empty) returns (helloworld.v1.GetHelloWorldResponse);

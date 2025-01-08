@@ -19,6 +19,10 @@ go_binary(
     visibility = ["//visibility:private"],
 )
 
+# SEE: https://go.dev/doc/install/source#environment
+# The valid OS and CPU architecture combinations can be found above.
+# Cross compiled binaries for Linux make sure that local compilation from MacOS doesn't lead to `exec format error`
+# bugs when running the binary inside a Linux container.
 go_cross_binary(
     name = "helloworld_linux_arm64",
     platform = "@rules_go//go/toolchain:linux_arm64",

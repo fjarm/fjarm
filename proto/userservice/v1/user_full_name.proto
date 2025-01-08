@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package userservice.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/internal/pkg/userservice/v1";
+option java_multiple_files = true;
+option java_outer_classname = "UserFullNameProto";
+option java_package = "xyz.fjarm.userservice.v1";
+
+// The name a user supplies at registration or later updates. This should be used to address
+// a user in official communications such as emails or push notifications.
+message FullName {
+  // Required field that represents a user's preferred name when addressing them.
+  optional string family_name = 1 [
+    (buf.validate.field).string.example = "bella",
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 99
+  ];
+  // Required field that represents a user's family name.
+  optional string given_name = 2 [
+    (buf.validate.field).string.example = "hadid",
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 99
+  ];
+}
