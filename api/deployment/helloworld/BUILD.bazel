@@ -37,6 +37,7 @@ oci_image_index(
     ],
 )
 
+# SEE: https://github.com/bazel-contrib/bazel-lib/blob/fea951508738c95b4d18d93e444101f576458f60/lib/tests/expand_template/BUILD.bazel
 # Use the value of --embed_label under --stamp, otherwise use a deterministic constant
 # value to ensure cache hits for actions that depend on this.
 expand_template(
@@ -49,6 +50,7 @@ expand_template(
     template = "helloworld.tmpl",
 )
 
+# SEE: https://github.com/bazel-contrib/rules_oci/blob/843eb01b152b884fe731a3fb4431b738ad00ea60/docs/push.md
 oci_push(
     name = "helloworld_push",
     image = ":helloworld_image_index",
