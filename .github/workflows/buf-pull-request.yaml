@@ -8,10 +8,14 @@ on:
       - main
     paths:
       - "proto/**"
+      - "buf.lock"
+      - "buf.yaml"
   pull_request:
     types: [ opened, synchronize, reopened, labeled, unlabeled ]
     paths:
       - "proto/**"
+      - "buf.lock"
+      - "buf.yaml"
 jobs:
   build:
     runs-on: ubuntu-latest
