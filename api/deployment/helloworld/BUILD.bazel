@@ -53,7 +53,7 @@ oci_push(
     name = "helloworld_push",
     image = ":helloworld_image_index",
     remote_tags = ":stamped",
-    repository = "index.docker.io/veganafro/helloworld",
+    repository = "ghcr.io/fjarm/helloworld",
 )
 
 oci_load(
