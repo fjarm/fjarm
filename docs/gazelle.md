@@ -42,6 +42,18 @@ import (
 4. Run `bazel mod tidy` again
 5. Run `bazel run //:gazelle` to generate a `BUILD.bazel` file
 
+## Typical workflow for updating Buf SDK dependencies
+
+After running the [Buf Schema Registry push](../.github/workflows/buf-schema-registry-push.yaml) workflow to update Protobuf modules, the next step
+is to update the code that depends on the modules/schemas.
+
+For Go server/client code, assuming the Go module is already depended on, the steps look like:
+1. **From the `api` directory, run `bazel run @rules_go//go -- get buf.build/gen/go/fjarm/fjarm/grpc/go@latest`
+2. **From the `api` directory, run `bazel run @rules_go//go -- mod tidy`
+    * The two commands above should result in changes to `go.mod` and `go.sum`
+3. In some cases, other dependencies like `protovalidate-go` may need to be updated so run `bazel run @rules_go//go -- get github.com/bufbuild/protovalidate-go`
+    * If this is needed, run run `bazel run @rules_go//go -- mod tidy` once more
+
 See more in [these instructions](https://github.com/bazelbuild/rules_go/blob/master/docs/go/core/bzlmod.md#depending-on-tools).
 
 ## References and links
