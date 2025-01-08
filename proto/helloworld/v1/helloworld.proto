@@ -6,9 +6,9 @@ import "buf/validate/validate.proto";
 
 // SEE: https://google.aip.dev/191
 option go_package = "github.com/fjarm/fjarm/api/internal/pkg/helloworld/v1";
-option java_package = "xyz.fjarm.helloworld.v1";
 option java_multiple_files = true;
 option java_outer_classname = "HelloworldProto";
+option java_package = "xyz.fjarm.helloworld.v1";
 
 message GetHelloWorldRequest {
   string input = 1;
