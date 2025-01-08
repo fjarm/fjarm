@@ -15,16 +15,17 @@ jobs:
       # Run `git checkout`
       - uses: actions/checkout@v4
         name: Checkout repo
-      - uses: bazel-contrib/setup-bazel@0.8.5
+      - uses: bazel-contrib/setup-bazel@0.12.1
         name: Install Bazel CLI
         with:
-          # Avoid downloading Bazel every time.
+          # Avoid downloading Bazel every time
           bazelisk-cache: true
-          # Bazelisk version to download and use
           bazelisk-version: 1.x
-          # Store build cache per workflow.
-          disk-cache: ${{ github.workflow }}
-          # Share repository cache between workflows.
+          # Share a single disk cache across workflows
+          disk-cache: true
+          # Enable external repositories caches
+          external-cache: true
+          # Store a single repository cache
           repository-cache: true
       - name: Build all targets under api
         run: |
