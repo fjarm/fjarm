@@ -9,7 +9,10 @@ go_library(
 
 go_test(
     name = "userservice_test",
-    srcs = ["user_id_test.go"],
+    srcs = [
+        "user_full_name_test.go",
+        "user_id_test.go",
+    ],
     embed = [":userservice"],
     importpath = "github.com/fjarm/fjarm/api/pkg/userservice/v1",
     deps = [
