@@ -29,10 +29,10 @@ use_repo(
 
 oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
 oci.pull(
-    name = "alpine_base",
-    # SEE: https://hub.docker.com/layers/library/alpine/latest/images/sha256-1f390db9d9746cc317e16a98a8be2854c599abcbf04d45b6320b040e72034e33
-    digest = "sha256:b97e2a89d0b9e4011bb88c02ddf01c544b8c781acf1f4d559e7c8f12f1047ac3",
-    image = "docker.io/library/alpine",
+    name = "distroless_static",
+    # SEE: https://console.cloud.google.com/artifacts/docker/distroless/us/gcr.io/static/sha256:5c7e2b465ac6a2a4e5f4f7f722ce43b147dabe87cb21ac6c4007ae5178a1fa58
+    digest = "sha256:5c7e2b465ac6a2a4e5f4f7f722ce43b147dabe87cb21ac6c4007ae5178a1fa58",
+    image = "gcr.io/distroless/static",
     platforms = [
         "linux/amd64",
         "linux/arm64/v8",
@@ -40,9 +40,9 @@ oci.pull(
 )
 use_repo(
     oci,
-    "alpine_base",
-    "alpine_base_linux_amd64",
-    "alpine_base_linux_arm64_v8",
+    "distroless_static",
+    "distroless_static_linux_amd64",
+    "distroless_static_linux_arm64_v8",
 )
 
 register_toolchains("//tools/toolchains:all")
