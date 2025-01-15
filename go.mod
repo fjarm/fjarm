@@ -1,4 +1,4 @@
-module github.com/fjarm/fjarm/api
+module github.com/fjarm/fjarm
 
 go 1.23.4
 

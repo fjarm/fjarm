@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "7013223baa6d300f70528c5e22b8bec7777b4360b336557b2c8f9928888d1b03",
+  "moduleFileHash": "a3efb9ea1516ace62e40c7caab9f8b1c47cdce49aec80daf147fb7c66e1e79b8",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -77,7 +77,7 @@
             {
               "tagName": "from_file",
               "attributeValues": {
-                "go_mod": "//api:go.mod"
+                "go_mod": "//:go.mod"
               },
               "devDependency": false,
               "location": {
