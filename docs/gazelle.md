@@ -38,7 +38,7 @@ import (
 )
 ```
 2. Run `bazel mod tidy`
-3. **From the `api` directory**, run `bazel run @rules_go//go -- mod tidy`
+3. **From the root directory**, run `bazel run @rules_go//go -- mod tidy`
 4. Run `bazel mod tidy` again
 5. Run `bazel run //:gazelle` to generate a `BUILD.bazel` file
 
@@ -48,11 +48,11 @@ After running the [Buf Schema Registry push](../.github/workflows/buf-schema-reg
 is to update the code that depends on the modules/schemas.
 
 For Go server/client code, assuming the Go module is already depended on, the steps look like:
-1. **From the `api` directory, run `bazel run @rules_go//go -- get buf.build/gen/go/fjarm/fjarm/grpc/go@latest`
-2. **From the `api` directory, run `bazel run @rules_go//go -- mod tidy`
+1. **From the root directory, run `bazel run @rules_go//go -- get buf.build/gen/go/fjarm/fjarm/grpc/go@latest`
+2. **From the root directory, run `bazel run @rules_go//go -- mod tidy`
     * The two commands above should result in changes to `go.mod` and `go.sum`
 3. In some cases, other dependencies like `protovalidate-go` may need to be updated so run `bazel run @rules_go//go -- get github.com/bufbuild/protovalidate-go`
-    * If this is needed, run run `bazel run @rules_go//go -- mod tidy` once more
+    * If this is needed, run `bazel run @rules_go//go -- mod tidy` once more
 
 See more in [these instructions](https://github.com/bazelbuild/rules_go/blob/master/docs/go/core/bzlmod.md#depending-on-tools).
 
