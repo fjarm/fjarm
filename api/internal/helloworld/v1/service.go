@@ -1,13 +1,12 @@
-package helloworld
+package v1
 
 import (
-	rpc "buf.build/gen/go/fjarm/fjarm/grpc/go/helloworld/v1/helloworldv1grpc"
-	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/helloworld/v1"
+	rpc "buf.build/gen/go/fjarm/fjarm/grpc/go/fjarm/helloworld/v1/helloworldv1grpc"
+	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/helloworld/v1"
 	"context"
 	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 	"log/slog"
 )
 
@@ -19,7 +18,7 @@ type Service struct {
 
 func (svc *Service) GetHelloWorld(
 	ctx context.Context,
-	req *emptypb.Empty,
+	_ *pb.GetHelloWorldRequest,
 ) (*pb.GetHelloWorldResponse, error) {
 	slog.Info("received request", "rpc", "GetHelloWorld")
 	res, err := svc.repo.getHelloWorld(ctx)

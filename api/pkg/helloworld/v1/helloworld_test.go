@@ -1,7 +1,7 @@
 package v1
 
 import (
-	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/helloworld/v1"
+	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/helloworld/v1"
 	"github.com/bufbuild/protovalidate-go"
 	"testing"
 )
@@ -36,8 +36,10 @@ func TestGetHelloWorldResponse_OutputValidation(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			resp := pb.GetHelloWorldResponse{
-				Status: "",
-				Output: tc.output,
+				Status: nil,
+				Output: &pb.HelloWorldOutput{
+					Output: &tc.output,
+				},
 			}
 			err = validator.Validate(&resp)
 			if (err != nil) != tc.wantErr {

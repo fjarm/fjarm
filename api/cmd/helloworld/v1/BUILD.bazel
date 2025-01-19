@@ -3,11 +3,11 @@ load("@rules_go//go:def.bzl", "go_binary", "go_cross_binary", "go_library")
 go_library(
     name = "helloworld_lib",
     srcs = ["main.go"],
-    importpath = "github.com/fjarm/fjarm/api/cmd/helloworld",
+    importpath = "github.com/fjarm/fjarm/api/cmd/helloworld/v1",
     visibility = ["//visibility:private"],
     deps = [
-        "//api/internal/helloworld",
-        "@build_buf_gen_go_fjarm_fjarm_grpc_go//helloworld/v1/helloworldv1grpc",
+        "//api/internal/helloworld/v1:helloworld",
+        "@build_buf_gen_go_fjarm_fjarm_grpc_go//fjarm/helloworld/v1/helloworldv1grpc",
         "@org_golang_google_grpc//:grpc",
         "@org_golang_google_grpc//reflection",
     ],

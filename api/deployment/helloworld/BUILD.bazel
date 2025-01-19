@@ -5,13 +5,13 @@ load("@aspect_bazel_lib//lib:tar.bzl", "tar")
 # Put the cross compiled helloworld go_binary's into a tar layer.
 tar(
     name = "helloworld_linux_amd64_tar",
-    srcs = ["//api/cmd/helloworld:helloworld_linux_amd64"],
+    srcs = ["//api/cmd/helloworld/v1:helloworld_linux_amd64"],
     visibility = ["//visibility:private"],
 )
 
 tar(
     name = "helloworld_linux_arm64_tar",
-    srcs = ["//api/cmd/helloworld:helloworld_linux_arm64"],
+    srcs = ["//api/cmd/helloworld/v1:helloworld_linux_arm64"],
     visibility = ["//visibility:private"],
 )
 
