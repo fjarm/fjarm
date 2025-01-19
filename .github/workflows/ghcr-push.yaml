@@ -7,7 +7,7 @@ on:
         required: true
         type: choice
         options:
-          - helloworld:helloworld_push
+          - helloworld/v1:helloworld_push
 env:
   REGISTRY: ghcr.io
 jobs:
