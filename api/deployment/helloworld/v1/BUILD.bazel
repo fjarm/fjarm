@@ -1,6 +1,6 @@
-load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_load", "oci_push")
 load("@aspect_bazel_lib//lib:expand_template.bzl", "expand_template")
 load("@aspect_bazel_lib//lib:tar.bzl", "tar")
+load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_load", "oci_push")
 
 # Put the cross compiled helloworld go_binary's into a tar layer.
 tar(
@@ -18,14 +18,14 @@ tar(
 oci_image(
     name = "helloworld_distroless_static_linux_amd64",
     base = "@distroless_static_linux_amd64",
-    entrypoint = ["api/cmd/helloworld/helloworld_linux_amd64"],
+    entrypoint = ["api/cmd/helloworld/v1/helloworld_linux_amd64"],
     tars = [":helloworld_linux_amd64_tar"],
 )
 
 oci_image(
     name = "helloworld_distroless_static_linux_arm64_v8",
     base = "@distroless_static_linux_arm64_v8",
-    entrypoint = ["api/cmd/helloworld/helloworld_linux_arm64"],
+    entrypoint = ["api/cmd/helloworld/v1/helloworld_linux_arm64"],
     tars = [":helloworld_linux_arm64_tar"],
 )
 

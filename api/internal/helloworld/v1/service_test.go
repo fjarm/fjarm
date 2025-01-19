@@ -25,7 +25,7 @@ func TestService_GetHelloWorld(t *testing.T) {
 				t.Errorf("GetHelloWorld got unexpected error: %v", err)
 			}
 			if tc.wantCode != actual.Status.Code {
-				t.Errorf("want %s, got %s", tc.wantCode, actual.Status)
+				t.Errorf("want %d, got %s", tc.wantCode, actual.Status)
 			}
 		})
 	}
