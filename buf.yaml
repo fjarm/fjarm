@@ -4,10 +4,10 @@ modules:
     name: buf.build/fjarm/fjarm
 deps:
   - buf.build/bufbuild/protovalidate:a3320276596649bcad929ac829d451f4
+  - buf.build/googleapis/googleapis:e93e34f48be043dab55be31b4b47f458
 lint:
   use:
     - STANDARD
-  rpc_allow_google_protobuf_empty_requests: true
   except:
     - ENUM_FIRST_VALUE_ZERO
     - PACKAGE_NO_IMPORT_CYCLE

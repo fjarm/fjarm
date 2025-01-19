@@ -24,6 +24,15 @@ imported `.proto` files.
 
 This includes `buf/validate/validate.proto`.
 
+To introduce new dependencies:
+1. Add the dependency to `buf.yaml` under the `deps` section:
+```yaml
+deps:
+  - buf.build/googleapis/googleapis:e93e34f48be043dab55be31b4b47f458
+```
+2. From the project root, run `buf dep update`
+3. This should result in changes to `buf.lock`
+
 ## buf generate
 
 `buf generate` generates the language Protobuf messages and RPCs specified in a `buf.gen.yaml` file.
