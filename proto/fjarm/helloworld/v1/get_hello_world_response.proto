@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package fjarm.helloworld.v1;
 
-import "google/rpc/status.proto";
 import "fjarm/helloworld/v1/hello_world_output.proto";
+import "google/rpc/status.proto";
 
 option go_package = "github.com/fjarm/fjarm/fjarm/helloworld/apiv1";
 option java_multiple_files = true;
