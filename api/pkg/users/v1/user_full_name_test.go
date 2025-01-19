@@ -1,7 +1,7 @@
 package v1
 
 import (
-	userservicepb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/userservice/v1"
+	userservicepb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"github.com/bufbuild/protovalidate-go"
 	"testing"
 )
@@ -10,7 +10,7 @@ func TestUserFullName_Validation(t *testing.T) {
 	validator, err := protovalidate.New(
 		protovalidate.WithDisableLazy(true),
 		protovalidate.WithMessages(
-			&userservicepb.FullName{},
+			&userservicepb.UserFullName{},
 		),
 	)
 	if err != nil {
@@ -49,7 +49,7 @@ func TestUserFullName_Validation(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			fullName := &userservicepb.FullName{
+			fullName := &userservicepb.UserFullName{
 				FamilyName: &tc.first,
 				GivenName:  &tc.last,
 			}

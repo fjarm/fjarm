@@ -1,9 +1,9 @@
 package main
 
 import (
-	rpc "buf.build/gen/go/fjarm/fjarm/grpc/go/helloworld/v1/helloworldv1grpc"
+	rpc "buf.build/gen/go/fjarm/fjarm/grpc/go/fjarm/helloworld/v1/helloworldv1grpc"
 	"fmt"
-	"github.com/fjarm/fjarm/api/internal/helloworld"
+	helloworld "github.com/fjarm/fjarm/api/internal/helloworld/v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log/slog"
