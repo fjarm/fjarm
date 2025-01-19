@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package fjarm.helloworld.v1;
+
+import "fjarm/helloworld/v1/get_hello_world_request.proto";
+import "fjarm/helloworld/v1/get_hello_world_response.proto";
+
+// SEE: https://google.aip.dev/191
+option go_package = "github.com/fjarm/fjarm/fjarm/helloworld/apiv1"; // [VCS provider - github.com/fjarm/fjarm]/[Proto package - fjarm/helloworld/apiv1]
+option java_multiple_files = true;
+option java_outer_classname = "HelloworldProto";
+option java_package = "xyz.fjarm.helloworld.v1";
+
+service HelloWorldService {
+  rpc GetHelloWorld(fjarm.helloworld.v1.GetHelloWorldRequest) returns (fjarm.helloworld.v1.GetHelloWorldResponse);
+}

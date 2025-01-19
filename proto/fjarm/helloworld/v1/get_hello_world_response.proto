@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package fjarm.helloworld.v1;
+
+import "google/rpc/status.proto";
+import "fjarm/helloworld/v1/hello_world_output.proto";
+
+option go_package = "github.com/fjarm/fjarm/fjarm/helloworld/apiv1";
+option java_multiple_files = true;
+option java_outer_classname = "GetHelloWorldResponseProto";
+option java_package = "xyz.fjarm.helloworld.v1";
+
+message GetHelloWorldResponse {
+  // SEE: https://google.aip.dev/193
+  optional google.rpc.Status status = 1;
+  optional HelloWorldOutput output = 2;
+}
