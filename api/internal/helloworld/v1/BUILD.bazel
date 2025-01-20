@@ -3,33 +3,33 @@ load("@rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "helloworld",
     srcs = [
-        "repository.go",
-        "service.go",
+        "grpchandler.go",
+        "in_memory_repository.go",
+        "interactor.go",
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/helloworld/v1",
     visibility = ["//api:__subpackages__"],
     deps = [
+        "//api/internal/logkeys",
         "@build_buf_gen_go_fjarm_fjarm_grpc_go//fjarm/helloworld/v1/helloworldv1grpc",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/helloworld/v1:helloworld",
         "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
+        "@org_golang_google_genproto_googleapis_rpc//code",
         "@org_golang_google_genproto_googleapis_rpc//status",
-        "@org_golang_google_grpc//codes",
-        "@org_golang_google_grpc//status",
     ],
 )
 
 go_test(
     name = "helloworld_test",
-    srcs = ["service_test.go"],
+    srcs = [
+        "in_memory_repository_test.go",
+        "interactor_test.go",
+    ],
     embed = [
         ":helloworld",
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/helloworld/v1",
     visibility = [
         "//api:__subpackages__",
-    ],
-    deps = [
-        "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/helloworld/v1:helloworld",
-        "@org_golang_google_grpc//codes",
     ],
 )
