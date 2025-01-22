@@ -2,8 +2,10 @@ package main
 
 import (
 	rpc "buf.build/gen/go/fjarm/fjarm/grpc/go/fjarm/helloworld/v1/helloworldv1grpc"
+	"context"
 	"fmt"
 	helloworld "github.com/fjarm/fjarm/api/internal/helloworld/v1"
+	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"log/slog"
@@ -13,35 +15,67 @@ import (
 
 const ip = "[::]"
 
-func serve(lis net.Listener) error {
-	srv := grpc.NewServer()
-	rpc.RegisterHelloWorldServiceServer(srv, helloworld.NewService())
-	slog.Info("starting server", "addr", lis.Addr())
-
-	reflection.Register(srv)
-	if err := srv.Serve(lis); err != nil {
-		return err
-	}
-	return nil
-}
+const serviceName = "helloworld"
 
 func main() {
+	// Use flags here instead of environment variable
 	port := os.Getenv("PORT")
 	if port == "" {
-		slog.Error("failed to read port from environment")
+		slog.Error(
+			"failed to read port from environment",
+			slog.String(logkeys.Service, serviceName),
+		)
 		os.Exit(1)
 	}
+
+	ctx := context.Background()
 
 	addr := fmt.Sprintf("%s:%s", ip, port)
 	lis, err := net.Listen("tcp6", addr)
 	if err != nil {
-		slog.Error("failed to listen", "err", err)
+		slog.ErrorContext(
+			ctx,
+			"failed to create listener",
+			slog.String(logkeys.Service, serviceName),
+			slog.String(logkeys.Addr, addr),
+			slog.String(logkeys.Err, err.Error()),
+		)
 		os.Exit(1)
 	}
-	defer lis.Close()
 
-	if err = serve(lis); err != nil {
-		slog.Error("failed to serve", "err", err)
+	srv := grpc.NewServer()
+	han := helloworld.NewGrpcHandler()
+	if han == nil {
+		slog.ErrorContext(ctx, "failed to create gRPC handler", slog.String(logkeys.Service, serviceName))
+		os.Exit(1)
+	}
+	rpc.RegisterHelloWorldServiceServer(srv, han)
+	reflection.Register(srv)
+
+	closer := func() {
+		e := lis.Close()
+		if e != nil {
+			slog.ErrorContext(ctx, "failed to close listener", slog.String(logkeys.Service, serviceName))
+		}
+		srv.GracefulStop()
+	}
+	defer closer()
+
+	slog.InfoContext(
+		ctx,
+		"starting server",
+		slog.String(logkeys.Service, serviceName),
+		slog.String(logkeys.Addr, addr),
+	)
+
+	err = srv.Serve(lis)
+	if err != nil {
+		slog.ErrorContext(
+			ctx,
+			"failed to start serving",
+			slog.String(logkeys.Service, serviceName),
+			slog.String(logkeys.Err, err.Error()),
+		)
 		os.Exit(1)
 	}
 }
