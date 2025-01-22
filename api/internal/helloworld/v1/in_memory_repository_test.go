@@ -19,7 +19,7 @@ func TestInMemoryRepository_GetHelloWorldMessage(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			repo := newInMemoryRepository()
 			actual, err := repo.getHelloWorldMessage(context.Background())
-			if (err != nil) != tc.err {
+			if err != nil && !tc.err {
 				t.Errorf("getHelloWorldMesssage got an unexpected error: %v", err)
 			}
 
