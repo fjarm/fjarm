@@ -73,7 +73,7 @@ func (svc *GrpcHandler) GetHelloWorld(
 			"failed to validate request",
 			slog.String(logkeys.Tag, handlerTag),
 			slog.String(logkeys.Rpc, "GetHelloWorld"),
-			slog.String(logkeys.Request, req.String()),
+			slog.Any(logkeys.Raw, req),
 		)
 		return nil, err
 	}
