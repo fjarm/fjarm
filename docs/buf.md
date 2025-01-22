@@ -8,6 +8,16 @@ producers and consumers."
 
 ## What Buf provides
 
+## buf curl
+
+`buf curl` can be used to issue requests to running gRPC services as a manual testing strategy.
+
+```bash
+buf curl --protocol grpc http://localhost:8000/fjarm.helloworld.v1.HelloWorldService/GetHelloWorld --http2-prior-knowledge --data '{}'
+```
+
+Note that the gRPC service must have reflection enabled using `reflection.Register(srv)`.
+
 ## buf lint
 
 `buf lint` can be used from the project's root directory to run lint tests on schema and RPC definitions.
