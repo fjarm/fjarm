@@ -55,7 +55,7 @@ oci_push(
     name = "helloworld_push",
     image = ":helloworld_image_index",
     remote_tags = ":stamped",
-    repository = "ghcr.io/fjarm/helloworld",
+    repository = "ghcr.io/fjarm/fjarm/helloworld",
 )
 
 oci_load(

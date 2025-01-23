@@ -11,6 +11,8 @@ import (
 	"log/slog"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 )
 
 const ip = "[::]"
@@ -53,6 +55,7 @@ func main() {
 	reflection.Register(srv)
 
 	closer := func() {
+		slog.InfoContext(ctx, "stopping server", slog.String(logkeys.Service, serviceName))
 		e := lis.Close()
 		if e != nil {
 			slog.ErrorContext(ctx, "failed to close listener", slog.String(logkeys.Service, serviceName))
@@ -68,14 +71,20 @@ func main() {
 		slog.String(logkeys.Addr, addr),
 	)
 
-	err = srv.Serve(lis)
-	if err != nil {
-		slog.ErrorContext(
-			ctx,
-			"failed to start serving",
-			slog.String(logkeys.Service, serviceName),
-			slog.String(logkeys.Err, err.Error()),
-		)
-		os.Exit(1)
-	}
+	go func() {
+		e := srv.Serve(lis)
+		if e != nil {
+			slog.ErrorContext(
+				ctx,
+				"failed to start serving",
+				slog.String(logkeys.Service, serviceName),
+				slog.String(logkeys.Err, err.Error()),
+			)
+			os.Exit(1)
+		}
+	}()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
 }
