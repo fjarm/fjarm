@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/fjarm/fjarm/fjarm/users/apiv1";
+option java_multiple_files = true;
+option java_outer_classname = "UserHandleProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// A custom handle or username that a user supplies at registration or later updates. This can be used for
+// in-app communication between users. This value should be globally unique, and thus can be used to distinguish
+// two or more users who have the same values in their `fjarm.users.v1.UserFullName`.
+message UserHandle {
+  // Required field that represents a user's globally unique identifier.
+  optional string handle = 1 [
+    (buf.validate.field).string.example = "therealgleepglop",
+    (buf.validate.field).string.min_len = 1,
+    (buf.validate.field).string.max_len = 99,
+    (buf.validate.field).string.not_contains = " "
+  ];
+}
