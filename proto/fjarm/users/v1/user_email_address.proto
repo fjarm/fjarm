@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/fjarm/fjarm/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "UserEmailAddressProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// An email address supplied by a user at account creation time or updated later. This can be used
+// to reach out to a user for promotions or to reset a password.
+message UserEmailAddress {
+  // Required field that represents a user's email address.
+  optional string email_address = 1[
+    (buf.validate.field).string.email = true
+  ];
+}
