@@ -3,7 +3,7 @@ load("@rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "helloworld",
     srcs = [
-        "grpchandler.go",
+        "grpc_handler.go",
         "in_memory_repository.go",
         "interactor.go",
     ],
@@ -22,7 +22,7 @@ go_library(
 go_test(
     name = "helloworld_test",
     srcs = [
-        "grpchandler_test.go",
+        "grpc_handler_test.go",
         "in_memory_repository_test.go",
         "interactor_test.go",
     ],
