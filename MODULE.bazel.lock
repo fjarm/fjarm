@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "4c37b5e1c22d6a061cc6c421f27b5e7056ff0093203e5fa7461e51473fd32167",
+  "moduleFileHash": "1b7252dcb77e3a05d32070b91d3e5ba6f3e52ffb8a538d70e779fae1d7332add",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -69,7 +69,6 @@
             "build_buf_gen_go_fjarm_fjarm_protocolbuffers_go": "build_buf_gen_go_fjarm_fjarm_protocolbuffers_go",
             "com_github_bufbuild_protovalidate_go": "com_github_bufbuild_protovalidate_go",
             "com_github_google_uuid": "com_github_google_uuid",
-            "org_golang_google_genproto_googleapis_rpc": "org_golang_google_genproto_googleapis_rpc",
             "org_golang_google_grpc": "org_golang_google_grpc"
           },
           "devImports": [],
@@ -96,7 +95,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 30,
+            "line": 29,
             "column": 20
           },
           "imports": {
@@ -120,7 +119,7 @@
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 31,
+                "line": 30,
                 "column": 9
               }
             }
