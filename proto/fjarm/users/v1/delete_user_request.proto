@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "buf/validate/validate.proto";
+import "fjarm/consistency/v1/entity_tag.proto";
+import "fjarm/idempotency/v1/idempotency_key.proto";
+import "fjarm/users/v1/user_id.proto";
+
+option go_package = "github.com/fjarm/fjarm/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "DeleteUserRequestProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// DeleteUserRequest describes the input required to initiate an RPC that deletes a user from the system.
+message DeleteUserRequest {
+  // The idempotency key. This can be used for client retries on retryable errors like `UNAVAILABLE`.
+  optional fjarm.idempotency.v1.IdempotencyKey idempotency_key = 1 [(buf.validate.field).required = true];
+
+  // The ETag, which represents the latest known state of the user. Supplying this requires the client to
+  // know and have the latest data before a DELETE is processed.
+  optional fjarm.consistency.v1.EntityTag e_tag = 2 [(buf.validate.field).required = true];
+
+  // The ID of the user being retrieved.
+  optional fjarm.users.v1.UserId user_id = 3 [(buf.validate.field).required = true];
+
+}

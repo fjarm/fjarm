@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/fjarm/fjarm/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "UserAvatarProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// The URI that identifies where to load a user's avatar or profile picture from.
+message UserAvatar {
+  // Optional field that identifies where to load a user's profile picture from. If a user chooses NOT
+  // to supply a photo, then this value may be empty.
+  optional string avatar = 1 [(buf.validate.field).string.example = "https://fjarm.xyz/media/abcd1234/v1.png"];
+}

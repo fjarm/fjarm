@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "fjarm/users/v1/user.proto";
+import "google/rpc/status.proto";
+
+option go_package = "github.com/fjarm/fjarm/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "GetUserResponseProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// GetUserResponse describes the result of attempting an RPC to retrieve a user.
+message GetUserResponse {
+  // The status of the RPC request to retrieve a user.
+  optional google.rpc.Status status = 1;
+  // The user and related details or an empty result if the RPC was unsuccessful.
+  optional fjarm.users.v1.User user = 2;
+}

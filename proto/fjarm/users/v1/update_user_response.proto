@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "fjarm/users/v1/user.proto";
+import "google/rpc/status.proto";
+
+option go_package = "github.com/fjarm/fjarm/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "UpdateUserResponseProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// UpdateUserResponse represents the result of attempting to update a `user` entity.
+message UpdateUserResponse {
+  // The status of the RPC request to update a user.
+  optional google.rpc.Status status = 1;
+  // The user that was updated or an empty result if the RPC was unsuccessful.
+  optional fjarm.users.v1.User user = 2;
+}

@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "fjarm/consistency/v1/entity_tag.proto";
+import "fjarm/users/v1/user_avatar.proto";
+import "fjarm/users/v1/user_email_address.proto";
+import "fjarm/users/v1/user_full_name.proto";
+import "fjarm/users/v1/user_handle.proto";
+import "fjarm/users/v1/user_id.proto";
+import "fjarm/users/v1/user_password.proto";
+
+option go_package = "github.com/fjarm/fjarm/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "UserProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// The uniquely identifiable user. This message represents the shared knowledge about the user between the
+// client and the server.
+message User {
+  optional fjarm.users.v1.UserId user_id = 1;
+  optional fjarm.users.v1.UserFullName full_name = 2;
+  optional fjarm.users.v1.UserHandle handle = 3;
+  optional fjarm.users.v1.UserEmailAddress email_address = 4;
+  optional fjarm.users.v1.UserAvatar avatar = 5;
+
+  // The password a user can authenticate and authorize with. This is an input-only field as described
+  // in AIP-203.
+  optional fjarm.users.v1.UserPassword password = 6;
+  // The entity tag, which represents the latest state of the user entity as described in AIP-143. For
+  // clients, this is an input only field that's passed along in RPCs.
+  optional fjarm.consistency.v1.EntityTag e_tag = 7;
+}

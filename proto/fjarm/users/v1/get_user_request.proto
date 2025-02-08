@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "buf/validate/validate.proto";
+import "fjarm/consistency/v1/entity_tag.proto";
+import "fjarm/users/v1/user_id.proto";
+import "google/protobuf/field_mask.proto";
+
+option go_package = "github.com/fjarm/fjarm/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "GetUserRequestProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// SEE: https://google.aip.dev/131
+//
+// GetUserRequest describes a message used for an RPC that returns a `User` message.
+//
+// When using this message, the request metadata MUST include a request ID and MAY include an ETag.
+message GetUserRequest {
+  // The last received entity tag associated with a user if one exists.
+  // If the client has a stale representation of a user, an `OK` response will be sent with a non-null user.
+  optional fjarm.consistency.v1.EntityTag e_tag = 1;
+
+  // The ID of the user being retrieved.
+  optional fjarm.users.v1.UserId user_id = 2 [(buf.validate.field).required = true];
+
+  // SEE: https://google.aip.dev/161
+  // A read mask used to specify which properties of a user to request.
+  optional google.protobuf.FieldMask field_mask = 3 [(buf.validate.field).required = true];
+}

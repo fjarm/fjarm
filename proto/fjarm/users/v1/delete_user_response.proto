@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "google/rpc/status.proto";
+
+option go_package = "github.com/fjarm/fjarm/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "DeleteUserResponseProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// DeleteUserRequest describes the result of a mutation RPC to delete a User resource.
+message DeleteUserResponse {
+  // The status of the RPC request to create a user.
+  optional google.rpc.Status status = 1;
+}
