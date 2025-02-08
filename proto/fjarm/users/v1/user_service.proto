@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "fjarm/users/v1/create_user_request.proto";
+import "fjarm/users/v1/create_user_response.proto";
+import "fjarm/users/v1/delete_user_request.proto";
+import "fjarm/users/v1/delete_user_response.proto";
+import "fjarm/users/v1/get_user_request.proto";
+import "fjarm/users/v1/get_user_response.proto";
+import "fjarm/users/v1/update_user_request.proto";
+import "fjarm/users/v1/update_user_response.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "UserServiceProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// The operations that can be applied to a user entity from the client to the server.
+service UserService {
+  // SEE: https://google.aip.dev/133
+  rpc CreateUser(fjarm.users.v1.CreateUserRequest) returns (fjarm.users.v1.CreateUserResponse);
+
+  // SEE: https://google.aip.dev/131
+  rpc GetUser(fjarm.users.v1.GetUserRequest) returns (fjarm.users.v1.GetUserResponse);
+
+  // SEE: https://google.aip.dev/134
+  rpc UpdateUser(fjarm.users.v1.UpdateUserRequest) returns (fjarm.users.v1.UpdateUserResponse);
+
+  // SEE: https://google.aip.dev/135
+  rpc DeleteUser(fjarm.users.v1.DeleteUserRequest) returns (fjarm.users.v1.DeleteUserResponse);
+}

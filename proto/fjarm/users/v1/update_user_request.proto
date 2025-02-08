@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "buf/validate/validate.proto";
+import "fjarm/idempotency/v1/idempotency_key.proto";
+import "fjarm/users/v1/user.proto";
+import "google/protobuf/field_mask.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "UpdateUserRequestProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// SEE: https://google.aip.dev/134
+//
+// UpdateUserRequest describes a message used in RPCs meant to mutate a `User` type.
+//
+// When using this message, the request metadata MUST include a request ID, an idempotency key, AND
+// an ETag.
+message UpdateUserRequest {
+  // Uniquely identifies a request such that a client can retry the request if it failed for a retry-able
+  // error like `UNAVAILABLE`. The same request should always return the same response.
+  optional fjarm.idempotency.v1.IdempotencyKey idempotency_key = 1 [(buf.validate.field).required = true];
+
+  // The user being updated. The `user_id` and `e_tag` fields are minimally required to be present.
+  optional fjarm.users.v1.User user = 2 [(buf.validate.field).required = true];
+
+  // An update mask used to specify which properties of a user are being mutated.
+  optional google.protobuf.FieldMask field_mask = 3 [(buf.validate.field).required = true];
+}

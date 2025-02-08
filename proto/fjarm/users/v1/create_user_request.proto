@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package fjarm.users.v1;
+
+import "buf/validate/validate.proto";
+import "fjarm/idempotency/v1/idempotency_key.proto";
+import "fjarm/users/v1/user.proto";
+import "fjarm/users/v1/user_id.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1";
+option java_multiple_files = true;
+option java_outer_classname = "CreateUserRequestProto";
+option java_package = "xyz.fjarm.users.v1";
+
+// SEE: https://google.aip.dev/133
+// AIP-133 recommends that Create methods use a request message that matches the RPC with a Request suffix.
+//
+// CreateUserRequest is used to issue Create requests to the API when a user first registers.
+//
+// When using this message, the request metadata MUST include a request ID AND an idempotency key.
+message CreateUserRequest {
+  // Uniquely identifies a request such that a client can retry the request if it failed for a retry-able
+  // error like `UNAVAILABLE`. The same request should always return the same response.
+  optional fjarm.idempotency.v1.IdempotencyKey idempotency_key = 1 [(buf.validate.field).required = true];
+
+  // The ID of the user being created. This should match the ID found in the `user` field below.
+  optional fjarm.users.v1.UserId user_id = 2 [(buf.validate.field).required = true];
+
+  // The user to create.
+  optional fjarm.users.v1.User user = 3 [(buf.validate.field).required = true];
+}

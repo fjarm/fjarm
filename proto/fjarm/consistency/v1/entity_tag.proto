@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package fjarm.consistency.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/consistency/v1";
+option java_multiple_files = true;
+option java_outer_classname = "EntityTagProto";
+option java_package = "xyz.fjarm.consistency.v1";
+
+// SEE: https://google.aip.dev/154
+// AIP-154 recommends including an `etag` field on an entity. The value can be used in read RPCs to avoid
+// expensive operations like database reads if the client already has the latest data as confirmed by the
+// `etag`. The value can also be used in mutation RPCs to prevent clients with outdated data from
+// overwriting a prior, concurrent mutation. If `etag` validation fails (an RPC was made with stale data),
+// a `PRECONDITION_FAILED` result is returned.
+//
+// EntityTag describes a consistency mechanism for read RPCs that need the latest data state or mutation
+// RPCs that must have the latest state before proceeding.
+message EntityTag {
+  // The entity tag representing the latest data as known to the server.
+  optional string entity_tag = 1 [(buf.validate.field).required = true];
+}

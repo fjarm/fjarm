@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package fjarm.idempotency.v1;
+
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/idempotency/v1";
+option java_multiple_files = true;
+option java_outer_classname = "IdempotencyKeyProto";
+option java_package = "xyz.fjarm.idempotency.v1";
+
+// SEE: https://google.aip.dev/155
+// AIP-155 recommends having a `request_id` field in each request message. The value can be used to
+// de-duplicate requests, especially those that fail due to transient or retryable errors like `UNAVAILABLE`.
+// For retried mutation RPCs, the originally processed result can be immediately returned. This avoids
+// expensive database operations AND ensures the same mutation returns the same result.
+//
+// IdempotencyKey describes the details needed to ensure that a repeated or retried mutation RPC does
+// is processed exactly once.
+//
+// If the request fails (because of network or other retry-able errors), a client can retry a request.
+// The server can detect duplicates and ensure the request is only processed once.
+//
+// The field is added to each request body to make requirement enforcement more explicit. An interceptor then
+// reads it and sets the value as a request header.
+message IdempotencyKey {
+  // A user-specified, unique identifier that can be used to retry eligible requests.
+  optional string idempotency_key = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.uuid = true
+  ];
+
+  // A point in time independent of any time zone or calendar represented as seconds and fractions of
+  // seconds at nanosecond resolution in UTC Epoch time.
+  optional google.protobuf.Timestamp timestamp = 2 [(buf.validate.field).required = true];
+}
