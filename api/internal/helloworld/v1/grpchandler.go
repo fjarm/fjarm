@@ -6,8 +6,8 @@ import (
 	"context"
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"google.golang.org/genproto/googleapis/rpc/code"
-	"google.golang.org/genproto/googleapis/rpc/status"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"log/slog"
 )
 
@@ -80,21 +80,20 @@ func (svc *GrpcHandler) GetHelloWorld(
 
 	msg, err := svc.domain.getHelloWorld(ctx, req.GetInput().GetInput())
 	if err != nil {
-		return buildResponse(int32(code.Code_UNKNOWN), err.Error(), ""), err
+		res := &pb.GetHelloWorldResponse{
+			Status: status.New(codes.Unknown, err.Error()).Proto(),
+			Output: &pb.HelloWorldOutput{
+				Output: &msg,
+			},
+		}
+		return res, err
 	}
 
-	return buildResponse(int32(code.Code_OK), "OK", msg), nil
-}
-
-func buildResponse(sc int32, sm string, output string) *pb.GetHelloWorldResponse {
-	return &pb.GetHelloWorldResponse{
-		Status: &status.Status{
-			Code:    sc,
-			Message: sm,
-			Details: nil,
-		},
+	res := &pb.GetHelloWorldResponse{
+		Status: status.New(codes.OK, codes.OK.String()).Proto(),
 		Output: &pb.HelloWorldOutput{
-			Output: &output,
+			Output: &msg,
 		},
 	}
+	return res, nil
 }
