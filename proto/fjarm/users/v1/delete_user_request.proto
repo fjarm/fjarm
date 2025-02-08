@@ -7,7 +7,7 @@ import "fjarm/consistency/v1/entity_tag.proto";
 import "fjarm/idempotency/v1/idempotency_key.proto";
 import "fjarm/users/v1/user_id.proto";
 
-option go_package = "github.com/fjarm/fjarm/fjarm/users/v1";
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1";
 option java_multiple_files = true;
 option java_outer_classname = "DeleteUserRequestProto";
 option java_package = "xyz.fjarm.users.v1";

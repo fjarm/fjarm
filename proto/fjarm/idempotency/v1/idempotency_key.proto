@@ -5,7 +5,7 @@ package fjarm.idempotency.v1;
 import "buf/validate/validate.proto";
 import "google/protobuf/timestamp.proto";
 
-option go_package = "github.com/fjarm/fjarm/fjarm/idempotency/v1";
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/idempotency/v1";
 option java_multiple_files = true;
 option java_outer_classname = "IdempotencyKeyProto";
 option java_package = "xyz.fjarm.idempotency.v1";

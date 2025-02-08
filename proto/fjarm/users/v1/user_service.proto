@@ -11,7 +11,7 @@ import "fjarm/users/v1/get_user_response.proto";
 import "fjarm/users/v1/update_user_request.proto";
 import "fjarm/users/v1/update_user_response.proto";
 
-option go_package = "github.com/fjarm/fjarm/fjarm/users/v1";
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1";
 option java_multiple_files = true;
 option java_outer_classname = "UserServiceProto";
 option java_package = "xyz.fjarm.users.v1";

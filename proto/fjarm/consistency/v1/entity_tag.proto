@@ -4,7 +4,7 @@ package fjarm.consistency.v1;
 
 import "buf/validate/validate.proto";
 
-option go_package = "github.com/fjarm/fjarm/fjarm/consistency/v1";
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/consistency/v1";
 option java_multiple_files = true;
 option java_outer_classname = "EntityTagProto";
 option java_package = "xyz.fjarm.consistency.v1";
