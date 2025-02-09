@@ -3,7 +3,7 @@ load("@rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "users",
     srcs = ["users.go"],
-    importpath = "github.com/fjarm/fjarm/api/pkg/users/v1",
+    importpath = "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1",
     visibility = ["//:__subpackages__"],
 )
 
@@ -17,7 +17,7 @@ go_test(
         "user_password_test.go",
     ],
     embed = [":users"],
-    importpath = "github.com/fjarm/fjarm/api/pkg/users/v1",
+    importpath = "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1",
     deps = [
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",
         "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
