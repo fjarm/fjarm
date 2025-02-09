@@ -9,7 +9,7 @@ import (
 
 func TestUserId_Validation(t *testing.T) {
 	validator, err := protovalidate.New(
-		protovalidate.WithDisableLazy(true),
+		protovalidate.WithDisableLazy(),
 		protovalidate.WithMessages(
 			&pb.UserId{},
 		),

@@ -21,15 +21,15 @@ type getHelloWorlder interface {
 type GrpcHandler struct {
 	rpc.UnimplementedHelloWorldServiceServer
 
-	validator *protovalidate.Validator
+	validator protovalidate.Validator
 	domain    getHelloWorlder
 }
 
 // NewGrpcHandler creates a gRPC handler for the helloworld service. Protovalidate is enabled by default.
 func NewGrpcHandler() *GrpcHandler {
 	validator, err := protovalidate.New(
-		protovalidate.WithDisableLazy(true),
-		protovalidate.WithFailFast(true),
+		protovalidate.WithDisableLazy(),
+		protovalidate.WithFailFast(),
 		protovalidate.WithMessages(
 			&pb.GetHelloWorldRequest{},
 			&pb.GetHelloWorldResponse{},

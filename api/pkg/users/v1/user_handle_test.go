@@ -8,7 +8,7 @@ import (
 
 func TestUserHandle_Validation(t *testing.T) {
 	validator, err := protovalidate.New(
-		protovalidate.WithDisableLazy(true),
+		protovalidate.WithDisableLazy(),
 		protovalidate.WithMessages(
 			&userservicepb.UserHandle{},
 		),

@@ -10,6 +10,7 @@ go_library(
 go_test(
     name = "users_test",
     srcs = [
+        "user_email_address_test.go",
         "user_full_name_test.go",
         "user_handle_test.go",
         "user_id_test.go",
