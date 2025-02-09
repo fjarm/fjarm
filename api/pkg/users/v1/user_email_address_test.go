@@ -60,6 +60,9 @@ func TestUserEmailAddress_Validation(t *testing.T) {
 			emailAddress: "gloop@www.gmail.com",
 			wantErr:      true,
 		},
+		"invalid_no_value_email_address": {
+			wantErr: true,
+		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
