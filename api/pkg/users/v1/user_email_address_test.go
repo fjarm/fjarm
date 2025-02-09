@@ -52,6 +52,10 @@ func TestUserEmailAddress_Validation(t *testing.T) {
 			emailAddress: " @gmail.com",
 			wantErr:      true,
 		},
+		"invalid_non_alphabet_in_username_email_address": {
+			emailAddress: "-@gmail.com",
+			wantErr:      true,
+		},
 		"invalid_www_in_tld_email_address": {
 			emailAddress: "gloop@www.gmail.com",
 			wantErr:      true,
