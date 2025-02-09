@@ -8,7 +8,7 @@ import (
 
 func TestGetHelloWorldResponse_OutputValidation(t *testing.T) {
 	validator, err := protovalidate.New(
-		protovalidate.WithDisableLazy(true),
+		protovalidate.WithDisableLazy(),
 		protovalidate.WithMessages(
 			&pb.GetHelloWorldResponse{},
 		),

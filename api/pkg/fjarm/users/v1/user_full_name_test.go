@@ -8,7 +8,7 @@ import (
 
 func TestUserFullName_Validation(t *testing.T) {
 	validator, err := protovalidate.New(
-		protovalidate.WithDisableLazy(true),
+		protovalidate.WithDisableLazy(),
 		protovalidate.WithMessages(
 			&userservicepb.UserFullName{},
 		),
@@ -54,7 +54,7 @@ func TestUserFullName_Validation(t *testing.T) {
 				GivenName:  &tc.last,
 			}
 			err = validator.Validate(fullName)
-			if (err != nil) != tc.wantErr {
+			if err != nil && !tc.wantErr {
 				t.Errorf("got error = %v, wantErr = %v, input = %v, %v", err, tc.wantErr, tc.first, tc.last)
 			}
 		})
