@@ -9,6 +9,7 @@ require (
 	github.com/bufbuild/protovalidate-go v0.9.1
 	github.com/google/uuid v1.6.0
 	google.golang.org/grpc v1.70.0
+	google.golang.org/protobuf v1.36.5
 )
 
 require (
@@ -22,5 +23,4 @@ require (
 	golang.org/x/text v0.22.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250207221924-e9438ea467c6 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250207221924-e9438ea467c6 // indirect
-	google.golang.org/protobuf v1.36.5 // indirect
 )
