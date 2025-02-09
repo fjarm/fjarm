@@ -1,0 +1,18 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "consistency",
+    srcs = ["consistency.go"],
+    importpath = "github.com/fjarm/fjarm/api/pkg/fjarm/consistency/v1",
+    visibility = ["//visibility:public"],
+)
+
+go_test(
+    name = "consistency_test",
+    srcs = ["entity_tag_test.go"],
+    embed = [":consistency"],
+    deps = [
+        "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/consistency/v1:consistency",
+        "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
+    ],
+)
