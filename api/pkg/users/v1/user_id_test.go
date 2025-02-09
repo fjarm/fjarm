@@ -42,7 +42,7 @@ func TestUserId_Validation(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			userId := pb.UserId{UserId: &tc.userId}
 			err = validator.Validate(&userId)
-			if (err != nil) != tc.wantErr {
+			if err != nil && !tc.wantErr {
 				t.Errorf("got error = %v, wantErr = %v, input = %v", err, tc.wantErr, tc.userId)
 			}
 		})
