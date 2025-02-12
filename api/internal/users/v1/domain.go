@@ -20,3 +20,11 @@ func (dom *domain) createUser(ctx context.Context, user *userspb.User) (*userspb
 func (dom *domain) getUserWithID(ctx context.Context, id *userspb.UserId) (*userspb.User, error) {
 	return nil, nil
 }
+
+func (dom *domain) updateUser(ctx context.Context, user *userspb.User) (*userspb.User, error) {
+	return nil, nil
+}
+
+func (dom *domain) deleteUser(ctx context.Context, user *userspb.User) error {
+	return nil
+}

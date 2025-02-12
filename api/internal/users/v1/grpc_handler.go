@@ -19,6 +19,8 @@ var ErrUnimplemented = status.Error(codes.Unimplemented, "rpc is not implemented
 type userDomain interface {
 	createUser(ctx context.Context, user *userspb.User) (*userspb.User, error)
 	getUserWithID(ctx context.Context, id *userspb.UserId) (*userspb.User, error)
+	updateUser(ctx context.Context, user *userspb.User) (*userspb.User, error)
+	deleteUser(ctx context.Context, user *userspb.User) error
 }
 
 // GrpcHandler implements the gRPC service found in `user_service.proto`.
