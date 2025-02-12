@@ -12,6 +12,9 @@ import (
 	"time"
 )
 
+// RequestIDKey represents the string used as the key to access the request ID value from the request metadata map.
+const RequestIDKey = "request-id"
+
 // ErrMetadataNotFound is returned when reading the incoming  request context does not have any metadata.
 var ErrMetadataNotFound = status.Error(codes.InvalidArgument, "failed to find metadata")
 
@@ -40,7 +43,7 @@ func RequestIDLoggingInterceptor(logger *slog.Logger) grpc.UnaryServerIntercepto
 			ctx,
 			l,
 			"intercepted request",
-			slog.String("request-id", reqID),
+			slog.String(RequestIDKey, reqID),
 			slog.Time(logkeys.StartTime, start),
 			slog.String(logkeys.Addr, clientIP),
 			slog.String(logkeys.Rpc, info.FullMethod),
@@ -56,7 +59,7 @@ func RequestIDLoggingInterceptor(logger *slog.Logger) grpc.UnaryServerIntercepto
 		logger.InfoContext(
 			ctx,
 			"completed request",
-			slog.String("request-id", reqID),
+			slog.String(RequestIDKey, reqID),
 			slog.Duration(logkeys.Duration, duration),
 			slog.Any(logkeys.Err, err),
 		)
@@ -71,7 +74,7 @@ func getRequestID(ctx context.Context) (string, error) {
 		return "", ErrMetadataNotFound
 	}
 
-	values := md.Get("request-id")
+	values := md.Get(RequestIDKey)
 	if len(values) == 0 {
 		return "", ErrRequestIDNotFound
 	}
