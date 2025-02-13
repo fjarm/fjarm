@@ -12,7 +12,10 @@ require (
 	google.golang.org/protobuf v1.36.5
 )
 
+require connectrpc.com/connect v1.18.1
+
 require (
+	buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.18.1-20250208225348-ff1224dfd9fe.1
 	cel.dev/expr v0.19.2 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/google/cel-go v0.23.2 // indirect
