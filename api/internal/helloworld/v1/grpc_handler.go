@@ -11,7 +11,7 @@ import (
 	"log/slog"
 )
 
-const handlerTag = "grpchandler"
+const grpcHandlerTag = "grpc_handler"
 
 type getHelloWorlder interface {
 	getHelloWorld(ctx context.Context, input string) (string, error)
@@ -38,7 +38,7 @@ func NewGrpcHandler() *GrpcHandler {
 	if err != nil {
 		slog.Error(
 			"failed to create validator",
-			slog.String(logkeys.Tag, handlerTag),
+			slog.String(logkeys.Tag, grpcHandlerTag),
 			slog.String(logkeys.Err, err.Error()),
 		)
 		return nil
@@ -61,7 +61,7 @@ func (svc *GrpcHandler) GetHelloWorld(
 	slog.InfoContext(
 		ctx,
 		"received request",
-		slog.String(logkeys.Tag, handlerTag),
+		slog.String(logkeys.Tag, grpcHandlerTag),
 		slog.String(logkeys.Rpc, "GetHelloWorld"),
 		slog.String(logkeys.Request, req.String()),
 	)
@@ -71,7 +71,7 @@ func (svc *GrpcHandler) GetHelloWorld(
 		slog.WarnContext(
 			ctx,
 			"failed to validate request",
-			slog.String(logkeys.Tag, handlerTag),
+			slog.String(logkeys.Tag, grpcHandlerTag),
 			slog.String(logkeys.Rpc, "GetHelloWorld"),
 			slog.Any(logkeys.Raw, req),
 		)
