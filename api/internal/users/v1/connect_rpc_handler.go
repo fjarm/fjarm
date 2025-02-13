@@ -1,56 +1,63 @@
 package v1
 
 import (
-	usersrpc "buf.build/gen/go/fjarm/fjarm/grpc/go/fjarm/users/v1/usersv1grpc"
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+	"connectrpc.com/connect"
 	"context"
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"log/slog"
 )
 
-const handlerTag = "grpc_handler"
+const connectHandlerTag = "connect_rpc_handler"
 
-// GrpcHandler implements the gRPC service found in `user_service.proto`.
-type GrpcHandler struct {
-	usersrpc.UnimplementedUserServiceServer
+type userDomain interface {
+	createUser(ctx context.Context, user *userspb.User) (*userspb.User, error)
+	getUserWithID(ctx context.Context, id *userspb.UserId) (*userspb.User, error)
+	updateUser(ctx context.Context, user *userspb.User) (*userspb.User, error)
+	deleteUser(ctx context.Context, user *userspb.User) error
+}
 
+type ConnectRPCHandler struct {
 	domain    userDomain
 	logger    *slog.Logger
 	validator protovalidate.Validator
 }
 
 // CreateUser handles gRPC requests to create a `User` entity.
-func (h *GrpcHandler) CreateUser(
+func (h *ConnectRPCHandler) CreateUser(
 	ctx context.Context,
-	req *userspb.CreateUserRequest,
-) (*userspb.CreateUserResponse, error) {
+	req *connect.Request[userspb.CreateUserRequest],
+) (*connect.Response[userspb.CreateUserResponse], error) {
 	return nil, ErrUnimplemented
 }
 
 // GetUser handles gRPC requests to retrieve a `User` entity.
-func (h *GrpcHandler) GetUser(ctx context.Context, req *userspb.GetUserRequest) (*userspb.GetUserResponse, error) {
-	return nil, ErrUnimplemented
+func (h *ConnectRPCHandler) GetUser(
+	ctx context.Context,
+	req *connect.Request[userspb.GetUserRequest],
+) (*connect.Response[userspb.GetUserResponse], error) {
+	return nil, nil
 }
 
 // UpdateUser handles gRPC requests to modify a field in a `User` entity.
-func (h *GrpcHandler) UpdateUser(
+func (h *ConnectRPCHandler) UpdateUser(
 	ctx context.Context,
-	req *userspb.UpdateUserRequest,
-) (*userspb.UpdateUserResponse, error) {
+	req *connect.Request[userspb.UpdateUserRequest],
+) (*connect.Response[userspb.UpdateUserResponse], error) {
 	return nil, ErrUnimplemented
 }
 
 // DeleteUser handles gRPC requests to delete an instance of a `User` entity.
-func (h *GrpcHandler) DeleteUser(
+func (h *ConnectRPCHandler) DeleteUser(
 	ctx context.Context,
-	req *userspb.DeleteUserRequest,
-) (*userspb.DeleteUserResponse, error) {
+	req *connect.Request[userspb.DeleteUserRequest],
+) (*connect.Response[userspb.DeleteUserResponse], error) {
 	return nil, ErrUnimplemented
 }
 
-// NewGrpcHandler creates a concrete users gRPC service with logging and business/domain logic.
-func NewGrpcHandler(l *slog.Logger) *GrpcHandler {
+// NewConnectRPCHandler creates a concrete users ConnectRPC service with logging and business/domain logic.
+func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 	logger := l.With(
 		slog.String(logkeys.Tag, handlerTag),
 	)
@@ -71,15 +78,15 @@ func NewGrpcHandler(l *slog.Logger) *GrpcHandler {
 			"failed to create message validator",
 			slog.Any(logkeys.Err, err),
 		)
+		return nil
 	}
 
 	dom := newUserDomain()
 
-	handler := GrpcHandler{
+	han := ConnectRPCHandler{
 		domain:    dom,
 		logger:    logger,
 		validator: validator,
 	}
-
-	return &handler
+	return &han
 }

@@ -3,6 +3,8 @@ load("@rules_go//go:def.bzl", "go_library")
 go_library(
     name = "users",
     srcs = [
+        "common_errors.go",
+        "connect_rpc_handler.go",
         "domain.go",
         "grpc_handler.go",
     ],
@@ -12,6 +14,7 @@ go_library(
         "//api/internal/logkeys",
         "@build_buf_gen_go_fjarm_fjarm_grpc_go//fjarm/users/v1/usersv1grpc",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",
+        "@com_connectrpc_connect//:connect",
         "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
         "@org_golang_google_grpc//codes",
         "@org_golang_google_grpc//status",
