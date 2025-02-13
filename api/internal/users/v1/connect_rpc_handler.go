@@ -59,7 +59,7 @@ func (h *ConnectRPCHandler) DeleteUser(
 // NewConnectRPCHandler creates a concrete users ConnectRPC service with logging and business/domain logic.
 func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 	logger := l.With(
-		slog.String(logkeys.Tag, handlerTag),
+		slog.String(logkeys.Tag, connectHandlerTag),
 	)
 
 	validator, err := protovalidate.New(
