@@ -3,6 +3,7 @@ package interceptor
 import (
 	"context"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
+	"github.com/fjarm/fjarm/api/internal/tracing"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -12,9 +13,6 @@ import (
 	"time"
 )
 
-// RequestIDKey represents the string used as the key to access the request ID value from the request metadata map.
-const RequestIDKey = "request-id"
-
 // ErrMetadataNotFound is returned when reading the incoming  request context does not have any metadata.
 var ErrMetadataNotFound = status.Error(codes.InvalidArgument, "failed to find metadata")
 
@@ -22,7 +20,12 @@ var ErrMetadataNotFound = status.Error(codes.InvalidArgument, "failed to find me
 var ErrRequestIDNotFound = status.Error(codes.InvalidArgument, "failed to find request-id value")
 
 // RequestIDLoggingInterceptor extracts and logs the incoming gRPC request's `request-id` key/value pair in its
-// metadata.
+// metadata. It then verifies that the incoming request does indeed contain a request ID.
+//
+// If no request ID is found in the incoming request context, the request is immediately rejected.
+//
+// Note that the provided `logger` must already include a `slog.Handler` that extracts a request ID and adds it as an
+// attribute.
 func RequestIDLoggingInterceptor(logger *slog.Logger) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		start := time.Now()
@@ -43,7 +46,7 @@ func RequestIDLoggingInterceptor(logger *slog.Logger) grpc.UnaryServerIntercepto
 			ctx,
 			l,
 			"intercepted request",
-			slog.String(RequestIDKey, reqID),
+			slog.String(tracing.RequestIDKey, reqID),
 			slog.Time(logkeys.StartTime, start),
 			slog.String(logkeys.Addr, clientIP),
 			slog.String(logkeys.Rpc, info.FullMethod),
@@ -59,7 +62,7 @@ func RequestIDLoggingInterceptor(logger *slog.Logger) grpc.UnaryServerIntercepto
 		logger.InfoContext(
 			ctx,
 			"completed request",
-			slog.String(RequestIDKey, reqID),
+			slog.String(tracing.RequestIDKey, reqID),
 			slog.Duration(logkeys.Duration, duration),
 			slog.Any(logkeys.Err, err),
 		)
@@ -74,7 +77,7 @@ func getRequestID(ctx context.Context) (string, error) {
 		return "", ErrMetadataNotFound
 	}
 
-	values := md.Get(RequestIDKey)
+	values := md.Get(tracing.RequestIDKey)
 	if len(values) == 0 {
 		return "", ErrRequestIDNotFound
 	}
