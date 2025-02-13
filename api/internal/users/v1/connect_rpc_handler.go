@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-const connectHandlerTag = "connect_rpc_handler"
+const connectRPCHandlerTag = "connect_rpc_handler"
 
 type userDomain interface {
 	createUser(ctx context.Context, user *userspb.User) (*userspb.User, error)
@@ -59,7 +59,7 @@ func (h *ConnectRPCHandler) DeleteUser(
 // NewConnectRPCHandler creates a concrete users ConnectRPC service with logging and business/domain logic.
 func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 	logger := l.With(
-		slog.String(logkeys.Tag, connectHandlerTag),
+		slog.String(logkeys.Tag, connectRPCHandlerTag),
 	)
 
 	validator, err := protovalidate.New(
@@ -82,7 +82,6 @@ func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 	}
 
 	dom := newUserDomain()
-
 	han := ConnectRPCHandler{
 		domain:    dom,
 		logger:    logger,
