@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "e8cf1a280d5c512605de6be05fd290094a96a3258f60ea2207b4a37c60ba0274",
+  "moduleFileHash": "c717761d8108ae648a10aa06e56cab14f5da2f8984b880deadfdc0afa268d2ec",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -66,7 +66,6 @@
           "imports": {
             "build_buf_gen_go_bufbuild_protovalidate_protocolbuffers_go": "build_buf_gen_go_bufbuild_protovalidate_protocolbuffers_go",
             "build_buf_gen_go_fjarm_fjarm_connectrpc_go": "build_buf_gen_go_fjarm_fjarm_connectrpc_go",
-            "build_buf_gen_go_fjarm_fjarm_grpc_go": "build_buf_gen_go_fjarm_fjarm_grpc_go",
             "build_buf_gen_go_fjarm_fjarm_protocolbuffers_go": "build_buf_gen_go_fjarm_fjarm_protocolbuffers_go",
             "com_connectrpc_connect": "com_connectrpc_connect",
             "com_github_bufbuild_protovalidate_go": "com_github_bufbuild_protovalidate_go",
@@ -98,7 +97,7 @@
           "usingModule": "<root>",
           "location": {
             "file": "@@//:MODULE.bazel",
-            "line": 32,
+            "line": 31,
             "column": 20
           },
           "imports": {
@@ -122,7 +121,7 @@
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
-                "line": 33,
+                "line": 32,
                 "column": 9
               }
             }

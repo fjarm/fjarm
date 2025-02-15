@@ -5,7 +5,6 @@ go 1.23.4
 require (
 	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.5-20250130201111-63bb56e20495.1
 	buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.18.1-20250208225348-ff1224dfd9fe.1
-	buf.build/gen/go/fjarm/fjarm/grpc/go v1.5.1-20250208225348-ff1224dfd9fe.2
 	buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.5-20250208225348-ff1224dfd9fe.1
 	connectrpc.com/connect v1.18.1
 	github.com/bufbuild/protovalidate-go v0.9.1
