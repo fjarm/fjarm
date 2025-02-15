@@ -15,6 +15,10 @@ import (
 
 const connectRPCHandlerTag = "connect_rpc_handler"
 
+type getHelloWorlder interface {
+	getHelloWorld(ctx context.Context, input string) (string, error)
+}
+
 // ConnectRPCHandler defines a ConnectRPC handler for the `fjarm.helloworld.v1.HelloWorldService` service.
 type ConnectRPCHandler struct {
 	domain    getHelloWorlder
