@@ -26,6 +26,7 @@ go_library(
 go_test(
     name = "helloworld_test",
     srcs = [
+        "connect_rpc_handler_test.go",
         "grpc_handler_test.go",
         "in_memory_repository_test.go",
         "interactor_test.go",
@@ -40,6 +41,7 @@ go_test(
     deps = [
         "@build_buf_gen_go_fjarm_fjarm_grpc_go//fjarm/helloworld/v1/helloworldv1grpc",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/helloworld/v1:helloworld",
+        "@com_connectrpc_connect//:connect",
         "@org_golang_google_grpc//:grpc",
         "@org_golang_google_grpc//credentials/insecure",
         "@org_golang_google_grpc//test/bufconn",
