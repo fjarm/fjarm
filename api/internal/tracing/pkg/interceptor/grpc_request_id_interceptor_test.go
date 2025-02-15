@@ -25,7 +25,7 @@ func TestRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 	handler := func(ctx context.Context, req any) (any, error) {
 		return nil, nil
 	}
-	si := RequestIDLoggingInterceptor(l)
+	si := RequestIDLoggingGRPCInterceptor(l)
 
 	tests := map[string]struct {
 		headers  map[string]string
@@ -58,12 +58,12 @@ func TestRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 			ctx := metadata.NewIncomingContext(context.Background(), metadata.New(tc.headers))
 			_, err := si(ctx, nil, info, handler)
 			if err != nil && !tc.err {
-				t.Errorf("RequestIDLoggingInterceptor got an unexpected error: %v", err)
+				t.Errorf("RequestIDLoggingGRPCInterceptor got an unexpected error: %v", err)
 			}
 
 			actual := buf.String()
 			if !strings.Contains(actual, tc.expected) {
-				t.Errorf("RequestIDLoggingInterceptor got: %v, want: %v", actual, tc.expected)
+				t.Errorf("RequestIDLoggingGRPCInterceptor got: %v, want: %v", actual, tc.expected)
 			}
 		})
 	}

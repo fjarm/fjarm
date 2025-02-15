@@ -19,14 +19,14 @@ var ErrMetadataNotFound = status.Error(codes.InvalidArgument, "failed to find me
 // ErrRequestIDNotFound is returned when an incoming request does not contain a `request-id` key/value pair.
 var ErrRequestIDNotFound = status.Error(codes.InvalidArgument, "failed to find request-id value")
 
-// RequestIDLoggingInterceptor extracts and logs the incoming gRPC request's `request-id` key/value pair in its
+// RequestIDLoggingGRPCInterceptor extracts and logs the incoming gRPC request's `request-id` key/value pair in its
 // metadata. It then verifies that the incoming request does indeed contain a request ID.
 //
 // If no request ID is found in the incoming request context, the request is immediately rejected.
 //
 // Note that the provided `logger` must already include a `slog.Handler` that extracts a request ID and adds it as an
 // attribute.
-func RequestIDLoggingInterceptor(logger *slog.Logger) grpc.UnaryServerInterceptor {
+func RequestIDLoggingGRPCInterceptor(logger *slog.Logger) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		start := time.Now()
 		reqID, err := getRequestID(ctx)
