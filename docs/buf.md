@@ -73,7 +73,7 @@ func main() {
 The `curl` command looks like:
 
 ```bash
-curl -X POST --data '{"input": {"input": "Derp"}}' --header "Content-Type: application/json" -o - https://localhost:8000/fjarm.helloworld.v1.HelloWorldService/GetHelloWorld
+curl -X POST --data '{}' --header "Content-Type: application/json" --header "request-id: abc123" -o - http://localhost:8000/fjarm.helloworld.v1.HelloWorldService/GetHelloWorld
 ```
 
 ## buf lint
