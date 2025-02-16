@@ -85,7 +85,7 @@ func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 	dom := newUserDomain()
 	han := ConnectRPCHandler{
 		domain:    dom,
-		logger:    logger,
+		logger:    l,
 		validator: validator,
 	}
 	return &han
