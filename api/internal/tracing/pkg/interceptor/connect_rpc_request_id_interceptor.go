@@ -9,6 +9,9 @@ import (
 	"time"
 )
 
+// NewConnectRPCRequestIDLoggingInterceptor intercepts ConnectRPC requests and verifies that a key named `request-id` is
+// in the request headers with a non-null value. If the key can't be found, the request is automatically rejected.
+// Otherwise, the corresponding value is added to the context before completing the request.
 func NewConnectRPCRequestIDLoggingInterceptor(logger *slog.Logger) connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
@@ -35,7 +38,7 @@ func NewConnectRPCRequestIDLoggingInterceptor(logger *slog.Logger) connect.Unary
 
 			var res connect.AnyResponse = nil
 			if err == nil {
-				res, err = next(ctx, req)
+				res, err = next(context.WithValue(ctx, tracing.RequestIDKey, reqID), req)
 			}
 
 			duration := time.Since(start)
