@@ -8,8 +8,6 @@ import (
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"log/slog"
 )
 
@@ -54,7 +52,6 @@ func (h *ConnectRPCHandler) GetHelloWorld(
 	}
 
 	res := connect.NewResponse(&pb.GetHelloWorldResponse{
-		Status: status.New(codes.OK, codes.OK.String()).Proto(),
 		Output: &pb.HelloWorldOutput{
 			Output: &msg,
 		},
