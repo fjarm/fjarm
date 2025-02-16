@@ -14,17 +14,17 @@ func newUserDomain() userDomain {
 }
 
 func (dom *domain) createUser(ctx context.Context, user *userspb.User) (*userspb.User, error) {
-	return nil, nil
+	return nil, ErrUnimplemented
 }
 
 func (dom *domain) getUserWithID(ctx context.Context, id *userspb.UserId) (*userspb.User, error) {
-	return nil, nil
+	return nil, ErrUnimplemented
 }
 
 func (dom *domain) updateUser(ctx context.Context, user *userspb.User) (*userspb.User, error) {
-	return nil, nil
+	return nil, ErrUnimplemented
 }
 
 func (dom *domain) deleteUser(ctx context.Context, user *userspb.User) error {
-	return nil
+	return ErrUnimplemented
 }
