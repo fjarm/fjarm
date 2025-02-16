@@ -18,13 +18,14 @@ type userDomain interface {
 	deleteUser(ctx context.Context, user *userspb.User) error
 }
 
+// ConnectRPCHandler defines a ConnectRPC handler for the `fjarm.users.v1.UserService` service.
 type ConnectRPCHandler struct {
 	domain    userDomain
 	logger    *slog.Logger
 	validator protovalidate.Validator
 }
 
-// CreateUser handles gRPC requests to create a `User` entity.
+// CreateUser handles ConnectRPC requests to create a `User` entity.
 func (h *ConnectRPCHandler) CreateUser(
 	ctx context.Context,
 	req *connect.Request[userspb.CreateUserRequest],
@@ -32,7 +33,7 @@ func (h *ConnectRPCHandler) CreateUser(
 	return nil, ErrUnimplemented
 }
 
-// GetUser handles gRPC requests to retrieve a `User` entity.
+// GetUser handles ConnectRPC requests to retrieve a `User` entity.
 func (h *ConnectRPCHandler) GetUser(
 	ctx context.Context,
 	req *connect.Request[userspb.GetUserRequest],
@@ -40,7 +41,7 @@ func (h *ConnectRPCHandler) GetUser(
 	return nil, nil
 }
 
-// UpdateUser handles gRPC requests to modify a field in a `User` entity.
+// UpdateUser handles ConnectRPC requests to modify a field in a `User` entity.
 func (h *ConnectRPCHandler) UpdateUser(
 	ctx context.Context,
 	req *connect.Request[userspb.UpdateUserRequest],
@@ -48,7 +49,7 @@ func (h *ConnectRPCHandler) UpdateUser(
 	return nil, ErrUnimplemented
 }
 
-// DeleteUser handles gRPC requests to delete an instance of a `User` entity.
+// DeleteUser handles ConnectRPC requests to delete an instance of a `User` entity.
 func (h *ConnectRPCHandler) DeleteUser(
 	ctx context.Context,
 	req *connect.Request[userspb.DeleteUserRequest],
