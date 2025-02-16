@@ -2,11 +2,13 @@ package main
 
 import (
 	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/helloworld/v1/helloworldv1connect"
+	"connectrpc.com/connect"
 	"context"
 	"errors"
 	"fmt"
 	helloworld "github.com/fjarm/fjarm/api/internal/helloworld/v1"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
+	"github.com/fjarm/fjarm/api/internal/tracing/pkg/interceptor"
 	"log/slog"
 	"net"
 	"net/http"
@@ -36,8 +38,9 @@ func main() {
 	}
 	addr := fmt.Sprintf("%s:%s", ip, port)
 
+	interceptors := connect.WithInterceptors(interceptor.NewConnectRPCRequestIDLoggingInterceptor(logger))
 	connectRPCHandler := helloworld.NewConnectRPCHandler(logger)
-	path, handler := helloworldv1connect.NewHelloWorldServiceHandler(connectRPCHandler)
+	path, handler := helloworldv1connect.NewHelloWorldServiceHandler(connectRPCHandler, interceptors)
 
 	mux := http.NewServeMux()
 	mux.Handle(path, handler)
