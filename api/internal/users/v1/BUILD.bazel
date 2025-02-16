@@ -6,6 +6,7 @@ go_library(
         "common_errors.go",
         "connect_rpc_handler.go",
         "domain.go",
+        "in_memory_repository.go",
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/users/v1",
     visibility = ["//api:__subpackages__"],
@@ -22,6 +23,7 @@ go_test(
     srcs = [
         "connect_rpc_handler_test.go",
         "domain_test.go",
+        "in_memory_repository_test.go",
     ],
     embed = [":users"],
 )
