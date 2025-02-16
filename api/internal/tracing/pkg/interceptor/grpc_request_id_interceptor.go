@@ -2,22 +2,15 @@ package interceptor
 
 import (
 	"context"
+	"fmt"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/peer"
-	"google.golang.org/grpc/status"
 	"log/slog"
 	"time"
 )
-
-// ErrMetadataNotFound is returned when reading the incoming  request context does not have any metadata.
-var ErrMetadataNotFound = status.Error(codes.InvalidArgument, "failed to find metadata")
-
-// ErrRequestIDNotFound is returned when an incoming request does not contain a `request-id` key/value pair.
-var ErrRequestIDNotFound = status.Error(codes.InvalidArgument, "failed to find request-id value")
 
 // RequestIDLoggingGRPCInterceptor extracts and logs the incoming gRPC request's `request-id` key/value pair in its
 // metadata. It then verifies that the incoming request does indeed contain a request ID.
@@ -74,7 +67,7 @@ func RequestIDLoggingGRPCInterceptor(logger *slog.Logger) grpc.UnaryServerInterc
 func getRequestID(ctx context.Context) (string, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
-		return "", ErrMetadataNotFound
+		return "", fmt.Errorf("failed to find metadata")
 	}
 
 	values := md.Get(tracing.RequestIDKey)
