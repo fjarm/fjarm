@@ -3,7 +3,7 @@ load("@rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "helloworld",
     srcs = [
-        "grpc_handler.go",
+        "connect_rpc_handler.go",
         "in_memory_repository.go",
         "interactor.go",
     ],
@@ -11,8 +11,10 @@ go_library(
     visibility = ["//api:__subpackages__"],
     deps = [
         "//api/internal/logkeys",
-        "@build_buf_gen_go_fjarm_fjarm_grpc_go//fjarm/helloworld/v1/helloworldv1grpc",
+        "//api/internal/tracing",
+        "@build_buf_gen_go_fjarm_fjarm_connectrpc_go//fjarm/helloworld/v1/helloworldv1connect",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/helloworld/v1:helloworld",
+        "@com_connectrpc_connect//:connect",
         "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
         "@org_golang_google_grpc//codes",
         "@org_golang_google_grpc//status",
@@ -22,7 +24,7 @@ go_library(
 go_test(
     name = "helloworld_test",
     srcs = [
-        "grpc_handler_test.go",
+        "connect_rpc_handler_test.go",
         "in_memory_repository_test.go",
         "interactor_test.go",
     ],
@@ -34,10 +36,8 @@ go_test(
         "//api:__subpackages__",
     ],
     deps = [
-        "@build_buf_gen_go_fjarm_fjarm_grpc_go//fjarm/helloworld/v1/helloworldv1grpc",
+        "@build_buf_gen_go_fjarm_fjarm_connectrpc_go//fjarm/helloworld/v1/helloworldv1connect",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/helloworld/v1:helloworld",
-        "@org_golang_google_grpc//:grpc",
-        "@org_golang_google_grpc//credentials/insecure",
-        "@org_golang_google_grpc//test/bufconn",
+        "@com_connectrpc_connect//:connect",
     ],
 )

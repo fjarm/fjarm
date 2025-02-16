@@ -16,7 +16,65 @@ producers and consumers."
 buf curl --protocol grpc http://localhost:8000/fjarm.helloworld.v1.HelloWorldService/GetHelloWorld --http2-prior-knowledge --data '{}'
 ```
 
-Note that the gRPC service must have reflection enabled using `reflection.Register(srv)`.
+Note that the gRPC service must have reflection enabled using:
+```go
+package main
+
+import (
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
+)
+
+func main() {
+	// Set up...
+	srv := grpc.NewServer()
+	reflection.Register(srv)
+	// Set up...
+}
+```
+
+The same requirement is true when the server is a ConnectRPC server, otherwise `curl` MUST be used to manually test:
+
+```go
+package main
+
+import (
+	"connectrpc.com/grpcreflect"
+	"context"
+	"net"
+	"net/http"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
+)
+
+func main() {
+	// Set up...
+	reflector := grpcreflect.NewStaticReflector(
+		"", // Fake service name i.e. fjarm.helloworld.v1.HelloWorldService
+	)
+
+	mux := http.NewServeMux()
+	mux.Handle(grpcreflect.NewHandlerV1(reflector))
+	mux.Handle(grpcreflect.NewHandlerV1Alpha(reflector))
+
+	h2cHandler := h2c.NewHandler(mux, &http2.Server{})
+
+	_ = http.Server{
+		Addr: "[::]:8000",
+		BaseContext: func(_ net.Listener) context.Context {
+			return context.Background()
+		},
+		Handler: h2cHandler,
+	}
+	// Set up...
+}
+```
+
+The `curl` command looks like:
+
+```bash
+curl -X POST --data '{}' --header "Content-Type: application/json" --header "request-id: abc123" -o - http://localhost:8000/fjarm.helloworld.v1.HelloWorldService/GetHelloWorld
+```
 
 ## buf lint
 

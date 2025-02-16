@@ -2,25 +2,22 @@ load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "interceptor",
-    srcs = ["request_id.go"],
+    srcs = [
+        "common_errors.go",
+        "connect_rpc_request_id_interceptor.go",
+    ],
     importpath = "github.com/fjarm/fjarm/api/internal/tracing/pkg/interceptor",
     visibility = ["//api:__subpackages__"],
     deps = [
         "//api/internal/logkeys",
-        "@org_golang_google_grpc//:grpc",
-        "@org_golang_google_grpc//codes",
-        "@org_golang_google_grpc//metadata",
-        "@org_golang_google_grpc//peer",
-        "@org_golang_google_grpc//status",
+        "//api/internal/tracing",
+        "@com_connectrpc_connect//:connect",
     ],
 )
 
 go_test(
     name = "interceptor_test",
-    srcs = ["request_id_test.go"],
+    srcs = ["connect_rpc_request_id_interceptor_test.go"],
     embed = [":interceptor"],
-    deps = [
-        "@org_golang_google_grpc//:grpc",
-        "@org_golang_google_grpc//metadata",
-    ],
+    deps = ["@com_connectrpc_connect//:connect"],
 )

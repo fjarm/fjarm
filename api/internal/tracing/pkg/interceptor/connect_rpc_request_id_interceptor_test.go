@@ -2,30 +2,26 @@ package interceptor
 
 import (
 	"bytes"
+	"connectrpc.com/connect"
 	"context"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/metadata"
 	"log/slog"
 	"strings"
 	"testing"
 )
 
-func TestRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
+func TestNewConnectRPCRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 	dl := slog.Default()
 	defer slog.SetDefault(dl)
 
 	var buf bytes.Buffer
 	l := slog.New(slog.NewTextHandler(&buf, nil))
-
 	slog.SetDefault(l)
 
-	info := &grpc.UnaryServerInfo{
-		FullMethod: "/test/method",
-	}
-	handler := func(ctx context.Context, req any) (any, error) {
+	next := func(context.Context, connect.AnyRequest) (connect.AnyResponse, error) {
 		return nil, nil
 	}
-	si := RequestIDLoggingInterceptor(l)
+
+	si := NewConnectRPCRequestIDLoggingInterceptor(l)(next)
 
 	tests := map[string]struct {
 		headers  map[string]string
@@ -55,15 +51,19 @@ func TestRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			ctx := metadata.NewIncomingContext(context.Background(), metadata.New(tc.headers))
-			_, err := si(ctx, nil, info, handler)
-			if err != nil && !tc.err {
-				t.Errorf("RequestIDLoggingInterceptor got an unexpected error: %v", err)
+			req := connect.NewRequest(
+				&[]string{"a", "cool", "request"},
+			)
+			for key, val := range tc.headers {
+				req.Header().Add(key, val)
 			}
-
+			_, err := si(context.Background(), req)
+			if err != nil && !tc.err {
+				t.Errorf("NewConnectRPCRequestIDLoggingInterceptor got an unexpected error: %v", err)
+			}
 			actual := buf.String()
 			if !strings.Contains(actual, tc.expected) {
-				t.Errorf("RequestIDLoggingInterceptor got: %v, want: %v", actual, tc.expected)
+				t.Errorf("NewConnectRPCRequestIDLoggingInterceptor got: %v, want: %v", actual, tc.expected)
 			}
 		})
 	}
