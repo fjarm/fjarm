@@ -1,4 +1,4 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "users",
@@ -15,4 +15,13 @@ go_library(
         "@com_connectrpc_connect//:connect",
         "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
     ],
+)
+
+go_test(
+    name = "users_test",
+    srcs = [
+        "connect_rpc_handler_test.go",
+        "domain_test.go",
+    ],
+    embed = [":users"],
 )
