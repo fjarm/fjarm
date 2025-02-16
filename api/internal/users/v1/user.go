@@ -2,6 +2,8 @@ package v1
 
 import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+	"connectrpc.com/connect"
+	"fmt"
 	"time"
 )
 
@@ -22,7 +24,10 @@ type user struct {
 
 func wireUserToStorageUser(msg *userspb.User) (*user, error) {
 	if msg == nil {
-		return nil, ErrInvalidArgument
+		return nil, connect.NewError(
+			connect.CodeInvalidArgument,
+			fmt.Errorf("cannot convert nil message to user. %w", ErrInvalidArgument),
+		)
 	}
 	usr := user{
 		UserID:       msg.GetUserId().GetUserId(),
