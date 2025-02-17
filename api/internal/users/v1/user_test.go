@@ -144,7 +144,7 @@ func TestRedactedUserMessageString(t *testing.T) {
 			actual := redactedUserMessageString(msg)
 			for _, s := range tc.contains {
 				if !strings.Contains(actual, s) {
-					t.Errorf("redactedUserMessageString got: %v, must contain: %v, %v", actual, tc.contains, msg)
+					t.Errorf("redactedUserMessageString got: %v, must contain: %v", actual, tc.contains)
 				}
 			}
 			for _, s := range tc.excludes {
