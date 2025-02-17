@@ -7,20 +7,6 @@ import (
 	"time"
 )
 
-func TestWireUserToStorageUser_ErrorWrapping(t *testing.T) {
-	_, err := wireUserToStorageUser(nil)
-	if !errors.Is(err, ErrInvalidArgument) {
-		t.Errorf("error is not wrapped correctly")
-	}
-}
-
-func TestStorageUserToWireUser_ErrorWrapping(t *testing.T) {
-	_, err := storageUserToWireUser(nil)
-	if !errors.Is(err, ErrInvalidArgument) {
-		t.Errorf("error is not wrapped correctly")
-	}
-}
-
 func TestCalculateETag(t *testing.T) {
 	tests := map[string]struct {
 		u1    user
@@ -91,5 +77,19 @@ func TestRedactedUserMessageString(t *testing.T) {
 				t.Errorf("redactedUserMessageString got: %v, must exclude: %v", actual, tc.excludes)
 			}
 		})
+	}
+}
+
+func TestStorageUserToWireUser_ErrorWrapping(t *testing.T) {
+	_, err := storageUserToWireUser(nil)
+	if !errors.Is(err, ErrInvalidArgument) {
+		t.Errorf("error is not wrapped correctly")
+	}
+}
+
+func TestWireUserToStorageUser_ErrorWrapping(t *testing.T) {
+	_, err := wireUserToStorageUser(nil)
+	if !errors.Is(err, ErrInvalidArgument) {
+		t.Errorf("error is not wrapped correctly")
 	}
 }
