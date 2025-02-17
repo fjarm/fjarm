@@ -67,7 +67,7 @@ func storageUserToWireUser(su *user) (*userspb.User, error) {
 	if su == nil {
 		return nil, connect.NewError(
 			connect.CodeInvalidArgument,
-			fmt.Errorf("cannot convert nil user to user message. %w", ErrInvalidArgument),
+			fmt.Errorf("%w: cannot convert nil user to user message", ErrInvalidArgument),
 		)
 	}
 	usr := userspb.User{
@@ -87,7 +87,7 @@ func wireUserToStorageUser(msg *userspb.User) (*user, error) {
 	if msg == nil {
 		return nil, connect.NewError(
 			connect.CodeInvalidArgument,
-			fmt.Errorf("cannot convert nil user message to user. %w", ErrInvalidArgument),
+			fmt.Errorf("%w: cannot convert nil user message to user", ErrInvalidArgument),
 		)
 	}
 	avi := msg.GetAvatar().GetAvatar()
