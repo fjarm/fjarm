@@ -87,6 +87,39 @@ func TestStorageUserToWireUser_ErrorWrapping(t *testing.T) {
 	}
 }
 
+func TestStorageUserToWireUser_EtagCalculation(t *testing.T) {
+	tests := map[string]struct {
+		usr user
+		err bool
+	}{
+		"valid_empty_user": {
+			usr: user{},
+			err: false,
+		},
+		"valid_non_empty_user": {
+			usr: user{
+				UserID: "abc123",
+			},
+			err: false,
+		},
+	}
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			msg, err := storageUserToWireUser(&tc.usr)
+			if err != nil && !tc.err {
+				t.Errorf("storageUserToWireUser got an unexpected error: %v", err)
+			}
+			if msg.GetETag().GetEntityTag() != tc.usr.calculateETag() {
+				t.Errorf(
+					"unexpected etag calculation got %v, want %v",
+					msg.GetETag().GetEntityTag(),
+					tc.usr.calculateETag(),
+				)
+			}
+		})
+	}
+}
+
 func TestWireUserToStorageUser_ErrorWrapping(t *testing.T) {
 	_, err := wireUserToStorageUser(nil)
 	if !errors.Is(err, ErrInvalidArgument) {

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	consistencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/consistency/v1"
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"connectrpc.com/connect"
 	"crypto/sha256"
@@ -80,6 +81,9 @@ func storageUserToWireUser(su *user) (*userspb.User, error) {
 		EmailAddress: &userspb.UserEmailAddress{EmailAddress: &su.EmailAddress},
 		Avatar:       &userspb.UserAvatar{Avatar: su.Avatar},
 	}
+	etag := su.calculateETag()
+	usr.SetETag(&consistencypb.EntityTag{EntityTag: &etag})
+
 	return &usr, nil
 }
 

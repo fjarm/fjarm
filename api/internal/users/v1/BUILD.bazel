@@ -15,6 +15,7 @@ go_library(
         "//api/internal/logkeys",
         "//api/internal/logvals",
         "//api/internal/tracing",
+        "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/consistency/v1:consistency",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",
         "@com_connectrpc_connect//:connect",
         "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
