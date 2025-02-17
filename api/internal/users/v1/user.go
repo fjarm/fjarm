@@ -53,13 +53,8 @@ func redactedUserMessageString(msg *userspb.User) string {
 	if msg == nil {
 		return logvals.Nil
 	}
-	redacted := logvals.Redacted
 	rm := &userspb.User{
-		UserId:       msg.UserId,
-		FullName:     &userspb.UserFullName{FamilyName: &redacted, GivenName: &redacted},
-		Handle:       &userspb.UserHandle{Handle: &redacted},
-		EmailAddress: &userspb.UserEmailAddress{EmailAddress: &redacted},
-		Avatar:       msg.Avatar,
+		UserId: msg.UserId,
 	}
 	return rm.String()
 }

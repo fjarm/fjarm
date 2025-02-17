@@ -100,23 +100,57 @@ func TestCalculateETag(t *testing.T) {
 
 func TestRedactedUserMessageString(t *testing.T) {
 	tests := map[string]struct {
-		usr      user
-		contains string
-		excludes string
+		usr      *user
+		contains []string
+		excludes []string
 		err      bool
-	}{}
+	}{
+		"valid_empty_user": {
+			usr:      &user{},
+			contains: []string{"{", "}", "user_id"},
+			excludes: []string{"password", "nil", "salt", "full_name", "handle", "email_address", "avatar", "last_updated", "created_at"},
+			err:      false,
+		},
+		"valid_nil_user": {
+			contains: []string{"nil"},
+			excludes: []string{"password", "salt", "{", "}", "user_id", "full_name", "handle", "email_address", "avatar"},
+			err:      true,
+		},
+		"valid_valid_password_and_salt_user": {
+			usr: &user{
+				Password: "abc123",
+				Salt:     "salt",
+			},
+			contains: []string{"{", "}", "user_id"},
+			excludes: []string{"password", "salt", "full_name", "handle", "email_address", "avatar", "abc123", "salt"},
+			err:      false,
+		},
+		"valid_valid_user_id_user": {
+			usr: &user{
+				UserID: "abc123",
+				Salt:   "salt",
+			},
+			contains: []string{"{", "}", "user_id", "abc123"},
+			excludes: []string{"password", "salt", "full_name", "handle", "email_address", "avatar"},
+			err:      false,
+		},
+	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			msg, err := storageUserToWireUser(&tc.usr)
-			if err != nil && !tc.err {
+			msg, err := storageUserToWireUser(tc.usr)
+			if !tc.err && err != nil {
 				t.Errorf("storageUserToWireUser got an unexpected error: %v", err)
 			}
 			actual := redactedUserMessageString(msg)
-			if !strings.Contains(actual, tc.contains) {
-				t.Errorf("redactedUserMessageString got: %v, must contain: %v", actual, tc.contains)
+			for _, s := range tc.contains {
+				if !strings.Contains(actual, s) {
+					t.Errorf("redactedUserMessageString got: %v, must contain: %v, %v", actual, tc.contains, msg)
+				}
 			}
-			if strings.Contains(actual, tc.excludes) {
-				t.Errorf("redactedUserMessageString got: %v, must exclude: %v", actual, tc.excludes)
+			for _, s := range tc.excludes {
+				if strings.Contains(actual, s) {
+					t.Errorf("redactedUserMessageString got: %v, must exclude: %v", actual, tc.excludes)
+				}
 			}
 		})
 	}
