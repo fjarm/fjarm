@@ -2,6 +2,7 @@ package v1
 
 import (
 	"errors"
+	"strings"
 	"testing"
 	"time"
 )
@@ -64,6 +65,30 @@ func TestCalculateETag(t *testing.T) {
 			e2 := tc.u2.calculateETag()
 			if e1 != e2 && tc.equal {
 				t.Errorf("unexpected two unequal users")
+			}
+		})
+	}
+}
+
+func TestRedactedUserMessageString(t *testing.T) {
+	tests := map[string]struct {
+		usr      user
+		contains string
+		excludes string
+		err      bool
+	}{}
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			msg, err := storageUserToWireUser(&tc.usr)
+			if err != nil && !tc.err {
+				t.Errorf("storageUserToWireUser got an unexpected error: %v", err)
+			}
+			actual := redactedUserMessageString(msg)
+			if !strings.Contains(actual, tc.contains) {
+				t.Errorf("redactedUserMessageString got: %v, must contain: %v", actual, tc.contains)
+			}
+			if strings.Contains(actual, tc.excludes) {
+				t.Errorf("redactedUserMessageString got: %v, must exclude: %v", actual, tc.excludes)
 			}
 		})
 	}
