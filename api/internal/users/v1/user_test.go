@@ -31,6 +31,48 @@ func TestCalculateETag(t *testing.T) {
 			},
 			equal: true,
 		},
+		"valid_different_passwords_similar_users": {
+			u1: user{
+				UserID:   "abc123",
+				Password: "password",
+			},
+			u2: user{
+				UserID:   "abc123",
+				Password: "password1",
+			},
+			equal: true,
+		},
+		"valid_different_salts_similar_users": {
+			u1: user{
+				UserID: "abc123",
+				Salt:   "salt",
+			},
+			u2: user{
+				UserID: "abc123",
+				Salt:   "salt2",
+			},
+			equal: true,
+		},
+		"valid_nil_and_valid_passwords_similar_users": {
+			u1: user{
+				UserID:   "abc123",
+				Password: "password",
+			},
+			u2: user{
+				UserID: "abc123",
+			},
+			equal: true,
+		},
+		"valid_nil_and_valid_salts_similar_users": {
+			u1: user{
+				UserID: "abc123",
+				Salt:   "password",
+			},
+			u2: user{
+				UserID: "abc123",
+			},
+			equal: true,
+		},
 		"invalid_two_non_empty_users": {
 			u1: user{
 				UserID:      "abc123",
