@@ -3,7 +3,6 @@ package v1
 import (
 	consistencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/consistency/v1"
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
-	"connectrpc.com/connect"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
@@ -61,10 +60,7 @@ func redactedUserMessageString(msg *userspb.User) string {
 
 func storageUserToWireUser(su *user) (*userspb.User, error) {
 	if su == nil {
-		return nil, connect.NewError(
-			connect.CodeInvalidArgument,
-			fmt.Errorf("%w: cannot convert nil user to user message", ErrInvalidArgument),
-		)
+		return nil, fmt.Errorf("%w: cannot convert nil user to user message", ErrInvalidArgument)
 	}
 	usr := userspb.User{
 		UserId: &userspb.UserId{UserId: &su.UserID},
@@ -84,10 +80,7 @@ func storageUserToWireUser(su *user) (*userspb.User, error) {
 
 func wireUserToStorageUser(msg *userspb.User) (*user, error) {
 	if msg == nil {
-		return nil, connect.NewError(
-			connect.CodeInvalidArgument,
-			fmt.Errorf("%w: cannot convert nil user message to user", ErrInvalidArgument),
-		)
+		return nil, fmt.Errorf("%w: cannot convert nil user message to user", ErrInvalidArgument)
 	}
 	avi := msg.GetAvatar().GetAvatar()
 	usr := user{
