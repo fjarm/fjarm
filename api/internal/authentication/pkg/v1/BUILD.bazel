@@ -1,0 +1,11 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "pkg",
+    srcs = [
+        "hash_params.go",
+        "salt.go",
+    ],
+    importpath = "github.com/fjarm/fjarm/api/internal/authentication/pkg/v1",
+    visibility = ["//api:__subpackages__"],
+)
