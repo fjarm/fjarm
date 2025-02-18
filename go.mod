@@ -3,7 +3,6 @@ module github.com/fjarm/fjarm
 go 1.23.4
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.5-20250130201111-63bb56e20495.1
 	buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.18.1-20250208225348-ff1224dfd9fe.1
 	buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.5-20250208225348-ff1224dfd9fe.1
 	connectrpc.com/connect v1.18.1
@@ -14,6 +13,7 @@ require (
 )
 
 require (
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.5-20250130201111-63bb56e20495.1 // indirect
 	cel.dev/expr v0.19.2 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/google/cel-go v0.23.2 // indirect
