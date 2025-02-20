@@ -21,10 +21,10 @@ func generateSalt(size int) (string, error) {
 	}
 
 	// Encode as base64 for safe storage
-	return base64.StdEncoding.EncodeToString(bytes), nil
+	return base64.RawStdEncoding.EncodeToString(bytes), nil
 }
 
 func readSalt(salt string) ([]byte, error) {
 	// Decode the base64 encoded salt
-	return base64.StdEncoding.DecodeString(salt)
+	return base64.RawStdEncoding.DecodeString(salt)
 }
