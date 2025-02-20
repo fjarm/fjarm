@@ -21,8 +21,7 @@ type user struct {
 	FamilyName   string    `db:"family_name"`
 	Handle       string    `db:"handle"`
 	EmailAddress string    `db:"email_address"`
-	Password     string    `db:"password"`
-	Salt         string    `db:"salt"`
+	Password     string    `db:"password"`     // Argon2ID hashed password with salt embedded.
 	Avatar       *string   `db:"avatar"`       // Optional field/column. Can be nil/NULL.
 	LastUpdated  time.Time `db:"last_updated"` // Used primarily for ETag calculation.
 	CreatedAt    time.Time `db:"created_at"`

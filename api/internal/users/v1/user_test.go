@@ -42,31 +42,10 @@ func TestCalculateETag(t *testing.T) {
 			},
 			equal: true,
 		},
-		"valid_different_salts_similar_users": {
-			u1: user{
-				UserID: "abc123",
-				Salt:   "salt",
-			},
-			u2: user{
-				UserID: "abc123",
-				Salt:   "salt2",
-			},
-			equal: true,
-		},
 		"valid_nil_and_valid_passwords_similar_users": {
 			u1: user{
 				UserID:   "abc123",
 				Password: "password",
-			},
-			u2: user{
-				UserID: "abc123",
-			},
-			equal: true,
-		},
-		"valid_nil_and_valid_salts_similar_users": {
-			u1: user{
-				UserID: "abc123",
-				Salt:   "password",
 			},
 			u2: user{
 				UserID: "abc123",
@@ -108,30 +87,28 @@ func TestRedactedUserMessageString(t *testing.T) {
 		"valid_empty_user": {
 			usr:      &user{},
 			contains: []string{"{", "}", "user_id"},
-			excludes: []string{"password", "nil", "salt", "full_name", "handle", "email_address", "avatar", "last_updated", "created_at"},
+			excludes: []string{"password", "nil", "full_name", "handle", "email_address", "avatar", "last_updated", "created_at"},
 			err:      false,
 		},
 		"valid_nil_user": {
 			contains: []string{"nil"},
-			excludes: []string{"password", "salt", "{", "}", "user_id", "full_name", "handle", "email_address", "avatar"},
+			excludes: []string{"password", "{", "}", "user_id", "full_name", "handle", "email_address", "avatar"},
 			err:      true,
 		},
 		"valid_valid_password_and_salt_user": {
 			usr: &user{
 				Password: "abc123",
-				Salt:     "salt",
 			},
 			contains: []string{"{", "}", "user_id"},
-			excludes: []string{"password", "salt", "full_name", "handle", "email_address", "avatar", "abc123", "salt"},
+			excludes: []string{"password", "full_name", "handle", "email_address", "avatar", "abc123"},
 			err:      false,
 		},
 		"valid_valid_user_id_user": {
 			usr: &user{
 				UserID: "abc123",
-				Salt:   "salt",
 			},
 			contains: []string{"{", "}", "user_id", "abc123"},
-			excludes: []string{"password", "salt", "full_name", "handle", "email_address", "avatar"},
+			excludes: []string{"password", "full_name", "handle", "email_address", "avatar"},
 			err:      false,
 		},
 	}
