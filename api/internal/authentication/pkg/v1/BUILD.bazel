@@ -1,8 +1,9 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "pkg",
     srcs = [
+        "common_errors.go",
         "hash_params.go",
         "passwords.go",
         "salts.go",
@@ -10,4 +11,10 @@ go_library(
     importpath = "github.com/fjarm/fjarm/api/internal/authentication/pkg/v1",
     visibility = ["//api:__subpackages__"],
     deps = ["@org_golang_x_crypto//argon2"],
+)
+
+go_test(
+    name = "pkg_test",
+    srcs = ["passwords_test.go"],
+    embed = [":pkg"],
 )
