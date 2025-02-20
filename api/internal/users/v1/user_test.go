@@ -138,8 +138,11 @@ func TestRedactedUserMessageString(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			msg, err := storageUserToWireUser(tc.usr)
-			if !tc.err && err != nil {
+			if err != nil && !tc.err {
 				t.Errorf("storageUserToWireUser got an unexpected error: %v", err)
+			}
+			if tc.err && err == nil {
+				t.Errorf("storageUserToWireUser did not return an error")
 			}
 			actual := redactedUserMessageString(msg)
 			for _, s := range tc.contains {
@@ -184,6 +187,9 @@ func TestStorageUserToWireUser_EtagCalculation(t *testing.T) {
 			msg, err := storageUserToWireUser(&tc.usr)
 			if err != nil && !tc.err {
 				t.Errorf("storageUserToWireUser got an unexpected error: %v", err)
+			}
+			if tc.err && err == nil {
+				t.Errorf("storageUserToWireUser did not return an error")
 			}
 			if msg.GetETag().GetEntityTag() != tc.usr.calculateETag() {
 				t.Errorf(
