@@ -7,6 +7,7 @@ import (
 	"github.com/bufbuild/protovalidate-go"
 	authentication "github.com/fjarm/fjarm/api/internal/authentication/pkg/v1"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
+	"github.com/fjarm/fjarm/api/internal/logvals"
 	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
 	"time"
@@ -27,6 +28,14 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	)
 	logger.InfoContext(ctx, "requested user creation")
 
+	if msg == nil {
+		logger.ErrorContext(ctx,
+			"failed to create user entity with nil user message",
+			slog.String(logkeys.Raw, logvals.Nil),
+		)
+		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message is nil")
+	}
+
 	// If a user entity with the same ID as the message already exists, return an already exists error.
 	_, ok := repo.database[msg.GetUserId().GetUserId()]
 	if ok {
@@ -38,7 +47,7 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	err := repo.validator.Validate(msg)
 	if err != nil {
 		logger.ErrorContext(ctx,
-			"failed to validate user entity",
+			"failed to validate user message",
 			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
 			slog.Any(logkeys.Err, err),
 		)
@@ -59,6 +68,22 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		)
 		// The error message from wireUserToStorageUser is already wrapped with ErrInvalidArgument.
 		return &user{}, err
+	}
+
+	if !msg.HasHandle() || !msg.GetHandle().HasHandle() {
+		logger.ErrorContext(ctx,
+			"failed to create user entity with missing information",
+			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
+		)
+		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message missing handle")
+	}
+
+	if !msg.HasEmailAddress() || !msg.GetEmailAddress().HasEmailAddress() {
+		logger.ErrorContext(ctx,
+			"failed to create user entity with missing information",
+			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
+		)
+		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message missing email address")
 	}
 
 	// This shouldn't happen as the `fjarm.users.v1.UserPassword` message is required when calling
@@ -89,7 +114,7 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 
 	// Store the entity in the in-memory database.
 	repo.database[entity.UserID] = *entity
-	return nil, nil
+	return &user{}, nil
 }
 
 func newInMemoryRepository(l *slog.Logger, v protovalidate.Validator) *inMemoryRepository {
