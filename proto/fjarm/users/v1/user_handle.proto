@@ -16,8 +16,7 @@ message UserHandle {
   // Required field that represents a user's globally unique identifier.
   optional string handle = 1 [
     (buf.validate.field).string.example = "therealgleepglop",
-    (buf.validate.field).string.min_len = 1,
-    (buf.validate.field).string.max_len = 99,
-    (buf.validate.field).string.not_contains = " "
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.max_len = 99
   ];
 }

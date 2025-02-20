@@ -32,6 +32,10 @@ func TestUserPassword_Validation(t *testing.T) {
 			password: "",
 			wantErr:  true,
 		},
+		"invalid_single_space_string_password": {
+			password: " ",
+			wantErr:  true,
+		},
 		"invalid_no_value_password": {
 			wantErr: true,
 		},

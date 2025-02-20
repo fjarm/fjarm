@@ -30,7 +30,7 @@ func (h *ConnectRPCHandler) CreateUser(
 	ctx context.Context,
 	req *connect.Request[userspb.CreateUserRequest],
 ) (*connect.Response[userspb.CreateUserResponse], error) {
-	return nil, ErrUnimplemented
+	return nil, connect.NewError(connect.CodeUnimplemented, ErrUnimplemented)
 }
 
 // GetUser handles ConnectRPC requests to retrieve a `User` entity.
@@ -38,7 +38,7 @@ func (h *ConnectRPCHandler) GetUser(
 	ctx context.Context,
 	req *connect.Request[userspb.GetUserRequest],
 ) (*connect.Response[userspb.GetUserResponse], error) {
-	return nil, nil
+	return nil, connect.NewError(connect.CodeUnimplemented, ErrUnimplemented)
 }
 
 // UpdateUser handles ConnectRPC requests to modify a field in a `User` entity.
@@ -46,7 +46,7 @@ func (h *ConnectRPCHandler) UpdateUser(
 	ctx context.Context,
 	req *connect.Request[userspb.UpdateUserRequest],
 ) (*connect.Response[userspb.UpdateUserResponse], error) {
-	return nil, ErrUnimplemented
+	return nil, connect.NewError(connect.CodeUnimplemented, ErrUnimplemented)
 }
 
 // DeleteUser handles ConnectRPC requests to delete an instance of a `User` entity.
@@ -54,7 +54,7 @@ func (h *ConnectRPCHandler) DeleteUser(
 	ctx context.Context,
 	req *connect.Request[userspb.DeleteUserRequest],
 ) (*connect.Response[userspb.DeleteUserResponse], error) {
-	return nil, ErrUnimplemented
+	return nil, connect.NewError(connect.CodeUnimplemented, ErrUnimplemented)
 }
 
 // NewConnectRPCHandler creates a concrete users ConnectRPC service with logging and business/domain logic.
@@ -85,7 +85,7 @@ func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 	dom := newUserDomain()
 	han := ConnectRPCHandler{
 		domain:    dom,
-		logger:    logger,
+		logger:    l,
 		validator: validator,
 	}
 	return &han

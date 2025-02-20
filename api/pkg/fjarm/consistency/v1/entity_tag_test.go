@@ -31,6 +31,10 @@ func TestEntityTag_Validation(t *testing.T) {
 		"invalid_missing_value_etag": {
 			wantErr: true,
 		},
+		"invalid_single_space_string_etag": {
+			entityTag: " ",
+			wantErr:   true,
+		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
