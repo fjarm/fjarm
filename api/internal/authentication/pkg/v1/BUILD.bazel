@@ -4,8 +4,10 @@ go_library(
     name = "pkg",
     srcs = [
         "hash_params.go",
-        "salt.go",
+        "passwords.go",
+        "salts.go",
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/authentication/pkg/v1",
     visibility = ["//api:__subpackages__"],
+    deps = ["@org_golang_x_crypto//argon2"],
 )
