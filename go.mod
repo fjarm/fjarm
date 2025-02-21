@@ -7,7 +7,6 @@ require (
 	buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.5-20250220235546-9eca9e174ab9.1
 	connectrpc.com/connect v1.18.1
 	github.com/bufbuild/protovalidate-go v0.9.2
-	github.com/google/uuid v1.6.0
 	golang.org/x/crypto v0.33.0
 	google.golang.org/protobuf v1.36.5
 )

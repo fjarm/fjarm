@@ -22,7 +22,6 @@ use_repo(
     "build_buf_gen_go_fjarm_fjarm_protocolbuffers_go",
     "com_connectrpc_connect",
     "com_github_bufbuild_protovalidate_go",
-    "com_github_google_uuid",
     "org_golang_google_protobuf",
     "org_golang_x_crypto",
 )
