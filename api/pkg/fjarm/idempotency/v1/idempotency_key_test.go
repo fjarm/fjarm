@@ -3,7 +3,6 @@ package v1
 import (
 	idempotencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/idempotency/v1"
 	"github.com/bufbuild/protovalidate-go"
-	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"testing"
 	"time"
@@ -26,17 +25,17 @@ func TestIdempotencyKey_Validation(t *testing.T) {
 		wantErr        bool
 	}{
 		"valid_non_empty_uuid_idempotency_key": {
-			idempotencyKey: uuid.New().String(),
+			idempotencyKey: "123e4567-e89b-12d3-a456-426614174000",
 			timestamp:      time.Now(),
 			wantErr:        false,
 		},
 		"valid_past_timestamp_idempotency_key": {
-			idempotencyKey: uuid.New().String(),
+			idempotencyKey: "123e4567-e89b-12d3-a456-426614174000",
 			timestamp:      time.Now().Add(-60 * time.Second),
 			wantErr:        false,
 		},
 		"valid_future_timestamp_idempotency_key": {
-			idempotencyKey: uuid.New().String(),
+			idempotencyKey: "123e4567-e89b-12d3-a456-426614174000",
 			timestamp:      time.Now().Add(60 * time.Second),
 			wantErr:        false,
 		},
@@ -60,7 +59,7 @@ func TestIdempotencyKey_Validation(t *testing.T) {
 			wantErr:   true,
 		},
 		"invalid_missing_value_timestamp_idempotency_key": {
-			idempotencyKey: uuid.New().String(),
+			idempotencyKey: "123e4567-e89b-12d3-a456-426614174000",
 			wantErr:        true,
 		},
 		"invalid_missing_value_idempotency_key_and_timestamp_idempotency_key": {
