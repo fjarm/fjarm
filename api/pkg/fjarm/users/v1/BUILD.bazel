@@ -10,6 +10,7 @@ go_library(
 go_test(
     name = "users_test",
     srcs = [
+        "create_user_request_test.go",
         "user_email_address_test.go",
         "user_full_name_test.go",
         "user_handle_test.go",
@@ -21,6 +22,5 @@ go_test(
     deps = [
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",
         "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
-        "@com_github_google_uuid//:uuid",
     ],
 )
