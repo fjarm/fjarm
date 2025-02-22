@@ -1,8 +1,11 @@
 package v1
 
 import (
+	idempotencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/idempotency/v1"
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"github.com/bufbuild/protovalidate-go"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"testing"
 )
 
@@ -20,6 +23,37 @@ func TestCreateUserRequest_Validation(t *testing.T) {
 		request *userspb.CreateUserRequest
 		err     bool
 	}{
+		"valid_create_user_request": {
+			request: &userspb.CreateUserRequest{
+				IdempotencyKey: &idempotencypb.IdempotencyKey{
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174000"),
+					Timestamp:      timestamppb.Now(),
+				},
+				UserId: &userspb.UserId{
+					UserId: proto.String("123e4567-e89b-12d3-a456-426614174000"),
+				},
+				User: &userspb.User{
+					UserId: &userspb.UserId{
+						UserId: proto.String("123e4567-e89b-12d3-a456-426614174000"),
+					},
+				},
+			},
+			err: false,
+		},
+		"invalid_empty_idempotency_key_create_user_request": {
+			request: &userspb.CreateUserRequest{
+				IdempotencyKey: &idempotencypb.IdempotencyKey{},
+				UserId: &userspb.UserId{
+					UserId: proto.String("123e4567-e89b-12d3-a456-426614174000"),
+				},
+				User: &userspb.User{
+					UserId: &userspb.UserId{
+						UserId: proto.String("123e4567-e89b-12d3-a456-426614174000"),
+					},
+				},
+			},
+			err: true,
+		},
 		"invalid_empty_create_user_request": {
 			request: &userspb.CreateUserRequest{},
 			err:     true,
