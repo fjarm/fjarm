@@ -4,6 +4,7 @@ import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
 	"github.com/bufbuild/protovalidate-go"
+	"google.golang.org/protobuf/proto"
 	"io"
 	"log/slog"
 	"testing"
@@ -37,10 +38,10 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 		"valid_one_valid_message_users": {
 			users: []*userspb.User{
 				{
-					UserId:       &userspb.UserId{UserId: ptr("123e4567-e89b-12d3-a456-426614174000")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: ptr("foo@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: ptr("gleeper")},
-					Password:     &userspb.UserPassword{Password: ptr("password")},
+					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
 			err: []bool{false},
@@ -48,16 +49,16 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 		"valid_two_valid_messages_users": {
 			users: []*userspb.User{
 				{
-					UserId:       &userspb.UserId{UserId: ptr("123e4567-e89b-12d3-a456-426614174000")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: ptr("foo1@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: ptr("gleeper")},
-					Password:     &userspb.UserPassword{Password: ptr("password")},
+					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 				{
-					UserId:       &userspb.UserId{UserId: ptr("123e4568-e89b-12d3-a456-426614174000")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: ptr("foo@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: ptr("gleeper")},
-					Password:     &userspb.UserPassword{Password: ptr("password")},
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
 			err: []bool{false, false},
@@ -71,7 +72,7 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 		"invalid_one_unset_password_users": {
 			users: []*userspb.User{
 				{
-					UserId:   &userspb.UserId{UserId: ptr("123e4567-e89b-12d3-a456-426614174000")},
+					UserId:   &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					Password: &userspb.UserPassword{},
 				},
 			},
@@ -80,8 +81,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 		"invalid_one_no_email_users": {
 			users: []*userspb.User{
 				{
-					UserId:   &userspb.UserId{UserId: ptr("123e4567-e89b-12d3-a456-426614174000")},
-					Password: &userspb.UserPassword{Password: ptr("password")},
+					UserId:   &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					Password: &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
 			err: []bool{true},
@@ -89,10 +90,10 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 		"invalid_one_non_uuid_users": {
 			users: []*userspb.User{
 				{
-					UserId:       &userspb.UserId{UserId: ptr("user_id")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: ptr("foo@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: ptr("gleeper")},
-					Password:     &userspb.UserPassword{Password: ptr("password")},
+					UserId:       &userspb.UserId{UserId: proto.String("user_id")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
 			err: []bool{true},
@@ -100,7 +101,7 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 		"invalid_no_password_no_email_users": {
 			users: []*userspb.User{
 				{
-					UserId: &userspb.UserId{UserId: ptr("123e4567-e89b-12d3-a456-426614174000")},
+					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 				},
 			},
 			err: []bool{true},
@@ -108,16 +109,16 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 		"invalid_two_identical_id_users": {
 			users: []*userspb.User{
 				{
-					UserId:       &userspb.UserId{UserId: ptr("123e4567-e89b-12d3-a456-426614174000")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: ptr("foo1@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: ptr("gleeper")},
-					Password:     &userspb.UserPassword{Password: ptr("password")},
+					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 				{
-					UserId:       &userspb.UserId{UserId: ptr("123e4567-e89b-12d3-a456-426614174000")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: ptr("foo1@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: ptr("gleeper1")},
-					Password:     &userspb.UserPassword{Password: ptr("password1")},
+					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper1")},
+					Password:     &userspb.UserPassword{Password: proto.String("password1")},
 				},
 			},
 			err: []bool{false, true},
@@ -138,8 +139,4 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			repo.database = map[string]user{}
 		})
 	}
-}
-
-func ptr(s string) *string {
-	return &s
 }
