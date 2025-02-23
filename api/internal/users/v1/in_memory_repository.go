@@ -9,6 +9,7 @@ import (
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/logvals"
 	"github.com/fjarm/fjarm/api/internal/tracing"
+	validation "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1"
 	"log/slog"
 	"time"
 )
@@ -53,6 +54,16 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		)
 		// Wrap the error from `protovalidate` so the transport handler can return the correct error code:
 		// connect.CodeInvalidArgument.
+		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
+	}
+
+	err = validation.ValidateUserHandle(ctx, msg.GetHandle())
+	if err != nil {
+		logger.ErrorContext(ctx,
+			"failed to validate user handle",
+			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
+			slog.Any(logkeys.Err, err),
+		)
 		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
 	}
 

@@ -63,6 +63,12 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			},
 			err: []bool{false, false},
 		},
+		"invalid_nil_message_users": {
+			users: []*userspb.User{
+				nil,
+			},
+			err: []bool{true},
+		},
 		"invalid_one_empty_message_users": {
 			users: []*userspb.User{
 				{},
