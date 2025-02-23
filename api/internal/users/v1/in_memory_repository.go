@@ -70,32 +70,6 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		return &user{}, err
 	}
 
-	if !msg.HasHandle() || !msg.GetHandle().HasHandle() {
-		logger.ErrorContext(ctx,
-			"failed to create user entity with missing information",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message missing handle")
-	}
-
-	if !msg.HasEmailAddress() || !msg.GetEmailAddress().HasEmailAddress() {
-		logger.ErrorContext(ctx,
-			"failed to create user entity with missing information",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message missing email address")
-	}
-
-	// This shouldn't happen as the `fjarm.users.v1.UserPassword` message is required when calling
-	// `fjarm.users.v1.UserService/CreateUser`. But check for it anyway.
-	if !msg.HasPassword() || !msg.GetPassword().HasPassword() {
-		logger.ErrorContext(ctx,
-			"failed to create user entity with missing credentials",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message missing password")
-	}
-
 	pwd, err := authentication.HashPassword(msg.GetPassword().GetPassword())
 	if err != nil {
 		logger.ErrorContext(ctx,
