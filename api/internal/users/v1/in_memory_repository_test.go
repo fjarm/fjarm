@@ -98,6 +98,16 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			},
 			err: []bool{true},
 		},
+		"invalid_no_handle_users": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
 		"invalid_no_password_no_email_users": {
 			users: []*userspb.User{
 				{
