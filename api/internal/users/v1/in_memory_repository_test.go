@@ -114,6 +114,47 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			},
 			err: []bool{true},
 		},
+		"invalid_no_user_id_users": {
+			users: []*userspb.User{
+				{
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
+		"invalid_no_password_users": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+				},
+			},
+			err: []bool{true},
+		},
+		"invalid_no_email_address_users": {
+			users: []*userspb.User{
+				{
+					UserId:   &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					Handle:   &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password: &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
+		"invalid_invalid_email_address_users": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
 		"invalid_no_password_no_email_users": {
 			users: []*userspb.User{
 				{
