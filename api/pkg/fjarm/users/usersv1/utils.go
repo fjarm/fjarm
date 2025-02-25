@@ -4,6 +4,7 @@ import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
 	"github.com/bufbuild/protovalidate-go"
+	"strings"
 )
 
 func ValidateUserEmailAddress(_ context.Context, email *userspb.UserEmailAddress) error {
@@ -16,11 +17,27 @@ func ValidateUserEmailAddress(_ context.Context, email *userspb.UserEmailAddress
 	return protovalidate.Validate(email)
 }
 
+func ValidateUserFullName(_ context.Context, name *userspb.UserFullName) error {
+	if name == nil {
+		return ErrValidationError
+	}
+	if !name.HasGivenName() || !name.HasFamilyName() {
+		return ErrValidationError
+	}
+	return protovalidate.Validate(name)
+}
+
 func ValidateUserHandle(_ context.Context, handle *userspb.UserHandle) error {
 	if handle == nil {
 		return ErrValidationError
 	}
 	if !handle.HasHandle() {
+		return ErrValidationError
+	}
+	if strings.Contains(handle.GetHandle(), " ") {
+		return ErrValidationError
+	}
+	if handle.GetHandle() == "" {
 		return ErrValidationError
 	}
 	return protovalidate.Validate(handle)
