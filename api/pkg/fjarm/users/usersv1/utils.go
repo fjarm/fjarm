@@ -6,6 +6,16 @@ import (
 	"github.com/bufbuild/protovalidate-go"
 )
 
+func ValidateUserEmailAddress(_ context.Context, email *userspb.UserEmailAddress) error {
+	if email == nil {
+		return ErrValidationError
+	}
+	if !email.HasEmailAddress() {
+		return ErrValidationError
+	}
+	return protovalidate.Validate(email)
+}
+
 func ValidateUserHandle(_ context.Context, handle *userspb.UserHandle) error {
 	if handle == nil {
 		return ErrValidationError

@@ -9,7 +9,7 @@ import (
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/logvals"
 	"github.com/fjarm/fjarm/api/internal/tracing"
-	validation "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1"
+	"github.com/fjarm/fjarm/api/pkg/fjarm/users/usersv1"
 	"log/slog"
 	"time"
 )
@@ -57,7 +57,37 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
 	}
 
-	err = validation.ValidateUserHandle(ctx, msg.GetHandle())
+	err = usersv1.ValidateUserID(ctx, msg.GetUserId())
+	if err != nil {
+		logger.ErrorContext(ctx,
+			"failed to validate user ID",
+			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
+			slog.Any(logkeys.Err, err),
+		)
+		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
+	}
+
+	err = usersv1.ValidateUserEmailAddress(ctx, msg.GetEmailAddress())
+	if err != nil {
+		logger.ErrorContext(ctx,
+			"failed to validate user email address",
+			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
+			slog.Any(logkeys.Err, err),
+		)
+		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
+	}
+
+	err = usersv1.ValidateUserPassword(ctx, msg.GetPassword())
+	if err != nil {
+		logger.ErrorContext(ctx,
+			"failed to validate user password",
+			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
+			slog.Any(logkeys.Err, err),
+		)
+		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
+	}
+
+	err = usersv1.ValidateUserHandle(ctx, msg.GetHandle())
 	if err != nil {
 		logger.ErrorContext(ctx,
 			"failed to validate user handle",
