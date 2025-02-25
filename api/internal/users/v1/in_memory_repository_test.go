@@ -3,7 +3,6 @@ package v1
 import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
-	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/protobuf/proto"
 	"io"
 	"log/slog"
@@ -12,20 +11,7 @@ import (
 
 func TestInMemoryRepository_createUser(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	validator, err := protovalidate.New(
-		protovalidate.WithDisableLazy(),
-		protovalidate.WithFailFast(),
-		protovalidate.WithMessages(
-			&userspb.CreateUserRequest{},
-			&userspb.CreateUserResponse{},
-			&userspb.GetUserRequest{},
-			&userspb.GetUserResponse{},
-		),
-	)
-	if err != nil {
-		t.Errorf("failed to initialize validator: %v", err)
-	}
-	repo := newInMemoryRepository(logger, validator)
+	repo := newInMemoryRepository(logger)
 
 	tests := map[string]struct {
 		users []*userspb.User
@@ -191,6 +177,53 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			},
 			err: []bool{true},
 		},
+		"validation_one_no_full_name_user": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper@glopper.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
+		"validation_one_unset_full_name_user": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper@glopper.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
+		"validation_one_no_family_name_user": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper@glopper.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
+		"validation_one_no_given_name_user": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{FamilyName: proto.String("foo")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper@glopper.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
 		"validation_one_no_password_user": {
 			users: []*userspb.User{
 				{
@@ -237,7 +270,7 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			for index, create := range tc.users {
-				_, err = repo.createUser(context.Background(), create)
+				_, err := repo.createUser(context.Background(), create)
 				if err != nil && !tc.err[index] {
 					t.Errorf("createUser got an unexpected error: %v", err)
 				}

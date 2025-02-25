@@ -4,7 +4,6 @@ import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
 	"fmt"
-	"github.com/bufbuild/protovalidate-go"
 	authentication "github.com/fjarm/fjarm/api/internal/authentication/pkg/v1"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
@@ -15,9 +14,8 @@ import (
 const inMemoryRepositoryTag = "in_memory_repository"
 
 type inMemoryRepository struct {
-	database  map[string]user
-	logger    *slog.Logger
-	validator protovalidate.Validator
+	database map[string]user
+	logger   *slog.Logger
 }
 
 func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.User) (*user, error) {
@@ -82,11 +80,10 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	return &user{}, nil
 }
 
-func newInMemoryRepository(l *slog.Logger, v protovalidate.Validator) *inMemoryRepository {
+func newInMemoryRepository(l *slog.Logger) *inMemoryRepository {
 	repo := inMemoryRepository{
-		database:  map[string]user{},
-		logger:    l,
-		validator: v,
+		database: map[string]user{},
+		logger:   l,
 	}
 	return &repo
 }
