@@ -1,6 +1,6 @@
 module github.com/fjarm/fjarm
 
-go 1.23.4
+go 1.24.0
 
 require (
 	buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.18.1-20250220235546-9eca9e174ab9.1
