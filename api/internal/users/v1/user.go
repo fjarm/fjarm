@@ -6,7 +6,6 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"github.com/fjarm/fjarm/api/internal/logvals"
 	"time"
 )
 
@@ -45,16 +44,6 @@ func (usr *user) calculateETag() string {
 	// Convert hash to base64 for a shorter string representation
 	// Use RawURLEncoding to ensure URL-safe characters
 	return base64.RawURLEncoding.EncodeToString(hasher.Sum(nil))
-}
-
-func redactedUserMessageString(msg *userspb.User) string {
-	if msg == nil {
-		return logvals.Nil
-	}
-	rm := &userspb.User{
-		UserId: msg.UserId,
-	}
-	return rm.String()
 }
 
 func storageUserToWireUser(su *user) (*userspb.User, error) {
