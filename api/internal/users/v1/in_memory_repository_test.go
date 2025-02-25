@@ -278,8 +278,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					t.Errorf("createUser expected an error but got nil")
 				}
 			}
-			// Reset the database for each test run.
-			repo.database = map[string]user{}
 		})
+		// Reset the database for each test run.
+		repo.database = map[string]user{}
 	}
 }
