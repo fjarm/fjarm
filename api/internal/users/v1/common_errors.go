@@ -12,9 +12,13 @@ var ErrAlreadyExists = fmt.Errorf("resource already exists")
 // credentials do not match the stored credentials.
 var ErrAuthenticationIssue = fmt.Errorf("authentication issue")
 
-// ErrUnimplemented is returned when a service method is called before it's been implemented.
-var ErrUnimplemented = fmt.Errorf("method is not implemented")
-
 // ErrInvalidArgument is returned when a client supplies invalid arguments like a `nil` pointer to a
 // `fjarm.users.v1.User` message.
 var ErrInvalidArgument = fmt.Errorf("supplied argument is invalid")
+
+// ErrOperationFailed is returned when a service method fails to complete an operation. It is typically used to hide a
+// more precise error message from the client like ErrAuthenticationIssue or ErrAlreadyExists.
+var ErrOperationFailed = fmt.Errorf("operation failed")
+
+// ErrUnimplemented is returned when a service method is called before it's been implemented.
+var ErrUnimplemented = fmt.Errorf("method is not implemented")
