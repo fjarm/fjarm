@@ -6,6 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
+	"google.golang.org/protobuf/proto"
 	"time"
 )
 
@@ -70,14 +71,13 @@ func wireUserToStorageUser(msg *userspb.User) (*user, error) {
 	if msg == nil {
 		return nil, fmt.Errorf("%w: cannot convert nil user message to user", ErrInvalidArgument)
 	}
-	avi := msg.GetAvatar().GetAvatar()
 	usr := user{
 		UserID:       msg.GetUserId().GetUserId(),
 		GivenName:    msg.GetFullName().GetGivenName(),
 		FamilyName:   msg.GetFullName().GetFamilyName(),
 		Handle:       msg.GetHandle().GetHandle(),
 		EmailAddress: msg.GetEmailAddress().GetEmailAddress(),
-		Avatar:       &avi,
+		Avatar:       proto.String(msg.GetAvatar().GetAvatar()),
 	}
 	return &usr, nil
 }
