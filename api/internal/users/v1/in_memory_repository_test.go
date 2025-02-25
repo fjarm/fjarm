@@ -31,14 +31,11 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 		users []*userspb.User
 		err   []bool
 	}{
-		"valid_empty_slice_users": {
-			users: []*userspb.User{},
-			err:   []bool{false},
-		},
-		"valid_one_valid_message_users": {
+		"validation_one_valid_user": {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -46,16 +43,18 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			},
 			err: []bool{false},
 		},
-		"valid_two_valid_messages_users": {
+		"validation_two_distinct_valid_users": {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -63,40 +62,46 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			},
 			err: []bool{false, false},
 		},
-		"invalid_nil_message_users": {
+		"validation_one_nil_user": {
 			users: []*userspb.User{
 				nil,
 			},
 			err: []bool{true},
 		},
-		"invalid_one_empty_message_users": {
+		"validation_one_empty_user": {
 			users: []*userspb.User{
 				{},
 			},
 			err: []bool{true},
 		},
-		"invalid_one_unset_password_users": {
+		"validation_one_no_id_user": {
 			users: []*userspb.User{
 				{
-					UserId:   &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					Password: &userspb.UserPassword{},
+					UserId:       &userspb.UserId{},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
 			err: []bool{true},
 		},
-		"invalid_one_no_email_users": {
+		"validation_one_unset_id_user": {
 			users: []*userspb.User{
 				{
-					UserId:   &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					Password: &userspb.UserPassword{Password: proto.String("password")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
 			err: []bool{true},
 		},
-		"invalid_one_non_uuid_users": {
+		"validation_one_invalid_id_user": {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("user_id")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -104,50 +109,81 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			},
 			err: []bool{true},
 		},
-		"invalid_no_handle_users": {
+		"validation_one_no_handle_user": {
 			users: []*userspb.User{
 				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
+		"validation_one_unset_handle_user": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
 			err: []bool{true},
 		},
-		"invalid_no_user_id_users": {
+		"validation_one_invalid_empty_string_handle_user": {
 			users: []*userspb.User{
 				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
+		"validation_one_invalid_contains_spaces_handle_user": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String(" ")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err: []bool{true},
+		},
+		"validation_one_no_email_user": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+					EmailAddress: &userspb.UserEmailAddress{},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
 			err: []bool{true},
 		},
-		"invalid_no_password_users": {
+		"validation_one_unset_email_user": {
 			users: []*userspb.User{
 				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-				},
-			},
-			err: []bool{true},
-		},
-		"invalid_no_email_address_users": {
-			users: []*userspb.User{
-				{
-					UserId:   &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					UserId:   &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName: &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					Handle:   &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password: &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
 			err: []bool{true},
 		},
-		"invalid_invalid_email_address_users": {
+		"validation_one_invalid_email_user": {
 			users: []*userspb.User{
 				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -155,27 +191,44 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			},
 			err: []bool{true},
 		},
-		"invalid_no_password_no_email_users": {
+		"validation_one_no_password_user": {
 			users: []*userspb.User{
 				{
-					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{},
 				},
 			},
 			err: []bool{true},
 		},
-		"invalid_two_identical_id_users": {
+		"validation_one_unset_password_user": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+				},
+			},
+			err: []bool{true},
+		},
+		"idempotency_two_identical_id_users": {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper1")},
-					Password:     &userspb.UserPassword{Password: proto.String("password1")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
 			err: []bool{false, true},

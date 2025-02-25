@@ -7,9 +7,7 @@ import (
 	"github.com/bufbuild/protovalidate-go"
 	authentication "github.com/fjarm/fjarm/api/internal/authentication/pkg/v1"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/logvals"
 	"github.com/fjarm/fjarm/api/internal/tracing"
-	"github.com/fjarm/fjarm/api/pkg/fjarm/users/usersv1"
 	"log/slog"
 	"time"
 )
@@ -29,26 +27,12 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	)
 	logger.InfoContext(ctx, "requested user creation")
 
-	if msg == nil {
-		logger.ErrorContext(ctx,
-			"failed to create user entity with nil user message",
-			slog.String(logkeys.Raw, logvals.Nil),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message is nil")
-	}
-
-	// If a user entity with the same ID as the message already exists, return an already exists error.
-	_, ok := repo.database[msg.GetUserId().GetUserId()]
-	if ok {
-		return nil, ErrAlreadyExists
-	}
-
 	// The message validation is redundant, but protects against upstream changes in the input/domain layer(s) that
 	// should result in invalid input from going uncaught.
-	err := repo.validator.Validate(msg)
+	err := validateUserMessageForCreate(ctx, msg)
 	if err != nil {
 		logger.ErrorContext(ctx,
-			"failed to validate user message",
+			"failed to validate user message for creation",
 			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
 			slog.Any(logkeys.Err, err),
 		)
@@ -57,44 +41,10 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
 	}
 
-	err = usersv1.ValidateUserID(ctx, msg.GetUserId())
-	if err != nil {
-		logger.ErrorContext(ctx,
-			"failed to validate user ID",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-			slog.Any(logkeys.Err, err),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
-	}
-
-	err = usersv1.ValidateUserEmailAddress(ctx, msg.GetEmailAddress())
-	if err != nil {
-		logger.ErrorContext(ctx,
-			"failed to validate user email address",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-			slog.Any(logkeys.Err, err),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
-	}
-
-	err = usersv1.ValidateUserPassword(ctx, msg.GetPassword())
-	if err != nil {
-		logger.ErrorContext(ctx,
-			"failed to validate user password",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-			slog.Any(logkeys.Err, err),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
-	}
-
-	err = usersv1.ValidateUserHandle(ctx, msg.GetHandle())
-	if err != nil {
-		logger.ErrorContext(ctx,
-			"failed to validate user handle",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-			slog.Any(logkeys.Err, err),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
+	// If a user entity with the same ID as the message already exists, return an already exists error.
+	_, ok := repo.database[msg.GetUserId().GetUserId()]
+	if ok {
+		return nil, ErrAlreadyExists
 	}
 
 	// At this point, the supplied user message should be valid. Convert the Protobuf message to a storage entity.
