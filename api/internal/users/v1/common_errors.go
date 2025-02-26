@@ -17,7 +17,7 @@ var ErrAuthenticationIssue = fmt.Errorf("authentication issue")
 var ErrInvalidArgument = fmt.Errorf("supplied argument is invalid")
 
 // ErrOperationFailed is returned when a service method fails to complete an operation. It is typically used to hide a
-// more precise error message from the client like ErrAuthenticationIssue or ErrAlreadyExists.
+// more precise error message from the client like ErrAuthenticationIssue.
 var ErrOperationFailed = fmt.Errorf("operation failed")
 
 // ErrUnimplemented is returned when a service method is called before it's been implemented.
