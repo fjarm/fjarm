@@ -6,7 +6,7 @@ import (
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"github.com/fjarm/fjarm/api/internal/logvals"
+	"google.golang.org/protobuf/proto"
 	"time"
 )
 
@@ -47,16 +47,6 @@ func (usr *user) calculateETag() string {
 	return base64.RawURLEncoding.EncodeToString(hasher.Sum(nil))
 }
 
-func redactedUserMessageString(msg *userspb.User) string {
-	if msg == nil {
-		return logvals.Nil
-	}
-	rm := &userspb.User{
-		UserId: msg.UserId,
-	}
-	return rm.String()
-}
-
 func storageUserToWireUser(su *user) (*userspb.User, error) {
 	if su == nil {
 		return nil, fmt.Errorf("%w: cannot convert nil user to user message", ErrInvalidArgument)
@@ -81,14 +71,13 @@ func wireUserToStorageUser(msg *userspb.User) (*user, error) {
 	if msg == nil {
 		return nil, fmt.Errorf("%w: cannot convert nil user message to user", ErrInvalidArgument)
 	}
-	avi := msg.GetAvatar().GetAvatar()
 	usr := user{
 		UserID:       msg.GetUserId().GetUserId(),
 		GivenName:    msg.GetFullName().GetGivenName(),
 		FamilyName:   msg.GetFullName().GetFamilyName(),
 		Handle:       msg.GetHandle().GetHandle(),
 		EmailAddress: msg.GetEmailAddress().GetEmailAddress(),
-		Avatar:       &avi,
+		Avatar:       proto.String(msg.GetAvatar().GetAvatar()),
 	}
 	return &usr, nil
 }

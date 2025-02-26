@@ -1,9 +1,8 @@
-package v1
+package usersv1
 
 import (
 	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"github.com/bufbuild/protovalidate-go"
-	"github.com/google/uuid"
 	"testing"
 )
 
@@ -34,7 +33,7 @@ func TestUserId_Validation(t *testing.T) {
 			wantErr: true,
 		},
 		"valid_uuid": {
-			userId:  uuid.New().String(),
+			userId:  "123e4567-e89b-12d3-a456-426614174000",
 			wantErr: false,
 		},
 	}

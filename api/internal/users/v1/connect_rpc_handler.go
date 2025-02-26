@@ -4,8 +4,10 @@ import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"connectrpc.com/connect"
 	"context"
+	"errors"
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
+	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
 )
 
@@ -30,7 +32,47 @@ func (h *ConnectRPCHandler) CreateUser(
 	ctx context.Context,
 	req *connect.Request[userspb.CreateUserRequest],
 ) (*connect.Response[userspb.CreateUserResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, ErrUnimplemented)
+	logger := h.logger.With(
+		slog.String(logkeys.Tag, connectRPCHandlerTag),
+		slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
+	)
+	logger.InfoContext(ctx, "received request to create user")
+
+	// Validate the incoming message.
+	err := h.validator.Validate(req.Msg)
+	if err != nil || req.Msg.GetUserId().GetUserId() != req.Msg.GetUser().GetUserId().GetUserId() {
+		logger.ErrorContext(ctx,
+			"failed to validate incoming request message",
+			slog.String(logkeys.Raw, req.Msg.String()),
+			slog.Any(logkeys.Err, err),
+		)
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
+
+	// Create the user entity.
+	usr, err := h.domain.createUser(ctx, req.Msg.GetUser())
+	if err != nil {
+		logger.ErrorContext(ctx,
+			"failed to create user entity",
+			slog.String(logkeys.Raw, req.Msg.String()),
+			slog.Any(logkeys.Err, err),
+		)
+	}
+	if err != nil && errors.Is(err, ErrOperationFailed) {
+		// Typically returned for authentication issues. Obscure this from the client.
+		return nil, connect.NewError(connect.CodeInternal, err)
+	} else if err != nil && errors.Is(err, ErrInvalidArgument) {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	} else if err != nil {
+		// A true edge case. This shouldn't happen.
+		return nil, connect.NewError(connect.CodeUnknown, ErrOperationFailed)
+	}
+
+	res := &userspb.CreateUserResponse{
+		User: usr,
+	}
+	// User creation was successful.
+	return connect.NewResponse(res), nil
 }
 
 // GetUser handles ConnectRPC requests to retrieve a `User` entity.
@@ -82,7 +124,8 @@ func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 		return nil
 	}
 
-	dom := newUserDomain()
+	rep := newInMemoryRepository(l)
+	dom := newUserDomain(l, rep)
 	han := ConnectRPCHandler{
 		domain:    dom,
 		logger:    l,

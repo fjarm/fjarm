@@ -4,10 +4,8 @@ import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
 	"fmt"
-	"github.com/bufbuild/protovalidate-go"
 	authentication "github.com/fjarm/fjarm/api/internal/authentication/pkg/v1"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/logvals"
 	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
 	"time"
@@ -16,9 +14,8 @@ import (
 const inMemoryRepositoryTag = "in_memory_repository"
 
 type inMemoryRepository struct {
-	database  map[string]user
-	logger    *slog.Logger
-	validator protovalidate.Validator
+	database map[string]user
+	logger   *slog.Logger
 }
 
 func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.User) (*user, error) {
@@ -29,31 +26,27 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	logger.InfoContext(ctx, "requested user creation")
 
 	if msg == nil {
+		return nil, ErrInvalidArgument
+	}
+
+	// The message validation is redundant, but protects against upstream changes in the input/domain layer(s) that
+	// should result in invalid input from going uncaught.
+	err := validateUserMessageForCreate(ctx, msg)
+	if err != nil {
 		logger.ErrorContext(ctx,
-			"failed to create user entity with nil user message",
-			slog.String(logkeys.Raw, logvals.Nil),
+			"failed to validate user message for creation",
+			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
+			slog.Any(logkeys.Err, err),
 		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message is nil")
+		// Wrap the error from `protovalidate` so the transport handler can return the correct error code:
+		// connect.CodeInvalidArgument.
+		return nil, fmt.Errorf("%w: %w", ErrInvalidArgument, err)
 	}
 
 	// If a user entity with the same ID as the message already exists, return an already exists error.
 	_, ok := repo.database[msg.GetUserId().GetUserId()]
 	if ok {
 		return nil, ErrAlreadyExists
-	}
-
-	// The message validation is redundant, but protects against upstream changes in the input/domain layer(s) that
-	// should result in invalid input from going uncaught.
-	err := repo.validator.Validate(msg)
-	if err != nil {
-		logger.ErrorContext(ctx,
-			"failed to validate user message",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-			slog.Any(logkeys.Err, err),
-		)
-		// Wrap the error from `protovalidate` so the transport handler can return the correct error code:
-		// connect.CodeInvalidArgument.
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
 	}
 
 	// At this point, the supplied user message should be valid. Convert the Protobuf message to a storage entity.
@@ -70,32 +63,6 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		return &user{}, err
 	}
 
-	if !msg.HasHandle() || !msg.GetHandle().HasHandle() {
-		logger.ErrorContext(ctx,
-			"failed to create user entity with missing information",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message missing handle")
-	}
-
-	if !msg.HasEmailAddress() || !msg.GetEmailAddress().HasEmailAddress() {
-		logger.ErrorContext(ctx,
-			"failed to create user entity with missing information",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message missing email address")
-	}
-
-	// This shouldn't happen as the `fjarm.users.v1.UserPassword` message is required when calling
-	// `fjarm.users.v1.UserService/CreateUser`. But check for it anyway.
-	if !msg.HasPassword() || !msg.GetPassword().HasPassword() {
-		logger.ErrorContext(ctx,
-			"failed to create user entity with missing credentials",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
-		)
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, "user message missing password")
-	}
-
 	pwd, err := authentication.HashPassword(msg.GetPassword().GetPassword())
 	if err != nil {
 		logger.ErrorContext(ctx,
@@ -103,7 +70,7 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
 			slog.Any(logkeys.Err, err),
 		)
-		return nil, fmt.Errorf("%v: %v", ErrAuthenticationIssue, err)
+		return nil, fmt.Errorf("%w: %w", ErrAuthenticationIssue, err)
 	}
 	entity.Password = pwd
 
@@ -117,11 +84,10 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	return &user{}, nil
 }
 
-func newInMemoryRepository(l *slog.Logger, v protovalidate.Validator) *inMemoryRepository {
+func newInMemoryRepository(l *slog.Logger) *inMemoryRepository {
 	repo := inMemoryRepository{
-		database:  map[string]user{},
-		logger:    l,
-		validator: v,
+		database: map[string]user{},
+		logger:   l,
 	}
 	return &repo
 }
