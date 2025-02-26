@@ -32,26 +32,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			err:  []bool{false},
 			kind: []error{nil},
 		},
-		"validation_two_distinct_valid_users": {
-			users: []*userspb.User{
-				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
-				},
-				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
-				},
-			},
-			err:  []bool{false, false},
-			kind: []error{nil, nil},
-		},
 		"validation_one_nil_user": {
 			users: []*userspb.User{
 				nil,
@@ -268,6 +248,26 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			},
 			err:  []bool{true},
 			kind: []error{ErrInvalidArgument},
+		},
+		"idempotency_two_distinct_valid_users": {
+			users: []*userspb.User{
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+				{
+					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+					Password:     &userspb.UserPassword{Password: proto.String("password")},
+				},
+			},
+			err:  []bool{false, false},
+			kind: []error{nil, nil},
 		},
 		"idempotency_two_identical_id_users": {
 			users: []*userspb.User{
