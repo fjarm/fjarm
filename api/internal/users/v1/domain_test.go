@@ -95,7 +95,7 @@ func TestUserDomain_createUser(t *testing.T) {
 					t.Errorf("createUser got an unexpected error: %v", err)
 				}
 				if err == nil && tc.errs[i] {
-					t.Errorf("createUser expected an error but got nil at index %d", i)
+					t.Errorf("createUser expected an error but got nil")
 				}
 				if !errors.Is(err, tc.kind[i]) {
 					t.Errorf("createUser got an unexpected error type: %v", err)
