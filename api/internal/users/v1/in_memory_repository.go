@@ -25,6 +25,10 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	)
 	logger.InfoContext(ctx, "requested user creation")
 
+	if msg == nil {
+		return nil, ErrInvalidArgument
+	}
+
 	// The message validation is redundant, but protects against upstream changes in the input/domain layer(s) that
 	// should result in invalid input from going uncaught.
 	err := validateUserMessageForCreate(ctx, msg)
@@ -36,7 +40,7 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		)
 		// Wrap the error from `protovalidate` so the transport handler can return the correct error code:
 		// connect.CodeInvalidArgument.
-		return nil, fmt.Errorf("%v: %v", ErrInvalidArgument, err)
+		return nil, fmt.Errorf("%w: %w", ErrInvalidArgument, err)
 	}
 
 	// If a user entity with the same ID as the message already exists, return an already exists error.
@@ -66,7 +70,7 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
 			slog.Any(logkeys.Err, err),
 		)
-		return nil, fmt.Errorf("%v: %v", ErrAuthenticationIssue, err)
+		return nil, fmt.Errorf("%w: %w", ErrAuthenticationIssue, err)
 	}
 	entity.Password = pwd
 
