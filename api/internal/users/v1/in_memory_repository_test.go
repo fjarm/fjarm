@@ -3,6 +3,7 @@ package v1
 import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
+	"errors"
 	"google.golang.org/protobuf/proto"
 	"io"
 	"log/slog"
@@ -16,6 +17,7 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 	tests := map[string]struct {
 		users []*userspb.User
 		err   []bool
+		kind  []error
 	}{
 		"validation_one_valid_user": {
 			users: []*userspb.User{
@@ -27,7 +29,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{false},
+			err:  []bool{false},
+			kind: []error{nil},
 		},
 		"validation_two_distinct_valid_users": {
 			users: []*userspb.User{
@@ -46,19 +49,22 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{false, false},
+			err:  []bool{false, false},
+			kind: []error{nil, nil},
 		},
 		"validation_one_nil_user": {
 			users: []*userspb.User{
 				nil,
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_empty_user": {
 			users: []*userspb.User{
 				{},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_no_id_user": {
 			users: []*userspb.User{
@@ -70,7 +76,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_unset_id_user": {
 			users: []*userspb.User{
@@ -81,7 +88,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_invalid_id_user": {
 			users: []*userspb.User{
@@ -93,7 +101,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_no_handle_user": {
 			users: []*userspb.User{
@@ -105,7 +114,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_unset_handle_user": {
 			users: []*userspb.User{
@@ -116,7 +126,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_invalid_empty_string_handle_user": {
 			users: []*userspb.User{
@@ -128,7 +139,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_invalid_contains_spaces_handle_user": {
 			users: []*userspb.User{
@@ -140,7 +152,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_no_email_user": {
 			users: []*userspb.User{
@@ -152,7 +165,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_unset_email_user": {
 			users: []*userspb.User{
@@ -163,7 +177,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password: &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_invalid_email_user": {
 			users: []*userspb.User{
@@ -175,7 +190,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_no_full_name_user": {
 			users: []*userspb.User{
@@ -187,7 +203,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_unset_full_name_user": {
 			users: []*userspb.User{
@@ -198,7 +215,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_no_family_name_user": {
 			users: []*userspb.User{
@@ -210,7 +228,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_no_given_name_user": {
 			users: []*userspb.User{
@@ -222,7 +241,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_no_password_user": {
 			users: []*userspb.User{
@@ -234,7 +254,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"validation_one_unset_password_user": {
 			users: []*userspb.User{
@@ -245,7 +266,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 				},
 			},
-			err: []bool{true},
+			err:  []bool{true},
+			kind: []error{ErrInvalidArgument},
 		},
 		"idempotency_two_identical_id_users": {
 			users: []*userspb.User{
@@ -264,7 +286,8 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 			},
-			err: []bool{false, true},
+			err:  []bool{false, true},
+			kind: []error{nil, ErrAlreadyExists},
 		},
 	}
 	for name, tc := range tests {
@@ -276,6 +299,9 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 				}
 				if err == nil && tc.err[index] {
 					t.Errorf("createUser expected an error but got nil")
+				}
+				if !errors.Is(err, tc.kind[index]) {
+					t.Errorf("createUser got an unexpected error type: %v", err)
 				}
 			}
 		})
