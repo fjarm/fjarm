@@ -33,6 +33,8 @@ func (dom *domain) createUser(ctx context.Context, user *userspb.User) (*userspb
 	} else if err != nil && errors.Is(err, ErrAuthenticationIssue) {
 		// Obscure authentication issues from the client.
 		return nil, ErrOperationFailed
+	} else if err != nil {
+		return nil, err
 	}
 	// Creating a user is dead simple because enrolling is not the same as authenticating. Users first sign up then
 	// log in.
