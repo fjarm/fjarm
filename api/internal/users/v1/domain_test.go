@@ -4,6 +4,7 @@ import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
 	"errors"
+	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/protobuf/proto"
 	"io"
 	"log/slog"
@@ -13,7 +14,11 @@ import (
 func TestUserDomain_createUser(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	repo := newInMemoryRepository(logger)
-	dom := newUserDomain(logger, repo)
+	validator, err := protovalidate.New()
+	if err != nil {
+		t.Errorf("failed to create a new validator: %v", err)
+	}
+	dom := newUserDomain(logger, repo, validator)
 
 	tests := map[string]struct {
 		users []*userspb.User

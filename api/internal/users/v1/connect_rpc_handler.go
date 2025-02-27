@@ -38,17 +38,6 @@ func (h *ConnectRPCHandler) CreateUser(
 	)
 	logger.InfoContext(ctx, "received request to create user")
 
-	// Validate the incoming message.
-	err := h.validator.Validate(req.Msg)
-	if err != nil || req.Msg.GetUserId().GetUserId() != req.Msg.GetUser().GetUserId().GetUserId() {
-		logger.ErrorContext(ctx,
-			"failed to validate incoming request message",
-			slog.String(logkeys.Raw, req.Msg.String()),
-			slog.Any(logkeys.Err, err),
-		)
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
-	}
-
 	// Create the user entity.
 	usr, err := h.domain.createUser(ctx, req.Msg)
 	if err != nil {
@@ -125,7 +114,7 @@ func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 	}
 
 	rep := newInMemoryRepository(l)
-	dom := newUserDomain(l, rep)
+	dom := newUserDomain(l, rep, validator)
 	han := ConnectRPCHandler{
 		domain:    dom,
 		logger:    l,
