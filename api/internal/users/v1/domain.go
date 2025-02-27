@@ -24,8 +24,11 @@ func newUserDomain(l *slog.Logger, r userRepository) userDomain {
 	return dom
 }
 
-func (dom *domain) createUser(ctx context.Context, user *userspb.User) (*userspb.User, error) {
-	_, err := dom.repo.createUser(ctx, user)
+// TODO(2025-02-26): Update the signature to accept a CreateUserRequest instead of a User so idempotency can be handled in the business logic.
+func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error) {
+	msg := req.GetUser()
+
+	_, err := dom.repo.createUser(ctx, msg)
 	if err != nil && errors.Is(err, ErrAlreadyExists) {
 		// User creation is idempotent. But, we don't want to leak this information to the client. So, instead of
 		// returning the error, we return a successful response without the user's details.

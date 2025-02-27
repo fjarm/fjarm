@@ -14,7 +14,7 @@ import (
 const connectRPCHandlerTag = "connect_rpc_handler"
 
 type userDomain interface {
-	createUser(ctx context.Context, user *userspb.User) (*userspb.User, error)
+	createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error)
 	getUserWithID(ctx context.Context, id *userspb.UserId) (*userspb.User, error)
 	updateUser(ctx context.Context, user *userspb.User) (*userspb.User, error)
 	deleteUser(ctx context.Context, user *userspb.User) error
@@ -50,7 +50,7 @@ func (h *ConnectRPCHandler) CreateUser(
 	}
 
 	// Create the user entity.
-	usr, err := h.domain.createUser(ctx, req.Msg.GetUser())
+	usr, err := h.domain.createUser(ctx, req.Msg)
 	if err != nil {
 		logger.ErrorContext(ctx,
 			"failed to create user entity",
