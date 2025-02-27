@@ -59,6 +59,13 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 			errs: []bool{false},
 			code: []connect.Code{},
 		},
+		"validation_one_nil_user": {
+			reqs: []*userspb.CreateUserRequest{
+				nil,
+			},
+			errs: []bool{true},
+			code: []connect.Code{connect.CodeInvalidArgument},
+		},
 		"validation_one_no_idempotency_key_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
