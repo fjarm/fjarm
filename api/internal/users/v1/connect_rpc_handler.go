@@ -14,10 +14,10 @@ import (
 const connectRPCHandlerTag = "connect_rpc_handler"
 
 type userDomain interface {
-	createUser(ctx context.Context, user *userspb.User) (*userspb.User, error)
-	getUserWithID(ctx context.Context, id *userspb.UserId) (*userspb.User, error)
-	updateUser(ctx context.Context, user *userspb.User) (*userspb.User, error)
-	deleteUser(ctx context.Context, user *userspb.User) error
+	createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error)
+	getUser(ctx context.Context, req *userspb.GetUserRequest) (*userspb.User, error)
+	updateUser(ctx context.Context, req *userspb.UpdateUserRequest) (*userspb.User, error)
+	deleteUser(ctx context.Context, req *userspb.DeleteUserRequest) error
 }
 
 // ConnectRPCHandler defines a ConnectRPC handler for the `fjarm.users.v1.UserService` service.
@@ -38,19 +38,8 @@ func (h *ConnectRPCHandler) CreateUser(
 	)
 	logger.InfoContext(ctx, "received request to create user")
 
-	// Validate the incoming message.
-	err := h.validator.Validate(req.Msg)
-	if err != nil || req.Msg.GetUserId().GetUserId() != req.Msg.GetUser().GetUserId().GetUserId() {
-		logger.ErrorContext(ctx,
-			"failed to validate incoming request message",
-			slog.String(logkeys.Raw, req.Msg.String()),
-			slog.Any(logkeys.Err, err),
-		)
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
-	}
-
 	// Create the user entity.
-	usr, err := h.domain.createUser(ctx, req.Msg.GetUser())
+	usr, err := h.domain.createUser(ctx, req.Msg)
 	if err != nil {
 		logger.ErrorContext(ctx,
 			"failed to create user entity",
@@ -125,7 +114,7 @@ func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 	}
 
 	rep := newInMemoryRepository(l)
-	dom := newUserDomain(l, rep)
+	dom := newUserDomain(l, rep, validator)
 	han := ConnectRPCHandler{
 		domain:    dom,
 		logger:    l,
