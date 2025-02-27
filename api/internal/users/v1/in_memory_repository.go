@@ -49,7 +49,16 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		return nil, ErrAlreadyExists
 	}
 
-	// TODO(2025-02-26): If a user entity with the same email address or handle as the message already exists, return an already exists error.
+	// If a user entity with the same email address or handle as the submitted message already exists, return an
+	// already exists error.
+	for _, usr := range repo.database {
+		if usr.EmailAddress == msg.GetEmailAddress().GetEmailAddress() {
+			return nil, ErrAlreadyExists
+		}
+		if usr.Handle == msg.GetHandle().GetHandle() {
+			return nil, ErrAlreadyExists
+		}
+	}
 
 	// At this point, the supplied user message should be valid. Convert the Protobuf message to a storage entity.
 	// Because `wireUserToStorageUser` returns an error if the message is nil, we don't need to check for `nil` here or

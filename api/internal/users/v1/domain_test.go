@@ -171,6 +171,78 @@ func TestUserDomain_createUser(t *testing.T) {
 			errs: []bool{false, false},
 			kind: []error{nil, nil},
 		},
+		"idempotency_two_identical_email_users": {
+			// Two identical users with different idempotency keys should pass without error because the internal state
+			// should be hidden from clients.
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: &idempotencypb.IdempotencyKey{
+						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
+						Timestamp:      timestamppb.Now(),
+					},
+					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper1")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+				{
+					IdempotencyKey: &idempotencypb.IdempotencyKey{
+						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
+						Timestamp:      timestamppb.Now(),
+					},
+					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // Different user ID from the one in the request above.
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // User ID here matches the user ID in the request message.
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+			},
+			errs: []bool{false, false},
+			kind: []error{nil, nil},
+		},
+		"idempotency_two_identical_handle_users": {
+			// Two identical users with different idempotency keys should pass without error because the internal state
+			// should be hidden from clients.
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: &idempotencypb.IdempotencyKey{
+						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
+						Timestamp:      timestamppb.Now(),
+					},
+					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+				{
+					IdempotencyKey: &idempotencypb.IdempotencyKey{
+						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
+						Timestamp:      timestamppb.Now(),
+					},
+					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // Different user ID from the one in the request above.
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // User ID here matches the user ID in the request message.
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+			},
+			errs: []bool{false, false},
+			kind: []error{nil, nil},
+		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
