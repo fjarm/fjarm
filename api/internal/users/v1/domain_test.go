@@ -1,13 +1,11 @@
 package v1
 
 import (
-	idempotencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/idempotency/v1"
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
 	"errors"
 	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
 	"log/slog"
 	"testing"
@@ -23,71 +21,83 @@ func TestUserDomain_createUser(t *testing.T) {
 	dom := newUserDomain(logger, repo, validator)
 
 	tests := map[string]struct {
-		users []*userspb.User
-		errs  []bool
-		kind  []error
+		reqs []*userspb.CreateUserRequest
+		errs []bool
+		kind []error
 	}{
 		"validation_one_valid_user": {
-			users: []*userspb.User{
+			reqs: []*userspb.CreateUserRequest{
 				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
 				},
 			},
 			errs: []bool{false},
 			kind: []error{nil},
 		},
 		"validation_one_no_password_user": {
-			users: []*userspb.User{
+			reqs: []*userspb.CreateUserRequest{
 				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{},
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{},
+					},
 				},
 			},
 			errs: []bool{true},
 			kind: []error{ErrInvalidArgument},
 		},
 		"idempotency_two_distinct_valid_users": {
-			users: []*userspb.User{
+			reqs: []*userspb.CreateUserRequest{
 				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
 				},
 				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
 				},
 			},
 			errs: []bool{false, false},
 			kind: []error{nil, nil},
 		},
 		"idempotency_two_identical_id_users": {
-			users: []*userspb.User{
+			reqs: []*userspb.CreateUserRequest{
 				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
 				},
 				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
 				},
 			},
 			errs: []bool{false, false},
@@ -96,15 +106,7 @@ func TestUserDomain_createUser(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			for i, msg := range tc.users {
-				req := &userspb.CreateUserRequest{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
-					UserId: &userspb.UserId{UserId: proto.String(msg.GetUserId().GetUserId())},
-					User:   msg,
-				}
+			for i, req := range tc.reqs {
 				_, err = dom.createUser(context.Background(), req)
 				if err != nil && !tc.errs[i] {
 					t.Errorf("createUser got an unexpected error: %v", err)
