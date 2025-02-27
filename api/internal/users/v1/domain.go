@@ -39,20 +39,19 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 		slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
 	)
 
-	msg := req.GetUser()
-
-	// Validate the incoming message.
-	err := dom.validator.Validate(msg)
+	// Validate the incoming request. The user it contains and its fields will be validated by the repository.
+	err := dom.validator.Validate(req)
 	// The user ID in the request must match the user ID in the user entity.
-	if err != nil || req.GetUserId().GetUserId() != msg.GetUserId().GetUserId() {
+	if err != nil || req.GetUserId().GetUserId() != req.GetUser().GetUserId().GetUserId() {
 		logger.ErrorContext(ctx,
 			"failed to validate incoming request message",
-			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
+			slog.String(logkeys.Raw, redactedUserMessageString(req.GetUser())),
 			slog.Any(logkeys.Err, err),
 		)
 		return nil, fmt.Errorf("%w: %w", ErrInvalidArgument, err)
 	}
 
+	msg := req.GetUser()
 	_, err = dom.repo.createUser(ctx, msg)
 	if err != nil && errors.Is(err, ErrAlreadyExists) {
 		// User creation is idempotent. But, we don't want to leak this information to the client. So, instead of
