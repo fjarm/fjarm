@@ -96,7 +96,7 @@ func TestUserDomain_createUser(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			for i, msg := range tc.users {
 				req := &userspb.CreateUserRequest{User: msg}
-				_, err := dom.createUser(context.Background(), req)
+				_, err = dom.createUser(context.Background(), req)
 				if err != nil && !tc.errs[i] {
 					t.Errorf("createUser got an unexpected error: %v", err)
 				}
