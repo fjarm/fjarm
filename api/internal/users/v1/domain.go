@@ -72,10 +72,10 @@ func (dom *domain) getUser(ctx context.Context, req *userspb.GetUserRequest) (*u
 	return nil, ErrUnimplemented
 }
 
-func (dom *domain) updateUser(ctx context.Context, user *userspb.User) (*userspb.User, error) {
+func (dom *domain) updateUser(ctx context.Context, req *userspb.UpdateUserRequest) (*userspb.User, error) {
 	return nil, ErrUnimplemented
 }
 
-func (dom *domain) deleteUser(ctx context.Context, user *userspb.User) error {
+func (dom *domain) deleteUser(ctx context.Context, req *userspb.DeleteUserRequest) error {
 	return ErrUnimplemented
 }
