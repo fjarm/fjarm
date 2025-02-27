@@ -15,7 +15,7 @@ const connectRPCHandlerTag = "connect_rpc_handler"
 
 type userDomain interface {
 	createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error)
-	getUserWithID(ctx context.Context, id *userspb.UserId) (*userspb.User, error)
+	getUser(ctx context.Context, req *userspb.GetUserRequest) (*userspb.User, error)
 	updateUser(ctx context.Context, user *userspb.User) (*userspb.User, error)
 	deleteUser(ctx context.Context, user *userspb.User) error
 }

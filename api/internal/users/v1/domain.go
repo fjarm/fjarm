@@ -68,7 +68,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	return &userspb.User{}, nil
 }
 
-func (dom *domain) getUserWithID(ctx context.Context, id *userspb.UserId) (*userspb.User, error) {
+func (dom *domain) getUser(ctx context.Context, req *userspb.GetUserRequest) (*userspb.User, error) {
 	return nil, ErrUnimplemented
 }
 
