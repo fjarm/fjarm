@@ -32,7 +32,7 @@ func newUserDomain(l *slog.Logger, r userRepository, v protovalidate.Validator) 
 	return dom
 }
 
-// TODO(2025-02-26): Update the signature to accept a CreateUserRequest instead of a User so idempotency can be handled in the business logic.
+// TODO(2025-02-27): Idempotency needs to be handled here after Redis-based caching is introduced.
 func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error) {
 	logger := dom.logger.With(
 		slog.String(logkeys.Tag, domainTag),
