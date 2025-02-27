@@ -1,11 +1,13 @@
 package v1
 
 import (
+	idempotencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/idempotency/v1"
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
 	"errors"
 	"github.com/bufbuild/protovalidate-go"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
 	"log/slog"
 	"testing"
@@ -28,6 +30,11 @@ func TestUserDomain_createUser(t *testing.T) {
 		"validation_one_valid_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
+					IdempotencyKey: &idempotencypb.IdempotencyKey{
+						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
+						Timestamp:      timestamppb.Now(),
+					},
+					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
