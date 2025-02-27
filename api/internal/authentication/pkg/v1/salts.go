@@ -17,7 +17,7 @@ func generateSalt(size int) (string, error) {
 	if err != nil {
 		// The error is not recoverable and therefore isn't defined in common_errors.go. This should result in a panic
 		// and connect.CodeUnknown being returned to the client.
-		return "", fmt.Errorf("failed to generate salt: %v", err)
+		return "", fmt.Errorf("failed to generate salt: %w", err)
 	}
 
 	// Encode as base64 for safe storage
