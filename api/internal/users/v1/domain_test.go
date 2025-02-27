@@ -47,6 +47,40 @@ func TestUserDomain_createUser(t *testing.T) {
 			errs: []bool{false},
 			kind: []error{nil},
 		},
+		"validation_one_nil_user": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: &idempotencypb.IdempotencyKey{
+						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
+						Timestamp:      timestamppb.Now(),
+					},
+					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					User:   nil, // The User field is required but is nil here.
+				},
+			},
+			errs: []bool{true},
+			kind: []error{ErrInvalidArgument},
+		},
+		"validation_one_mismatched_id_user": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: &idempotencypb.IdempotencyKey{
+						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
+						Timestamp:      timestamppb.Now(),
+					},
+					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174555")}, // The User ID here ends in 555, which doesn't match the user ID in the field below.
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+			},
+			errs: []bool{true},
+			kind: []error{ErrInvalidArgument},
+		},
 		"validation_one_no_password_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
