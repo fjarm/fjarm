@@ -21,3 +21,10 @@ go_test(
     embed = [":pkg"],
     deps = ["@com_connectrpc_connect//:connect"],
 )
+
+go_test(
+    name = "pkg_benchmark_test",
+    srcs = ["connect_rpc_ambiguous_timing_interceptor_benchmark_test.go"],
+    embed = [":pkg"],
+    deps = ["@com_connectrpc_connect//:connect"],
+)
