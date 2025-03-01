@@ -28,7 +28,7 @@ func TestNewConnectRPCAmbiguousTimingInterceptor_LogOutput(t *testing.T) {
 	}{
 		"valid_delay": {
 			delay:  DelayDuration(1000),
-			output: []string{"level=\"INFO\"", "msg=\"introduced ambiguous delay\"", "delay"},
+			output: []string{"level=INFO", "msg=\"introduced ambiguous delay\"", "delay"},
 		},
 		"invalid_negative_delay": {
 			delay:  DelayDuration(-1),
