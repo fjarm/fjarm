@@ -19,18 +19,31 @@ func TestNewConnectRPCAmbiguousTimingInterceptor_LogOutput(t *testing.T) {
 	next := func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
 		return nil, nil
 	}
-	interceptor := NewConnectRPCAmbiguousTimingInterceptor(l, DelayDuration_15000ms)(next)
+	delay := DelayDuration(1)
+	interceptor := NewConnectRPCAmbiguousTimingInterceptor(l, delay)(next)
 
 	tests := map[string]struct {
-	}{}
-	for name, _ := range tests {
+		delay  DelayDuration
+		output []string
+		err    bool
+	}{
+		"valid_delay": {
+			delay:  delay,
+			output: []string{"level=\"INFO\"", "msg=\"introduced ambiguous delay\"", "delay=1000ms"},
+		},
+	}
+	t.Parallel()
+	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			req := connect.NewRequest(
 				&[]string{"a", "cool", "request"},
 			)
 			_, err := interceptor(context.Background(), req)
-			if err != nil {
-
+			if err != nil && !tc.err {
+				t.Errorf("NewConnectRPCAmbiguousTimingInterceptor got an unexpected error: %v", err)
+			}
+			if err == nil && tc.err {
+				t.Errorf("NewConnectRPCAmbiguousTimingInterceptor expected an error but got none")
 			}
 		})
 	}
