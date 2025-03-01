@@ -5,6 +5,7 @@ import (
 	"connectrpc.com/connect"
 	"context"
 	"log/slog"
+	"strings"
 	"testing"
 )
 
@@ -13,14 +14,12 @@ func TestNewConnectRPCAmbiguousTimingInterceptor_LogOutput(t *testing.T) {
 	defer slog.SetDefault(dl)
 
 	var buf bytes.Buffer
-	l := slog.New(slog.NewJSONHandler(&buf, nil))
+	l := slog.New(slog.NewTextHandler(&buf, nil))
 	slog.SetDefault(l)
 
 	next := func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
 		return nil, nil
 	}
-	delay := DelayDuration(1)
-	interceptor := NewConnectRPCAmbiguousTimingInterceptor(l, delay)(next)
 
 	tests := map[string]struct {
 		delay  DelayDuration
@@ -28,13 +27,18 @@ func TestNewConnectRPCAmbiguousTimingInterceptor_LogOutput(t *testing.T) {
 		err    bool
 	}{
 		"valid_delay": {
-			delay:  delay,
-			output: []string{"level=\"INFO\"", "msg=\"introduced ambiguous delay\"", "delay=1000ms"},
+			delay:  DelayDuration(1000),
+			output: []string{"level=\"INFO\"", "msg=\"introduced ambiguous delay\"", "delay"},
+		},
+		"invalid_negative_delay": {
+			delay:  DelayDuration(-1),
+			output: []string{"level=INFO", "level=WARN", "msg=\"introduced ambiguous delay\"", "msg=\"invalid delay duration\"", "delay"},
 		},
 	}
 	t.Parallel()
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+			interceptor := NewConnectRPCAmbiguousTimingInterceptor(l, tc.delay)(next)
 			req := connect.NewRequest(
 				&[]string{"a", "cool", "request"},
 			)
@@ -44,6 +48,12 @@ func TestNewConnectRPCAmbiguousTimingInterceptor_LogOutput(t *testing.T) {
 			}
 			if err == nil && tc.err {
 				t.Errorf("NewConnectRPCAmbiguousTimingInterceptor expected an error but got none")
+			}
+			actual := buf.String()
+			for _, exp := range tc.output {
+				if !strings.Contains(actual, exp) {
+					t.Errorf("NewConnectRPCAmbiguousTimingInterceptor got: %s, want: %s", actual, tc.output)
+				}
 			}
 		})
 	}
