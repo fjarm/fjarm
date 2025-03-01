@@ -24,6 +24,11 @@ func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) c
 			)
 
 			start := time.Now()
+
+			if dd < 0 {
+				logger.WarnContext(ctx, "invalid delay duration", slog.Any("delay", dd))
+				dd = DelayDuration(1000)
+			}
 			// Introduce a random delay between 0 and dd milliseconds (usually 15 seconds).
 			delay := time.Duration(rand.Intn(int(dd))) * time.Millisecond
 
