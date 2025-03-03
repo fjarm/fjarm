@@ -25,27 +25,27 @@ func TestNewConnectRPCRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 
 	tests := map[string]struct {
 		headers  map[string]string
-		expected string
+		expected []string
 		err      bool
 	}{
 		"valid_non_empty_request_id": {
 			headers:  map[string]string{"request-id": "abc123"},
-			expected: "INFO msg=\"intercepted request\" request-id=abc123",
+			expected: []string{"INFO", "msg=\"intercepted request\"", "request-id=abc123"},
 			err:      false,
 		},
 		"invalid_empty_value_request_id": {
 			headers:  map[string]string{"request-id": ""},
-			expected: "WARN msg=\"intercepted request\" request-id=\"\"",
+			expected: []string{"WARN", "msg=\"intercepted request\"", "request-id=\"\""},
 			err:      true,
 		},
 		"invalid_empty_request_id": {
 			headers:  map[string]string{},
-			expected: "WARN msg=\"intercepted request\" request-id=\"\"",
+			expected: []string{"WARN", "msg=\"intercepted request\"", "request-id=\"\""},
 			err:      true,
 		},
 		"invalid_incorrect_key_request_id": {
 			headers:  map[string]string{"Request-id": "abc123"},
-			expected: "WARN msg=\"intercepted request\" request-id=\"\"",
+			expected: []string{"WARN", "msg=\"intercepted request\"", "request-id=\"\""},
 			err:      true,
 		},
 	}
@@ -62,8 +62,10 @@ func TestNewConnectRPCRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 				t.Errorf("NewConnectRPCRequestIDLoggingInterceptor got an unexpected error: %v", err)
 			}
 			actual := buf.String()
-			if !strings.Contains(actual, tc.expected) {
-				t.Errorf("NewConnectRPCRequestIDLoggingInterceptor got: %v, want: %v", actual, tc.expected)
+			for _, exp := range tc.expected {
+				if !strings.Contains(actual, exp) {
+					t.Errorf("NewConnectRPCRequestIDLoggingInterceptor got: %v, want: %v", actual, tc.expected)
+				}
 			}
 		})
 	}

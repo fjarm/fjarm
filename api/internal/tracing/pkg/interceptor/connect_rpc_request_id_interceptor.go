@@ -9,10 +9,12 @@ import (
 	"time"
 )
 
+const connectRPCRequestIDInterceptorTag = "connect_rpc_request_id_interceptor"
+
 // NewConnectRPCRequestIDLoggingInterceptor intercepts ConnectRPC requests and verifies that a key named `request-id` is
 // in the request headers with a non-null value. If the key can't be found, the request is automatically rejected.
 // Otherwise, the corresponding value is added to the context before completing the request.
-func NewConnectRPCRequestIDLoggingInterceptor(logger *slog.Logger) connect.UnaryInterceptorFunc {
+func NewConnectRPCRequestIDLoggingInterceptor(l *slog.Logger) connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
 			start := time.Now()
@@ -25,14 +27,18 @@ func NewConnectRPCRequestIDLoggingInterceptor(logger *slog.Logger) connect.Unary
 
 			clientIP := req.Peer().Addr
 
+			logger := l.With(
+				slog.String(logkeys.Tag, connectRPCRequestIDInterceptorTag),
+				slog.String(tracing.RequestIDKey, reqID),
+				slog.String(logkeys.Addr, clientIP),
+				slog.String(logkeys.Rpc, req.Spec().Procedure),
+			)
+
 			logger.Log(
 				ctx,
 				lvl,
 				"intercepted request",
-				slog.String(tracing.RequestIDKey, reqID),
 				slog.Time(logkeys.StartTime, start),
-				slog.String(logkeys.Addr, clientIP),
-				slog.String(logkeys.Rpc, req.Spec().Procedure),
 				slog.Any(logkeys.Err, err),
 			)
 
@@ -46,7 +52,6 @@ func NewConnectRPCRequestIDLoggingInterceptor(logger *slog.Logger) connect.Unary
 			logger.InfoContext(
 				ctx,
 				"completed request",
-				slog.String(tracing.RequestIDKey, reqID),
 				slog.Duration(logkeys.Duration, duration),
 				slog.Any(logkeys.Err, err),
 			)

@@ -1,0 +1,26 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "pkg",
+    srcs = [
+        "connect_rpc_ambiguous_timing_interceptor.go",
+        "delay_duration.go",
+    ],
+    importpath = "github.com/fjarm/fjarm/api/internal/obfuscation/pkg",
+    visibility = ["//api:__subpackages__"],
+    deps = [
+        "//api/internal/logkeys",
+        "//api/internal/tracing",
+        "@com_connectrpc_connect//:connect",
+    ],
+)
+
+go_test(
+    name = "pkg_test",
+    srcs = [
+        "connect_rpc_ambiguous_timing_interceptor_benchmark_test.go",
+        "connect_rpc_ambiguous_timing_interceptor_test.go",
+    ],
+    embed = [":pkg"],
+    deps = ["@com_connectrpc_connect//:connect"],
+)
