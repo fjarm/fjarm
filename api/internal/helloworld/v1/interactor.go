@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
+	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
 )
 
@@ -14,29 +15,28 @@ type getHelloWorldMessageer interface {
 }
 
 type interactor struct {
-	repo getHelloWorldMessageer
+	logger *slog.Logger
+	repo   getHelloWorldMessageer
 }
 
-func newInteractor(repo getHelloWorldMessageer) *interactor {
+func newInteractor(logger *slog.Logger, repo getHelloWorldMessageer) *interactor {
 	return &interactor{
-		repo: repo,
+		logger: logger,
+		repo:   repo,
 	}
 }
 
 func (svc *interactor) getHelloWorld(ctx context.Context, input string) (string, error) {
-	slog.InfoContext(
-		ctx,
-		"called getHelloWorld",
+	logger := svc.logger.With(
 		slog.String(logkeys.Tag, interactorTag),
-		slog.String("input", input),
+		slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
 	)
 
 	msg, err := svc.repo.getHelloWorldMessage(ctx)
 	if err != nil {
-		slog.WarnContext(
+		logger.WarnContext(
 			ctx,
 			"getHelloWorld failed to request message from repository",
-			slog.String(logkeys.Tag, interactorTag),
 			slog.String(logkeys.Err, err.Error()),
 		)
 		return "", err

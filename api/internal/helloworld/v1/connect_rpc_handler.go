@@ -80,7 +80,7 @@ func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 	}
 
 	repo := newInMemoryRepository()
-	dom := newInteractor(repo)
+	dom := newInteractor(logger, repo)
 	han := ConnectRPCHandler{
 		domain:    dom,
 		logger:    logger,
