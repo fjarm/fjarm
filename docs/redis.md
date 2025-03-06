@@ -94,8 +94,16 @@ To avoid downtime when restarting Redis, the following steps can be taken:
 - Handles large datasets through horizontal scaling
 - Uses 16384 hash slots for data distribution
 
-## References and links
+## Documentation
 * [Redis OSS management](https://redis.io/docs/latest/operate/oss_and_stack/management/)
 * [Upgrading or restarting Redis without downtime](https://redis.io/docs/latest/cluster-tutorial#upgrading-or-restarting-redis-without-downtime)
 * [Redis security overview](https://redis.io/docs/latest/operate/oss_and_stack/management/security/)
 * [Redis ACLs overview](https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/)
+* [Redis TLS overview](https://redis.io/docs/latest/operate/oss_and_stack/management/security/encryption/)
+* [Redis Streams intro](https://redis.io/topics/streams-intro)
+
+## Demos and tutorials
+* [Redis tutorials](https://redis.io/learn/operate/redis-at-scale)
+* [CQRS with Redis Streams](https://redis.io/learn/howtos/solutions/microservices/cqrs)
+* [Event driven architecture with Redis Streams - Harness blog](https://www.harness.io/blog/event-driven-architecture-redis-streams)
+* [Redis Cluster tutorial](https://redis.io/docs/latest/cluster-tutorial)
