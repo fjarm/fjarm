@@ -106,4 +106,5 @@ To avoid downtime when restarting Redis, the following steps can be taken:
 * [Redis tutorials](https://redis.io/learn/operate/redis-at-scale)
 * [CQRS with Redis Streams](https://redis.io/learn/howtos/solutions/microservices/cqrs)
 * [Event driven architecture with Redis Streams - Harness blog](https://www.harness.io/blog/event-driven-architecture-redis-streams)
+* [Streams in Redis - LogRocket](https://blog.logrocket.com/why-are-we-getting-streams-in-redis-8c36498aaac5/)
 * [Redis Cluster tutorial](https://redis.io/docs/latest/cluster-tutorial)
