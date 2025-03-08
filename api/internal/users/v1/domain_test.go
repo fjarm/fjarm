@@ -101,6 +101,39 @@ func TestUserDomain_createUser(t *testing.T) {
 			errs: []bool{true},
 			kind: []error{ErrInvalidArgument},
 		},
+		"validation_one_unset_idempotency_key_request": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+			},
+			errs: []bool{true},
+			kind: []error{ErrInvalidArgument},
+		},
+		"validation_one_no_idempotency_key_request": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: &idempotencypb.IdempotencyKey{},
+					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+			},
+			errs: []bool{true},
+			kind: []error{ErrInvalidArgument},
+		},
 		"idempotency_two_distinct_valid_users": {
 			reqs: []*userspb.CreateUserRequest{
 				{
