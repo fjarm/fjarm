@@ -9,12 +9,27 @@ import (
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
+	"time"
 )
 
 const domainTag = "domain"
 
 type userRepository interface {
 	createUser(ctx context.Context, user *userspb.User) (*user, error)
+}
+
+// IdempotencyCache is an interface that describes how idempotency is leveraged in the users domain.
+type IdempotencyCache interface {
+	// Get retrieves the value for a given key if it exists. If the key doesn't exist, a nil slice is returned without
+	// any error.
+	Get(ctx context.Context, key string) ([]byte, error)
+
+	// Set writes a key value pair in the cache. If the key already exists, an error is returned.
+	Set(ctx context.Context, key string, value []byte, ttl time.Duration) error
+
+	// Update writes a key value pair in the cache. If the key already exists, the value is updated. If the key doesn't
+	// exist, the key value pair is created.
+	Update(ctx context.Context, key string, value []byte, ttl time.Duration) error
 }
 
 type domain struct {
