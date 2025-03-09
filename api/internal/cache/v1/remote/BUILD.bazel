@@ -1,0 +1,19 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "remote",
+    srcs = ["redis_cache.go"],
+    importpath = "github.com/fjarm/fjarm/api/internal/cache/v1/remote",
+    visibility = ["//api:__subpackages__"],
+    deps = [
+        "//api/internal/cache/v1:cache",
+        "//api/internal/logkeys",
+        "@com_github_redis_go_redis_v9//:go-redis",
+    ],
+)
+
+go_test(
+    name = "remote_test",
+    srcs = ["redis_cache_test.go"],
+    embed = [":remote"],
+)
