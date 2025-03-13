@@ -96,6 +96,7 @@ To avoid downtime when restarting Redis, the following steps can be taken:
 
 ## Documentation
 * [Redis OSS management](https://redis.io/docs/latest/operate/oss_and_stack/management/)
+* [Redis high availability with Sentinel](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/)
 * [Upgrading or restarting Redis without downtime](https://redis.io/docs/latest/cluster-tutorial#upgrading-or-restarting-redis-without-downtime)
 * [Redis security overview](https://redis.io/docs/latest/operate/oss_and_stack/management/security/)
 * [Redis ACLs overview](https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/)
@@ -104,6 +105,7 @@ To avoid downtime when restarting Redis, the following steps can be taken:
 
 ## Demos and tutorials
 * [Redis tutorials](https://redis.io/learn/operate/redis-at-scale)
+* [Cache aside pattern overview with examples](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside)
 * [CQRS with Redis Streams](https://redis.io/learn/howtos/solutions/microservices/cqrs)
 * [Event driven architecture with Redis Streams - Harness blog](https://www.harness.io/blog/event-driven-architecture-redis-streams)
 * [Streams in Redis - LogRocket](https://blog.logrocket.com/why-are-we-getting-streams-in-redis-8c36498aaac5/)
