@@ -31,10 +31,3 @@ go_cross_binary(
     target = ":helloworld",
     visibility = ["//visibility:public"],
 )
-
-go_cross_binary(
-    name = "helloworld_linux_amd64",
-    platform = "@rules_go//go/toolchain:linux_amd64",
-    target = ":helloworld",
-    visibility = ["//visibility:public"],
-)
