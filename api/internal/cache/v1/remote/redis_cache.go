@@ -7,14 +7,15 @@ import (
 	cachev1 "github.com/fjarm/fjarm/api/internal/cache/v1"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/redis/go-redis/v9"
+	"github.com/redis/rueidis"
 	"log/slog"
 	"time"
 )
 
 const redisCacheTag = "redis_cache"
 
+// TODO(2025-03-09): Replace go-redis with rueidis.
 // TODO(2025-03-09): Test RedisCache implementation.
-// TODO(2025-03-09): Implement TLS client and server support.
 // TODO(2025-03-09): Use Redis Sentinel.
 // TODO(2025-03-09): Manually configure Redis connection pooling.
 // TODO(2025-03-09): Add OpenTelemetry-based monitoring to Redis.
@@ -23,6 +24,7 @@ const redisCacheTag = "redis_cache"
 type RedisCache struct {
 	client *redis.Client
 	logger *slog.Logger
+	rdb    rueidis.Client
 }
 
 // Get retrieves the value associated with the supplied key from the remote Redis cache. If no such key/value pair
@@ -74,10 +76,49 @@ func (c *RedisCache) Update(ctx context.Context, key string, value []byte, ttl t
 	return nil
 }
 
+// newRedisClient creates a new Redis client using rueidis.
+func newRedisClient() (rueidis.Client, error) {
+	client, err := rueidis.NewClient(
+		rueidis.ClientOption{
+			// TODO(2025-03-09): Implement TLS client and server support. Load TLS cert/key and CA cert using infisical.
+			TLSConfig: nil,
+			// TODO(2025-03-09): Supply AuthCredentialsFn to provide username and password for ACL support.
+			AuthCredentialsFn: nil,
+			InitAddress: []string{
+				// When running Sentinel mode, all node addresses need to be supplied. In Cluster mode, only the one
+				// address needs to be supplied.
+				"redis-cluster.railway.internal:6379",
+			},
+			ClientTrackingOptions: []string{
+				// This is the default value. Keys mentioned in read operations aren't cached. Caching must be
+				// proactively turned on immediately before the actual command to enable client-side caching.
+				"OPTIN",
+			},
+			// TODO(2025-03-09): Allow specifying CacheSizeEachConn when client-side caching is enabled.
+			BlockingPoolCleanup: 30 * time.Second,
+			MaxFlushDelay:       0,
+			// TODO(2025-03-09): Set ShardsRefreshInterval to non-zero value after enabling Redis Cluster.
+			//ClusterOption:         rueidis.ClusterOption{
+			//	ShardsRefreshInterval: 0,
+			//},
+			DisableCache:          true, // Disable client-side caching.
+			DisableAutoPipelining: true, // Manual pipelining can be enabled using client.DoMulti().
+			// Toggled to true for read-only clients. But this should be accomplished using ACLs.
+			ReplicaOnly: false,
+		},
+	)
+	return client, err
+}
+
 // NewRedisCache creates a new RedisCache instance.
-func NewRedisCache(client *redis.Client, logger *slog.Logger) *RedisCache {
+func NewRedisCache(logger *slog.Logger) *RedisCache {
+	client, err := newRedisClient()
+	if err != nil {
+		logger.Error("failed to create Redis client", slog.Any(logkeys.Err, err))
+		return nil
+	}
 	return &RedisCache{
-		client: client,
 		logger: logger,
+		rdb:    client,
 	}
 }
