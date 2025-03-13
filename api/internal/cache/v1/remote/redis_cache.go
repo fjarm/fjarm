@@ -77,18 +77,18 @@ func (c *RedisCache) Update(ctx context.Context, key string, value []byte, ttl t
 }
 
 // newRedisClient creates a new Redis client using rueidis.
-func newRedisClient() (rueidis.Client, error) {
+func newRedisClient(addrs []string) (rueidis.Client, error) {
 	client, err := rueidis.NewClient(
 		rueidis.ClientOption{
 			// TODO(2025-03-09): Implement TLS client and server support. Load TLS cert/key and CA cert using infisical.
 			TLSConfig: nil,
 			// TODO(2025-03-09): Supply AuthCredentialsFn to provide username and password for ACL support.
 			AuthCredentialsFn: nil,
-			InitAddress: []string{
+			InitAddress: append([]string{
 				// When running Sentinel mode, all node addresses need to be supplied. In Cluster mode, only the one
 				// address needs to be supplied.
 				"redis-cluster.railway.internal:6379",
-			},
+			}, addrs...),
 			ClientTrackingOptions: []string{
 				// This is the default value. Keys mentioned in read operations aren't cached. Caching must be
 				// proactively turned on immediately before the actual command to enable client-side caching.
@@ -111,8 +111,8 @@ func newRedisClient() (rueidis.Client, error) {
 }
 
 // NewRedisCache creates a new RedisCache instance.
-func NewRedisCache(logger *slog.Logger) *RedisCache {
-	client, err := newRedisClient()
+func NewRedisCache(addrs []string, logger *slog.Logger) *RedisCache {
+	client, err := newRedisClient(addrs)
 	if err != nil {
 		logger.Error("failed to create Redis client", slog.Any(logkeys.Err, err))
 		return nil
