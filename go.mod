@@ -8,6 +8,7 @@ require (
 	connectrpc.com/connect v1.18.1
 	github.com/bufbuild/protovalidate-go v0.9.2
 	github.com/redis/go-redis/v9 v9.7.1
+	github.com/redis/rueidis v1.0.55
 	golang.org/x/crypto v0.33.0
 	google.golang.org/protobuf v1.36.5
 )
@@ -21,7 +22,6 @@ require (
 	github.com/google/cel-go v0.23.2 // indirect
 	github.com/stoewer/go-strcase v1.3.0 // indirect
 	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa // indirect
-	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250219182151-9fdb1cabc7b2 // indirect

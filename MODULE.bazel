@@ -23,6 +23,7 @@ use_repo(
     "com_connectrpc_connect",
     "com_github_bufbuild_protovalidate_go",
     "com_github_redis_go_redis_v9",
+    "com_github_redis_rueidis",
     "org_golang_google_protobuf",
     "org_golang_x_crypto",
 )
