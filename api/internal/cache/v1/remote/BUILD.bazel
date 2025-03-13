@@ -8,7 +8,6 @@ go_library(
     deps = [
         "//api/internal/cache/v1:cache",
         "//api/internal/logkeys",
-        "@com_github_redis_go_redis_v9//:go-redis",
         "@com_github_redis_rueidis//:rueidis",
     ],
 )
