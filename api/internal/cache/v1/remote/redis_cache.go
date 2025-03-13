@@ -106,14 +106,9 @@ func newRedisClient(addrs []string) (rueidis.Client, error) {
 }
 
 // NewRedisCache creates a new RedisCache instance.
-func NewRedisCache(addrs []string, logger *slog.Logger) *RedisCache {
-	client, err := newRedisClient(addrs)
-	if err != nil {
-		logger.Error("failed to create Redis client", slog.Any(logkeys.Err, err))
-		return nil
-	}
+func NewRedisCache(rdb rueidis.Client, logger *slog.Logger) *RedisCache {
 	return &RedisCache{
 		logger: logger,
-		rdb:    client,
+		rdb:    rdb,
 	}
 }
