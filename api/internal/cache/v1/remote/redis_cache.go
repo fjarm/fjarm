@@ -12,7 +12,6 @@ import (
 
 const redisCacheTag = "redis_cache"
 
-// TODO(2025-03-09): Replace go-redis with rueidis.
 // TODO(2025-03-09): Test RedisCache implementation.
 // TODO(2025-03-09): Use Redis Sentinel.
 // TODO(2025-03-09): Manually configure Redis connection pooling.
