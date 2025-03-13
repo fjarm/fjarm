@@ -2,11 +2,9 @@ package remote
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	cachev1 "github.com/fjarm/fjarm/api/internal/cache/v1"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/redis/go-redis/v9"
 	"github.com/redis/rueidis"
 	"log/slog"
 	"time"
@@ -22,7 +20,6 @@ const redisCacheTag = "redis_cache"
 
 // RedisCache is a distributed cache that uses Redis Sentinel for high availability.
 type RedisCache struct {
-	client *redis.Client
 	logger *slog.Logger
 	rdb    rueidis.Client
 }
@@ -33,8 +30,9 @@ func (c *RedisCache) Get(ctx context.Context, key string) ([]byte, error) {
 	logger := c.logger.With(slog.String(logkeys.Tag, redisCacheTag), slog.String("key", key))
 	logger.DebugContext(ctx, "attempted to get a key from Redis cache")
 
-	res, err := c.client.Get(ctx, key).Bytes()
-	if err != nil && errors.Is(err, redis.Nil) {
+	cmd := c.rdb.B().Get().Key(key).Build()
+	res, err := c.rdb.Do(ctx, cmd).AsBytes()
+	if err != nil && rueidis.IsRedisNil(err) {
 		// The key doesn't exist in the cache. This is an innocuous error.
 		logger.DebugContext(ctx, "failed to find key in Redis cache")
 		return nil, fmt.Errorf("%w: %w", cachev1.ErrCacheMiss, err)
@@ -50,14 +48,11 @@ func (c *RedisCache) Set(ctx context.Context, key string, value []byte, ttl time
 	logger := c.logger.With(slog.String(logkeys.Tag, redisCacheTag), slog.String("key", key))
 	logger.DebugContext(ctx, "attempted to set a key in Redis cache")
 
-	success, err := c.client.SetNX(ctx, key, value, ttl).Result()
+	cmd := c.rdb.B().Set().Key(key).Value(rueidis.BinaryString(value)).Nx().Ex(ttl).Build()
+	err := c.rdb.Do(ctx, cmd).Error()
 	if err != nil {
-		logger.WarnContext(ctx, "failed to set key in Redis cache")
+		logger.WarnContext(ctx, "failed to set key in Redis cache", slog.Any(logkeys.Err, err))
 		return err
-	}
-	if !success {
-		logger.DebugContext(ctx, "key already exists in Redis cache")
-		return fmt.Errorf("%w: key %s already exists", cachev1.ErrKeyExists, key)
 	}
 	return nil
 }
@@ -68,9 +63,10 @@ func (c *RedisCache) Update(ctx context.Context, key string, value []byte, ttl t
 	logger := c.logger.With(slog.String(logkeys.Tag, redisCacheTag), slog.String("key", key))
 	logger.DebugContext(ctx, "attempted to update a key in Redis cache")
 
-	_, err := c.client.Set(ctx, key, value, ttl).Result()
+	cmd := c.rdb.B().Set().Key(key).Value(rueidis.BinaryString(value)).Ex(ttl).Build()
+	err := c.rdb.Do(ctx, cmd).Error()
 	if err != nil {
-		logger.WarnContext(ctx, "failed to set key in Redis cache")
+		logger.WarnContext(ctx, "failed to update key in Redis cache")
 		return err
 	}
 	return nil
