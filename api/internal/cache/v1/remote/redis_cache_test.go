@@ -3,6 +3,7 @@ package remote
 import (
 	"context"
 	"errors"
+	cachev1 "github.com/fjarm/fjarm/api/internal/cache/v1"
 	"io"
 	"log/slog"
 	"testing"
@@ -15,18 +16,31 @@ func TestRedisCache_Get(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to create Redis client: %v", err)
 	}
+	type testcase struct {
+		val  string
+		err  bool
+		kind error
+	}
 	tests := map[string]struct {
-		set map[string]struct {
-			val  string
-			err  bool
-			kind error
-		}
-		get map[string]struct {
-			val  string
-			err  bool
-			kind error
-		}
-	}{}
+		set map[string]testcase
+		get map[string]testcase
+	}{
+		"valid_set_and_get": {
+			set: map[string]testcase{
+				"key1": {val: "value1", err: false, kind: nil},
+				"key2": {val: "value2", err: false, kind: nil},
+				"key3": {val: "value3", err: false, kind: nil},
+			},
+			get: map[string]testcase{
+				"key1": {val: "value1", err: false, kind: nil},
+				"key2": {val: "value2", err: false, kind: nil},
+				"key3": {val: "value3", err: false, kind: nil},
+				"key4": {val: "", err: true, kind: cachev1.ErrCacheMiss},
+				"key5": {val: "", err: true, kind: cachev1.ErrCacheMiss},
+				"":     {val: "", err: true, kind: cachev1.ErrCacheMiss},
+			},
+		},
+	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			rc := NewRedisCache(rdb, logger)
