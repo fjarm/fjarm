@@ -49,7 +49,11 @@ func (c *RedisCache) Set(ctx context.Context, key string, value []byte, ttl time
 
 	cmd := c.rdb.B().Set().Key(key).Value(rueidis.BinaryString(value)).Nx().Ex(ttl).Build()
 	err := c.rdb.Do(ctx, cmd).Error()
-	if err != nil {
+	if err != nil && rueidis.IsRedisNil(err) {
+		// The key already exists in the cache. This is an innocuous error.
+		logger.DebugContext(ctx, "failed to set existing key in Redis cache", slog.String("key", key))
+		return fmt.Errorf("%w: %w", cachev1.ErrKeyExists, err)
+	} else if err != nil {
 		logger.WarnContext(ctx, "failed to set key in Redis cache", slog.Any(logkeys.Err, err))
 		return err
 	}
