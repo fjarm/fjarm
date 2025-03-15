@@ -108,5 +108,6 @@ To avoid downtime when restarting Redis, the following steps can be taken:
 * [Cache aside pattern overview with examples](https://learn.microsoft.com/en-us/azure/architecture/patterns/cache-aside)
 * [CQRS with Redis Streams](https://redis.io/learn/howtos/solutions/microservices/cqrs)
 * [Event driven architecture with Redis Streams - Harness blog](https://www.harness.io/blog/event-driven-architecture-redis-streams)
-* [Streams in Redis - LogRocket](https://blog.logrocket.com/why-are-we-getting-streams-in-redis-8c36498aaac5/)
+* [Streams in Redis - LogRocket blog](https://blog.logrocket.com/why-are-we-getting-streams-in-redis-8c36498aaac5/)
+* [Redis best practices - Mattermost blog](https://mattermost.com/blog/lessons-learned-running-redis-at-scale/)
 * [Redis Cluster tutorial](https://redis.io/docs/latest/cluster-tutorial)
