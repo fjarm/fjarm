@@ -67,6 +67,10 @@ func (c *RedisCache) Set(ctx context.Context, key string, value []byte, ttl time
 // Update adds the supplied key/value pair to the Redis cache. If the key already exists, the associated value is
 // overwritten.
 func (c *RedisCache) Update(ctx context.Context, key string, value []byte, ttl time.Duration) error {
+	if ttl <= 0 {
+		return fmt.Errorf("%w: %s", cachev1.ErrInvalidExpiration, "ttl must be greater than 0")
+	}
+
 	logger := c.logger.With(slog.String(logkeys.Tag, redisCacheTag), slog.String("key", key))
 	logger.DebugContext(ctx, "attempted to update a key in Redis cache")
 
