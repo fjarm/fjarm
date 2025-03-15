@@ -60,6 +60,7 @@ func TestRedisCache_GetAndSet(t *testing.T) {
 	type testcase struct {
 		val  string
 		err  bool
+		ttl  time.Duration
 		kind error
 	}
 	tests := map[string]struct {
@@ -68,9 +69,12 @@ func TestRedisCache_GetAndSet(t *testing.T) {
 	}{
 		"valid_set_and_get": {
 			set: map[string]testcase{
-				"key1": {val: "value1", err: false, kind: nil},
-				"key2": {val: "value2", err: false, kind: nil},
-				"key3": {val: "value3", err: false, kind: nil},
+				"key1": {val: "value1", err: false, kind: nil, ttl: 10 * time.Second},
+				"key2": {val: "value2", err: false, kind: nil, ttl: 10 * time.Second},
+				"key3": {val: "value3", err: false, kind: nil, ttl: 10 * time.Second},
+				"key4": {val: "value4", err: true, kind: cachev1.ErrInvalidExpiration},
+				"key5": {val: "value5", err: true, kind: cachev1.ErrInvalidExpiration, ttl: 0},
+				"key6": {val: "value6", err: true, kind: cachev1.ErrInvalidExpiration, ttl: -1 * time.Second},
 			},
 			get: map[string]testcase{
 				"key1": {val: "value1", err: false, kind: nil},
@@ -86,7 +90,7 @@ func TestRedisCache_GetAndSet(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			rc := NewRedisCache(rdb, logger)
 			for key, val := range tc.set {
-				se := rc.Set(ctx, key, []byte(val.val), 1*time.Minute)
+				se := rc.Set(ctx, key, []byte(val.val), val.ttl)
 				if se != nil && !val.err {
 					t.Errorf("Set got an unexpected error: %v", se)
 				}
