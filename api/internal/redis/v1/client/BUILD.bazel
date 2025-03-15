@@ -1,0 +1,9 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "client",
+    srcs = ["redis_client.go"],
+    importpath = "github.com/fjarm/fjarm/api/internal/redis/v1/client",
+    visibility = ["//api:__subpackages__"],
+    deps = ["@com_github_redis_rueidis//:rueidis"],
+)

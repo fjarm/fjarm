@@ -19,6 +19,7 @@ go_test(
     deps = [
         "//api/internal/cache/v1:cache",
         "//api/internal/logkeys",
+        "//api/internal/redis/v1/client",
         "@com_github_redis_rueidis//:rueidis",
         "@com_github_testcontainers_testcontainers_go_modules_redis//:redis",
     ],

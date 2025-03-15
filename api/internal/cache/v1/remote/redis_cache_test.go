@@ -5,6 +5,7 @@ import (
 	"errors"
 	cachev1 "github.com/fjarm/fjarm/api/internal/cache/v1"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
+	"github.com/fjarm/fjarm/api/internal/redis/v1/client"
 	"github.com/redis/rueidis"
 	"github.com/testcontainers/testcontainers-go/modules/redis"
 	"io"
@@ -42,7 +43,7 @@ func TestMain(m *testing.M) {
 	}
 
 	addrs := rueidis.MustParseURL(connectionURI).InitAddress
-	rdb, err = newRedisClient(addrs)
+	rdb, err = client.NewRedisClient(nil, rueidis.AuthCredentials{}, addrs)
 	if err != nil {
 		slog.Error("failed to create Redis client", slog.Any(logkeys.Err, err))
 	}
@@ -121,6 +122,7 @@ func TestRedisCache_GetAndSet(t *testing.T) {
 			}
 		})
 	}
+	rdb.Do(ctx, rdb.B().Flushall().Build())
 }
 
 func TestRedisCache_Update(t *testing.T) {
@@ -198,4 +200,5 @@ func TestRedisCache_Update(t *testing.T) {
 			}
 		})
 	}
+	rdb.Do(ctx, rdb.B().Flushall().Build())
 }
