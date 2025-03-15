@@ -44,6 +44,10 @@ func (c *RedisCache) Get(ctx context.Context, key string) ([]byte, error) {
 // Set adds the supplied key/value pair to the Redis cache. If the key already exists, a v1.ErrKeyExists error is
 // returned. Other errors indicate something more serious.
 func (c *RedisCache) Set(ctx context.Context, key string, value []byte, ttl time.Duration) error {
+	if ttl <= 0 {
+		return fmt.Errorf("%w: %s", cachev1.ErrInvalidExpiration, "ttl must be greater than 0")
+	}
+
 	logger := c.logger.With(slog.String(logkeys.Tag, redisCacheTag), slog.String("key", key))
 	logger.DebugContext(ctx, "attempted to set a key in Redis cache")
 
@@ -83,11 +87,9 @@ func newRedisClient(addrs []string) (rueidis.Client, error) {
 			TLSConfig: nil,
 			// TODO(2025-03-09): Supply AuthCredentialsFn to provide username and password for ACL support.
 			AuthCredentialsFn: nil,
-			InitAddress: append([]string{
-				// When running Sentinel mode, all node addresses need to be supplied. In Cluster mode, only the one
-				// address needs to be supplied.
-				"redis-cluster.railway.internal:6379",
-			}, addrs...),
+			// When running Sentinel mode, all node addresses need to be individually supplied. In Cluster mode, only
+			// the one address needs to be supplied like - "redis-cluster.railway.internal:6379".
+			InitAddress: addrs,
 			ClientTrackingOptions: []string{
 				// This is the default value. Keys mentioned in read operations aren't cached. Caching must be
 				// proactively turned on immediately before the actual command to enable client-side caching.
