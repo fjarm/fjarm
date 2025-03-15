@@ -23,6 +23,7 @@ use_repo(
     "com_connectrpc_connect",
     "com_github_bufbuild_protovalidate_go",
     "com_github_redis_rueidis",
+    "com_github_testcontainers_testcontainers_go_modules_redis",
     "org_golang_google_protobuf",
     "org_golang_x_crypto",
 )
@@ -44,5 +45,20 @@ use_repo(
     "distroless_static_linux_amd64",
     "distroless_static_linux_arm64_v8",
 )
+
+# This dependency is only needed because testcontainers-go adds a transitive dependency on gogo/protobuf.
+bazel_dep(name = "toolchains_protoc", version = "0.3.7")
+# Optional: choose a version of protoc rather than the latest.
+protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
+protoc.toolchain(
+    # Creates a repository to satisfy well-known-types dependencies such as
+    # deps=["@com_google_protobuf//:any_proto"]
+    # Add com_google_protobuf to the `use_repo` call below
+    # google_protobuf = "com_google_protobuf",
+    # Pin to any version of protoc
+    version = "v29.3",
+)
+use_repo(protoc, "toolchains_protoc_hub")
+register_toolchains("@toolchains_protoc_hub//:all")
 
 register_toolchains("//tools/toolchains:all")
