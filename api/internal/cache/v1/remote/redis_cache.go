@@ -7,13 +7,13 @@ import (
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/redis/rueidis"
 	"log/slog"
+	"strings"
 	"time"
 )
 
 const redisCacheTag = "redis_cache"
 
-// TODO(2025-03-09): Test RedisCache implementation.
-// TODO(2025-03-09): Use Redis Sentinel.
+// TODO(2025-03-09): Setup Redis Sentinel in docker-compose.yaml file.
 // TODO(2025-03-09): Manually configure Redis connection pooling.
 // TODO(2025-03-09): Add OpenTelemetry-based monitoring to Redis.
 
@@ -26,6 +26,10 @@ type RedisCache struct {
 // Get retrieves the value associated with the supplied key from the remote Redis cache. If no such key/value pair
 // exists, a v1.ErrCacheMiss error is returned. Other errors indicate something more serious.
 func (c *RedisCache) Get(ctx context.Context, key string) ([]byte, error) {
+	if strings.TrimSpace(key) == "" {
+		return nil, fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or whitespace")
+	}
+
 	logger := c.logger.With(slog.String(logkeys.Tag, redisCacheTag), slog.String("key", key))
 	logger.DebugContext(ctx, "attempted to get a key from Redis cache")
 
@@ -44,6 +48,9 @@ func (c *RedisCache) Get(ctx context.Context, key string) ([]byte, error) {
 // Set adds the supplied key/value pair to the Redis cache. If the key already exists, a v1.ErrKeyExists error is
 // returned. Other errors indicate something more serious.
 func (c *RedisCache) Set(ctx context.Context, key string, value []byte, ttl time.Duration) error {
+	if strings.TrimSpace(key) == "" {
+		return fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or whitespace")
+	}
 	if ttl <= 0 {
 		return fmt.Errorf("%w: %s", cachev1.ErrInvalidExpiration, "ttl must be greater than 0")
 	}
@@ -67,6 +74,9 @@ func (c *RedisCache) Set(ctx context.Context, key string, value []byte, ttl time
 // Update adds the supplied key/value pair to the Redis cache. If the key already exists, the associated value is
 // overwritten.
 func (c *RedisCache) Update(ctx context.Context, key string, value []byte, ttl time.Duration) error {
+	if strings.TrimSpace(key) == "" {
+		return fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or whitespace")
+	}
 	if ttl <= 0 {
 		return fmt.Errorf("%w: %s", cachev1.ErrInvalidExpiration, "ttl must be greater than 0")
 	}
