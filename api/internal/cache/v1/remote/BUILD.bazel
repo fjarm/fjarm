@@ -16,4 +16,10 @@ go_test(
     name = "remote_test",
     srcs = ["redis_cache_test.go"],
     embed = [":remote"],
+    deps = [
+        "//api/internal/cache/v1:cache",
+        "//api/internal/logkeys",
+        "@com_github_redis_rueidis//:rueidis",
+        "@com_github_testcontainers_testcontainers_go_modules_redis//:redis",
+    ],
 )

@@ -4,18 +4,59 @@ import (
 	"context"
 	"errors"
 	cachev1 "github.com/fjarm/fjarm/api/internal/cache/v1"
+	"github.com/fjarm/fjarm/api/internal/logkeys"
+	"github.com/redis/rueidis"
+	"github.com/testcontainers/testcontainers-go/modules/redis"
 	"io"
 	"log/slog"
+	"os"
 	"testing"
+	"time"
 )
 
-func TestRedisCache_Get(t *testing.T) {
-	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	addrs := []string{""}
-	rdb, err := newRedisClient(addrs)
+var rdb rueidis.Client
+
+func TestMain(m *testing.M) {
+	ctx := context.Background()
+
+	// Use redis.Run instead of the deprecated redis.RunContainer.
+	// Specify the image with digest using WithImage option.
+	container, err := redis.Run(
+		ctx,
+		"redis@sha256:9cabfa9c15e13f9e4faee0f80d4373cd76e7b8d5a678b9036402b1b0ed9c661b",
+	)
 	if err != nil {
-		t.Fatalf("failed to create Redis client: %v", err)
+		slog.Error("failed to start Redis container", slog.Any(logkeys.Err, err))
 	}
+	// Clean up the container after the test
+	defer func() {
+		if te := container.Terminate(ctx); err != nil {
+			slog.Error("failed to terminate Redis container", slog.Any(logkeys.Err, te))
+		}
+	}()
+
+	// Get the connection URI directly from the Redis module
+	connectionURI, err := container.ConnectionString(ctx)
+	if err != nil {
+		slog.Error("failed to get Redis connection URI", slog.Any(logkeys.Err, err))
+	}
+
+	addrs := rueidis.MustParseURL(connectionURI).InitAddress
+	rdb, err = newRedisClient(addrs)
+	if err != nil {
+		slog.Error("failed to create Redis client", slog.Any(logkeys.Err, err))
+	}
+
+	// Run the tests
+	code := m.Run()
+
+	// Exit with the appropriate code
+	os.Exit(code)
+}
+
+func TestRedisCache_GetAndSet(t *testing.T) {
+	ctx := context.Background()
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	type testcase struct {
 		val  string
 		err  bool
@@ -45,7 +86,7 @@ func TestRedisCache_Get(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			rc := NewRedisCache(rdb, logger)
 			for key, val := range tc.set {
-				se := rc.Set(context.Background(), key, []byte(val.val), 0)
+				se := rc.Set(ctx, key, []byte(val.val), 1*time.Minute)
 				if se != nil && !val.err {
 					t.Errorf("Set got an unexpected error: %v", se)
 				}
@@ -57,7 +98,7 @@ func TestRedisCache_Get(t *testing.T) {
 				}
 			}
 			for key, val := range tc.get {
-				actual, ge := rc.Get(context.Background(), key)
+				actual, ge := rc.Get(ctx, key)
 				if ge != nil && !val.err {
 					t.Errorf("Set got an unexpected error: %v", ge)
 				}
