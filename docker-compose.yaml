@@ -1,24 +1,6 @@
-version: '3.8'
+version: "3.8"
 
 services:
-  traefik:
-    image: traefik:v2.10
-    command:
-      - "--api.insecure=false"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=redis-cluster"
-      - "--entrypoints.redis.address=:6379"
-    ports:
-      - "6379:6379"  # Redis cluster port
-      - "8080:8080"  # Dashboard (optional)
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      redis-cluster:
-        aliases:
-          - traefik.railway.internal
-
   redis1:
     image: redis:7.2-alpine
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -31,97 +13,11 @@ services:
       redis-cluster:
         aliases:
           - redis1.railway.internal
-    labels:
-      - "traefik.enable=true"
-      - "traefik.tcp.routers.redis1.rule=HostSNI(`*`)"
-      - "traefik.tcp.routers.redis1.entrypoints=redis"
-      - "traefik.tcp.services.redis1.loadbalancer.server.port=6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s
       timeout: 3s
       retries: 3
-
-  redis2:
-    image: redis:7.2-alpine
-    command: redis-server /usr/local/etc/redis/redis.conf
-    volumes:
-      - ./redis/redis2.conf:/usr/local/etc/redis/redis.conf:ro
-      - ./redis/users.acl:/etc/redis/users.acl:ro
-      - redis2-data:/data
-    user: redis
-    networks:
-      redis-cluster:
-        aliases:
-          - redis2.railway.internal
-    labels:
-      - "traefik.enable=true"
-      - "traefik.tcp.routers.redis2.rule=HostSNI(`*`)"
-      - "traefik.tcp.routers.redis2.entrypoints=redis"
-      - "traefik.tcp.services.redis2.loadbalancer.server.port=6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 3
-
-  redis3:
-    image: redis:7.2-alpine
-    command: redis-server /usr/local/etc/redis/redis.conf
-    volumes:
-      - ./redis/redis3.conf:/usr/local/etc/redis/redis.conf:ro
-      - ./redis/users.acl:/etc/redis/users.acl:ro
-      - redis3-data:/data
-    user: redis
-    networks:
-      redis-cluster:
-        aliases:
-          - redis3.railway.internal
-    labels:
-      - "traefik.enable=true"
-      - "traefik.tcp.routers.redis3.rule=HostSNI(`*`)"
-      - "traefik.tcp.routers.redis3.entrypoints=redis"
-      - "traefik.tcp.services.redis3.loadbalancer.server.port=6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 3s
-      retries: 3
-
-  redisbackup:
-    image: "ghcr.io/fjarm/fjarm/redisbackup:latest"
-    volumes:
-      - redis1-data:/redis-data/node1:ro
-      - redis2-data:/redis-data/node2:ro
-      - redis3-data:/redis-data/node3:ro
-    depends_on:
-      redis1:
-        condition: service_healthy
-      redis2:
-        condition: service_healthy
-      redis3:
-        condition: service_healthy
-      minio:
-        condition: service_started
-    environment:
-      - REDIS_ADDR=redis-cluster.railway.internal:6379
-      - MINIO_ENDPOINT=minio:9000
-      - REDIS_DATA_PATH=/redis-data
-    networks:
-      - redis-cluster
-
-  # Your existing app service
-  app:
-    build: .
-    networks:
-      - redis-cluster
-    depends_on:
-      redis1:
-        condition: service_healthy
-      redis2:
-        condition: service_healthy
-      redis3:
-        condition: service_healthy
 
 networks:
   redis-cluster:
@@ -131,4 +27,3 @@ volumes:
   redis1-data:
   redis2-data:
   redis3-data:
-  minio-data:
