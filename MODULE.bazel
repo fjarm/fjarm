@@ -48,6 +48,7 @@ use_repo(
 
 # This dependency is only needed because testcontainers-go adds a transitive dependency on gogo/protobuf.
 bazel_dep(name = "toolchains_protoc", version = "0.3.7")
+
 # Optional: choose a version of protoc rather than the latest.
 protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
 protoc.toolchain(
@@ -59,6 +60,7 @@ protoc.toolchain(
     version = "v29.3",
 )
 use_repo(protoc, "toolchains_protoc_hub")
+
 register_toolchains("@toolchains_protoc_hub//:all")
 
 register_toolchains("//tools/toolchains:all")
