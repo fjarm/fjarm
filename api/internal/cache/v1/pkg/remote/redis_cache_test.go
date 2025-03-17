@@ -3,7 +3,7 @@ package remote
 import (
 	"context"
 	"errors"
-	cachev1 "github.com/fjarm/fjarm/api/internal/cache/v1"
+	cachev1 "github.com/fjarm/fjarm/api/internal/cache/v1/pkg"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/redis/v1/pkg/client"
 	"github.com/redis/rueidis"

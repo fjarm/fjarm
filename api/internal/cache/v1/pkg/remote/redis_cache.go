@@ -3,7 +3,7 @@ package remote
 import (
 	"context"
 	"fmt"
-	cachev1 "github.com/fjarm/fjarm/api/internal/cache/v1"
+	cachev1 "github.com/fjarm/fjarm/api/internal/cache/v1/pkg"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/redis/rueidis"
 	"log/slog"
@@ -24,7 +24,7 @@ type RedisCache struct {
 }
 
 // Get retrieves the value associated with the supplied key from the remote Redis cache. If no such key/value pair
-// exists, a v1.ErrCacheMiss error is returned. Other errors indicate something more serious.
+// exists, a pkg.ErrCacheMiss error is returned. Other errors indicate something more serious.
 func (c *RedisCache) Get(ctx context.Context, key string) ([]byte, error) {
 	if strings.TrimSpace(key) == "" || strings.Contains(key, " ") {
 		return nil, fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or contain whitespace")

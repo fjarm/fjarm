@@ -6,10 +6,10 @@ go_library(
         "fake_redis_cache.go",
         "redis_cache.go",
     ],
-    importpath = "github.com/fjarm/fjarm/api/internal/cache/v1/remote",
+    importpath = "github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote",
     visibility = ["//api:__subpackages__"],
     deps = [
-        "//api/internal/cache/v1:cache",
+        "//api/internal/cache/v1/pkg",
         "//api/internal/logkeys",
         "@com_github_redis_rueidis//:rueidis",
     ],
@@ -20,7 +20,7 @@ go_test(
     srcs = ["redis_cache_test.go"],
     embed = [":remote"],
     deps = [
-        "//api/internal/cache/v1:cache",
+        "//api/internal/cache/v1/pkg",
         "//api/internal/logkeys",
         "//api/internal/redis/v1/pkg/client",
         "@com_github_redis_rueidis//:rueidis",

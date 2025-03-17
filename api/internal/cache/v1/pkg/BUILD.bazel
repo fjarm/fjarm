@@ -6,3 +6,10 @@ go_library(
     importpath = "github.com/fjarm/fjarm/api/internal/cache/v1",
     visibility = ["//api:__subpackages__"],
 )
+
+go_library(
+    name = "pkg",
+    srcs = ["cache_errors.go"],
+    importpath = "github.com/fjarm/fjarm/api/internal/cache/v1/pkg",
+    visibility = ["//api:__subpackages__"],
+)
