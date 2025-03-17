@@ -1,4 +1,4 @@
-package v1
+package passwords
 
 // HashParams defines the parameters used by the Argon2id algorithm.
 type HashParams struct {

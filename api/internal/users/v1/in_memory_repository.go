@@ -4,7 +4,7 @@ import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
 	"fmt"
-	authentication "github.com/fjarm/fjarm/api/internal/authentication/pkg/v1"
+	authentication "github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
