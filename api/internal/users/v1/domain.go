@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/tracing"
+	"github.com/fjarm/fjarm/api/internal/tracing/v1/pkg"
 	"log/slog"
 	"time"
 )
@@ -51,7 +51,7 @@ func newUserDomain(l *slog.Logger, r userRepository, v protovalidate.Validator) 
 func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error) {
 	logger := dom.logger.With(
 		slog.String(logkeys.Tag, domainTag),
-		slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
+		slog.Any(pkg.RequestIDKey, ctx.Value(pkg.RequestIDKey)),
 	)
 
 	// Validate the incoming request. The user it contains and its fields will be validated by the repository.

@@ -9,7 +9,7 @@ go_library(
         "//api/internal/helloworld/v1:helloworld",
         "//api/internal/logkeys",
         "//api/internal/obfuscation/v1/pkg/interceptor",
-        "//api/internal/tracing/pkg/interceptor",
+        "//api/internal/tracing/v1/pkg/interceptor",
         "@build_buf_gen_go_fjarm_fjarm_connectrpc_go//fjarm/helloworld/v1/helloworldv1connect",
         "@com_connectrpc_connect//:connect",
     ],

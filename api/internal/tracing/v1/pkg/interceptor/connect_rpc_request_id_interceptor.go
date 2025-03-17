@@ -4,7 +4,7 @@ import (
 	"connectrpc.com/connect"
 	"context"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/tracing"
+	"github.com/fjarm/fjarm/api/internal/tracing/v1/pkg"
 	"log/slog"
 	"time"
 )
@@ -29,7 +29,7 @@ func NewConnectRPCRequestIDLoggingInterceptor(l *slog.Logger) connect.UnaryInter
 
 			logger := l.With(
 				slog.String(logkeys.Tag, connectRPCRequestIDInterceptorTag),
-				slog.String(tracing.RequestIDKey, reqID),
+				slog.String(pkg.RequestIDKey, reqID),
 				slog.String(logkeys.Addr, clientIP),
 				slog.String(logkeys.Rpc, req.Spec().Procedure),
 			)
@@ -44,7 +44,7 @@ func NewConnectRPCRequestIDLoggingInterceptor(l *slog.Logger) connect.UnaryInter
 
 			var res connect.AnyResponse = nil
 			if err == nil {
-				res, err = next(context.WithValue(ctx, tracing.RequestIDKey, reqID), req)
+				res, err = next(context.WithValue(ctx, pkg.RequestIDKey, reqID), req)
 			}
 
 			duration := time.Since(start)
@@ -62,7 +62,7 @@ func NewConnectRPCRequestIDLoggingInterceptor(l *slog.Logger) connect.UnaryInter
 }
 
 func getRequestIDFromReqHeaders(req connect.AnyRequest) (string, error) {
-	header := req.Header().Get(tracing.RequestIDKey)
+	header := req.Header().Get(pkg.RequestIDKey)
 	if header == "" {
 		return "", ErrRequestIDNotFound
 	}

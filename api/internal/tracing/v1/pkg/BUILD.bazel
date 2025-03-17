@@ -1,8 +1,8 @@
 load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
-    name = "tracing",
+    name = "pkg",
     srcs = ["request_id.go"],
-    importpath = "github.com/fjarm/fjarm/api/internal/tracing",
+    importpath = "github.com/fjarm/fjarm/api/internal/tracing/v1/pkg",
     visibility = ["//api:__subpackages__"],
 )

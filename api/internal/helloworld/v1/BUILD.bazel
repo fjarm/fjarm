@@ -11,7 +11,7 @@ go_library(
     visibility = ["//api:__subpackages__"],
     deps = [
         "//api/internal/logkeys",
-        "//api/internal/tracing",
+        "//api/internal/tracing/v1/pkg",
         "@build_buf_gen_go_fjarm_fjarm_connectrpc_go//fjarm/helloworld/v1/helloworldv1connect",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/helloworld/v1:helloworld",
         "@com_connectrpc_connect//:connect",

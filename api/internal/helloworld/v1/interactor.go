@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/tracing"
+	"github.com/fjarm/fjarm/api/internal/tracing/v1/pkg"
 	"log/slog"
 )
 
@@ -29,7 +29,7 @@ func newInteractor(logger *slog.Logger, repo getHelloWorldMessageer) *interactor
 func (svc *interactor) getHelloWorld(ctx context.Context, input string) (string, error) {
 	logger := svc.logger.With(
 		slog.String(logkeys.Tag, interactorTag),
-		slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
+		slog.Any(pkg.RequestIDKey, ctx.Value(pkg.RequestIDKey)),
 	)
 
 	msg, err := svc.repo.getHelloWorldMessage(ctx)

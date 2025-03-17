@@ -6,11 +6,11 @@ go_library(
         "common_errors.go",
         "connect_rpc_request_id_interceptor.go",
     ],
-    importpath = "github.com/fjarm/fjarm/api/internal/tracing/pkg/interceptor",
+    importpath = "github.com/fjarm/fjarm/api/internal/tracing/v1/pkg/interceptor",
     visibility = ["//api:__subpackages__"],
     deps = [
         "//api/internal/logkeys",
-        "//api/internal/tracing",
+        "//api/internal/tracing/v1/pkg",
         "@com_connectrpc_connect//:connect",
     ],
 )
