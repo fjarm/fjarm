@@ -1,13 +1,6 @@
 load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
-    name = "cache",
-    srcs = ["cache_errors.go"],
-    importpath = "github.com/fjarm/fjarm/api/internal/cache/v1",
-    visibility = ["//api:__subpackages__"],
-)
-
-go_library(
     name = "pkg",
     srcs = ["cache_errors.go"],
     importpath = "github.com/fjarm/fjarm/api/internal/cache/v1/pkg",
