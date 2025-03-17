@@ -5,7 +5,7 @@ import (
 	"errors"
 	cachev1 "github.com/fjarm/fjarm/api/internal/cache/v1"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/redis/v1/client"
+	"github.com/fjarm/fjarm/api/internal/redis/v1/pkg/client"
 	"github.com/redis/rueidis"
 	"github.com/testcontainers/testcontainers-go/modules/redis"
 	"io"

@@ -2,7 +2,10 @@ load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "remote",
-    srcs = ["redis_cache.go"],
+    srcs = [
+        "fake_redis_cache.go",
+        "redis_cache.go",
+    ],
     importpath = "github.com/fjarm/fjarm/api/internal/cache/v1/remote",
     visibility = ["//api:__subpackages__"],
     deps = [
@@ -19,7 +22,7 @@ go_test(
     deps = [
         "//api/internal/cache/v1:cache",
         "//api/internal/logkeys",
-        "//api/internal/redis/v1/client",
+        "//api/internal/redis/v1/pkg/client",
         "@com_github_redis_rueidis//:rueidis",
         "@com_github_testcontainers_testcontainers_go_modules_redis//:redis",
     ],
