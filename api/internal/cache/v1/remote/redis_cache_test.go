@@ -34,6 +34,7 @@ func TestMain(m *testing.M) {
 		if te := container.Terminate(ctx); err != nil {
 			slog.Error("failed to terminate Redis container", slog.Any(logkeys.Err, te))
 		}
+		rdb.Close()
 	}()
 
 	// Get the connection URI directly from the Redis module
