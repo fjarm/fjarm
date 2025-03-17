@@ -15,6 +15,10 @@ const connectRPCAmbiguousTimingInterceptorTag = "connect_rpc_ambiguous_timing_in
 
 // NewConnectRPCAmbiguousTimingInterceptor creates an interceptor that introduces random delays to requests.
 func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) connect.UnaryInterceptorFunc {
+	if dd < 0 {
+		l.Warn("invalid delay duration", slog.Any("delay", dd))
+		dd = DelayDuration(1000)
+	}
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
 			logger := l.With(
@@ -25,10 +29,6 @@ func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) c
 
 			start := time.Now()
 
-			if dd < 0 {
-				logger.WarnContext(ctx, "invalid delay duration", slog.Any("delay", dd))
-				dd = DelayDuration(1000)
-			}
 			// Introduce a random delay between 0 and dd milliseconds (usually 15 seconds).
 			delay := time.Duration(rand.Intn(int(dd))) * time.Millisecond
 
