@@ -2,10 +2,13 @@ package v1
 
 import (
 	"context"
+	"io"
+	"log/slog"
 	"testing"
 )
 
 func TestInteractor_GetHelloWorld(t *testing.T) {
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	tests := map[string]struct {
 		given string
 		want  string
@@ -25,7 +28,7 @@ func TestInteractor_GetHelloWorld(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			repository := newInMemoryRepository()
-			domain := newInteractor(repository)
+			domain := newInteractor(logger, repository)
 
 			actual, err := domain.getHelloWorld(context.Background(), tc.given)
 			if err != nil && !tc.err {
