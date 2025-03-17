@@ -71,23 +71,25 @@ func TestRedisCache_GetAndSet(t *testing.T) {
 	}{
 		"valid_set_and_get": {
 			set: map[string]testcase{
-				"key1": {val: "value1", err: false, kind: nil, ttl: 10 * time.Second},
-				"key2": {val: "value2", err: false, kind: nil, ttl: 10 * time.Second},
-				"key3": {val: "value3", err: false, kind: nil, ttl: 10 * time.Second},
-				"key4": {val: "value4", err: true, kind: cachev1.ErrInvalidExpiration},
-				"key5": {val: "value5", err: true, kind: cachev1.ErrInvalidExpiration, ttl: 0},
-				"key6": {val: "value6", err: true, kind: cachev1.ErrInvalidExpiration, ttl: -1 * time.Second},
-				"":     {val: "value7", err: true, kind: cachev1.ErrInvalidKey, ttl: 10 * time.Second},
-				" ":    {val: "value7", err: true, kind: cachev1.ErrInvalidKey, ttl: 10 * time.Second},
+				"key1":     {val: "value1", err: false, kind: nil, ttl: 10 * time.Second},
+				"key2":     {val: "value2", err: false, kind: nil, ttl: 10 * time.Second},
+				"key3":     {val: "value3", err: false, kind: nil, ttl: 10 * time.Second},
+				"key4":     {val: "value4", err: true, kind: cachev1.ErrInvalidExpiration},
+				"key5":     {val: "value5", err: true, kind: cachev1.ErrInvalidExpiration, ttl: 0},
+				"key6":     {val: "value6", err: true, kind: cachev1.ErrInvalidExpiration, ttl: -1 * time.Second},
+				"":         {val: "value7", err: true, kind: cachev1.ErrInvalidKey, ttl: 10 * time.Second},
+				" ":        {val: "value7", err: true, kind: cachev1.ErrInvalidKey, ttl: 10 * time.Second},
+				"cool key": {val: "value8", err: true, kind: cachev1.ErrInvalidKey, ttl: 10 * time.Second},
 			},
 			get: map[string]testcase{
-				"key1": {val: "value1", err: false, kind: nil},
-				"key2": {val: "value2", err: false, kind: nil},
-				"key3": {val: "value3", err: false, kind: nil},
-				"key4": {val: "", err: true, kind: cachev1.ErrCacheMiss},
-				"key5": {val: "", err: true, kind: cachev1.ErrCacheMiss},
-				"":     {val: "", err: true, kind: cachev1.ErrInvalidKey},
-				" ":    {val: "", err: true, kind: cachev1.ErrInvalidKey},
+				"key1":     {val: "value1", err: false, kind: nil},
+				"key2":     {val: "value2", err: false, kind: nil},
+				"key3":     {val: "value3", err: false, kind: nil},
+				"key4":     {val: "", err: true, kind: cachev1.ErrCacheMiss},
+				"key5":     {val: "", err: true, kind: cachev1.ErrCacheMiss},
+				"":         {val: "", err: true, kind: cachev1.ErrInvalidKey},
+				" ":        {val: "", err: true, kind: cachev1.ErrInvalidKey},
+				"cool key": {val: "", err: true, kind: cachev1.ErrInvalidKey},
 			},
 		},
 	}
@@ -126,7 +128,7 @@ func TestRedisCache_GetAndSet(t *testing.T) {
 	rdb.Do(ctx, rdb.B().Flushall().Build())
 }
 
-func TestRedisCache_Update(t *testing.T) {
+func TestRedisCache_UpdateAndGet(t *testing.T) {
 	ctx := context.Background()
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	type testcase struct {
@@ -142,26 +144,28 @@ func TestRedisCache_Update(t *testing.T) {
 	}{
 		"valid_update_and_get": {
 			upd: map[string]testcase{
-				"upd1": {key: "key1", val: "value1", err: false, kind: nil, ttl: 10 * time.Second},
-				"upd2": {key: "key2", val: "value2", err: false, kind: nil, ttl: 10 * time.Second},
-				"upd3": {key: "key3", val: "value3", err: false, kind: nil, ttl: 10 * time.Second},
-				"upd4": {key: "key4", val: "value4", err: true, kind: cachev1.ErrInvalidExpiration},
-				"upd5": {key: "key5", val: "value5", err: true, kind: cachev1.ErrInvalidExpiration, ttl: 0},
-				"upd6": {key: "key1", val: "value6", err: false, kind: nil, ttl: 10 * time.Second},
-				"upd7": {key: "key2", val: "value6", err: false, kind: nil, ttl: 10 * time.Second},
-				"upd8": {key: "", val: "value6", err: true, kind: cachev1.ErrInvalidKey, ttl: 10 * time.Second},
-				"upd9": {key: " ", val: "value6", err: true, kind: cachev1.ErrInvalidKey, ttl: 10 * time.Second},
+				"upd1":  {key: "key1", val: "value1", err: false, kind: nil, ttl: 10 * time.Second},
+				"upd2":  {key: "key2", val: "value2", err: false, kind: nil, ttl: 10 * time.Second},
+				"upd3":  {key: "key3", val: "value3", err: false, kind: nil, ttl: 10 * time.Second},
+				"upd4":  {key: "key4", val: "value4", err: true, kind: cachev1.ErrInvalidExpiration},
+				"upd5":  {key: "key5", val: "value5", err: true, kind: cachev1.ErrInvalidExpiration, ttl: 0},
+				"upd6":  {key: "key1", val: "value6", err: false, kind: nil, ttl: 10 * time.Second},
+				"upd7":  {key: "key2", val: "value6", err: false, kind: nil, ttl: 10 * time.Second},
+				"upd8":  {key: "", val: "value6", err: true, kind: cachev1.ErrInvalidKey, ttl: 10 * time.Second},
+				"upd9":  {key: " ", val: "value6", err: true, kind: cachev1.ErrInvalidKey, ttl: 10 * time.Second},
+				"upd10": {key: "cool key", val: "value6", err: true, kind: cachev1.ErrInvalidKey, ttl: 10 * time.Second},
 			},
 			get: map[string]testcase{
-				"get1": {key: "key1", val: "value6", err: false, kind: nil},
-				"get2": {key: "key2", val: "value6", err: false, kind: nil},
-				"get3": {key: "key3", val: "value3", err: false, kind: nil},
-				"get4": {key: "key4", err: true, kind: cachev1.ErrCacheMiss},
-				"get5": {key: "key5", err: true, kind: cachev1.ErrCacheMiss},
-				"get6": {key: "key1", val: "value6", err: false, kind: nil},
-				"get7": {key: "key2", val: "value6", err: false, kind: nil},
-				"get8": {key: "", err: true, kind: cachev1.ErrInvalidKey},
-				"get9": {key: " ", err: true, kind: cachev1.ErrInvalidKey},
+				"get1":  {key: "key1", val: "value6", err: false, kind: nil},
+				"get2":  {key: "key2", val: "value6", err: false, kind: nil},
+				"get3":  {key: "key3", val: "value3", err: false, kind: nil},
+				"get4":  {key: "key4", err: true, kind: cachev1.ErrCacheMiss},
+				"get5":  {key: "key5", err: true, kind: cachev1.ErrCacheMiss},
+				"get6":  {key: "key1", val: "value6", err: false, kind: nil},
+				"get7":  {key: "key2", val: "value6", err: false, kind: nil},
+				"get8":  {key: "", err: true, kind: cachev1.ErrInvalidKey},
+				"get9":  {key: " ", err: true, kind: cachev1.ErrInvalidKey},
+				"get10": {key: "cool key", err: true, kind: cachev1.ErrInvalidKey},
 			},
 		},
 	}
