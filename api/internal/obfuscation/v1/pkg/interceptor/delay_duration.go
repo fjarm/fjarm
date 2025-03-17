@@ -1,4 +1,4 @@
-package pkg
+package interceptor
 
 type DelayDuration int
 

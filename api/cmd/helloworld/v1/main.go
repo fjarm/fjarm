@@ -8,7 +8,7 @@ import (
 	"fmt"
 	helloworld "github.com/fjarm/fjarm/api/internal/helloworld/v1"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	pkg2 "github.com/fjarm/fjarm/api/internal/obfuscation/v1/pkg"
+	interceptor2 "github.com/fjarm/fjarm/api/internal/obfuscation/v1/pkg/interceptor"
 	"github.com/fjarm/fjarm/api/internal/tracing/pkg/interceptor"
 	"log/slog"
 	"net"
@@ -40,7 +40,7 @@ func main() {
 	addr := fmt.Sprintf("%s:%s", ip, port)
 
 	interceptors := connect.WithInterceptors(
-		pkg2.NewConnectRPCAmbiguousTimingInterceptor(logger, pkg2.DelayDuration_15000ms),
+		interceptor2.NewConnectRPCAmbiguousTimingInterceptor(logger, interceptor2.DelayDuration_15000ms),
 		interceptor.NewConnectRPCRequestIDLoggingInterceptor(logger),
 	)
 	connectRPCHandler := helloworld.NewConnectRPCHandler(logger)
