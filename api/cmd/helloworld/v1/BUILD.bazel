@@ -8,7 +8,7 @@ go_library(
     deps = [
         "//api/internal/helloworld/v1:helloworld",
         "//api/internal/logkeys",
-        "//api/internal/obfuscation/pkg",
+        "//api/internal/obfuscation/v1/pkg",
         "//api/internal/tracing/pkg/interceptor",
         "@build_buf_gen_go_fjarm_fjarm_connectrpc_go//fjarm/helloworld/v1/helloworldv1connect",
         "@com_connectrpc_connect//:connect",
