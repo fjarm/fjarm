@@ -7,7 +7,7 @@ import (
 	"context"
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/tracing/v1/pkg/requestid"
+	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
 )
 
@@ -31,7 +31,7 @@ func (h *ConnectRPCHandler) GetHelloWorld(
 ) (*connect.Response[pb.GetHelloWorldResponse], error) {
 	logger := h.logger.With(
 		slog.String(logkeys.Rpc, helloworldv1connect.HelloWorldServiceGetHelloWorldProcedure),
-		slog.String(requestid.RequestIDKey, req.Header().Get(requestid.RequestIDKey)),
+		slog.String(tracing.RequestIDKey, req.Header().Get(tracing.RequestIDKey)),
 	)
 
 	logger.InfoContext(

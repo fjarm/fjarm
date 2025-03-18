@@ -6,7 +6,7 @@ import (
 	"fmt"
 	authentication "github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/tracing/v1/pkg/requestid"
+	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
 	"time"
 )
@@ -21,7 +21,7 @@ type inMemoryRepository struct {
 func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.User) (*user, error) {
 	logger := repo.logger.With(
 		slog.String(logkeys.Tag, inMemoryRepositoryTag),
-		slog.Any(requestid.RequestIDKey, ctx.Value(requestid.RequestIDKey)),
+		slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
 	)
 	logger.InfoContext(ctx, "requested user creation")
 

@@ -5,7 +5,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/tracing/v1/pkg/requestid"
+	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
 	"math/rand"
 	"time"
@@ -23,7 +23,7 @@ func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) c
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
 			logger := l.With(
 				slog.String(logkeys.Tag, connectRPCAmbiguousTimingInterceptorTag),
-				slog.Any(requestid.RequestIDKey, ctx.Value(requestid.RequestIDKey)),
+				slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
 				slog.String(logkeys.Rpc, req.Spec().Procedure),
 			)
 
