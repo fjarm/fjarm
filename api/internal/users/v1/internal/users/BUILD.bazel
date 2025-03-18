@@ -16,7 +16,7 @@ go_library(
         "//api/internal/authentication/v1/pkg/passwords",
         "//api/internal/logkeys",
         "//api/internal/logvals",
-        "//api/internal/tracing/v1/pkg",
+        "//api/internal/tracing/v1/pkg/requestid",
         "//api/pkg/fjarm/users/usersv1",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/consistency/v1:consistency",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",

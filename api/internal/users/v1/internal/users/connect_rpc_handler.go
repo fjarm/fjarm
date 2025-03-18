@@ -7,7 +7,7 @@ import (
 	"errors"
 	"github.com/bufbuild/protovalidate-go"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/tracing/v1/pkg"
+	"github.com/fjarm/fjarm/api/internal/tracing/v1/pkg/requestid"
 	"log/slog"
 )
 
@@ -34,7 +34,7 @@ func (h *ConnectRPCHandler) CreateUser(
 ) (*connect.Response[userspb.CreateUserResponse], error) {
 	logger := h.logger.With(
 		slog.String(logkeys.Tag, connectRPCHandlerTag),
-		slog.Any(pkg.RequestIDKey, ctx.Value(pkg.RequestIDKey)),
+		slog.Any(requestid.RequestIDKey, ctx.Value(requestid.RequestIDKey)),
 	)
 	logger.InfoContext(ctx, "received request to create user")
 
