@@ -6,7 +6,7 @@ go_library(
     importpath = "github.com/fjarm/fjarm/api/internal/helloworld/v1/cmd/helloworld",
     visibility = ["//visibility:private"],
     deps = [
-        "//api/internal/helloworld/v1:helloworld",
+        "//api/internal/helloworld/v1/internal/helloworld",
         "//api/internal/logkeys",
         "//api/internal/obfuscation/v1/pkg/interceptor",
         "//api/internal/tracing/v1/pkg/interceptor",

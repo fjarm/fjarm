@@ -7,7 +7,7 @@ go_library(
         "in_memory_repository.go",
         "interactor.go",
     ],
-    importpath = "github.com/fjarm/fjarm/api/internal/helloworld/v1",
+    importpath = "github.com/fjarm/fjarm/api/internal/helloworld/v1/internal/helloworld",
     visibility = ["//api:__subpackages__"],
     deps = [
         "//api/internal/logkeys",

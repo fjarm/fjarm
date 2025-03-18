@@ -6,7 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	helloworld "github.com/fjarm/fjarm/api/internal/helloworld/v1"
+	"github.com/fjarm/fjarm/api/internal/helloworld/v1/internal/helloworld"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	obfuscation "github.com/fjarm/fjarm/api/internal/obfuscation/v1/pkg/interceptor"
 	tracing "github.com/fjarm/fjarm/api/internal/tracing/v1/pkg/interceptor"

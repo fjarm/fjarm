@@ -1,4 +1,4 @@
-package v1
+package helloworld
 
 import (
 	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/helloworld/v1/helloworldv1connect"
