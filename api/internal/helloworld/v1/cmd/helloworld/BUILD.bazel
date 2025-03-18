@@ -3,7 +3,7 @@ load("@rules_go//go:def.bzl", "go_binary", "go_cross_binary", "go_library")
 go_library(
     name = "helloworld_lib",
     srcs = ["main.go"],
-    importpath = "github.com/fjarm/fjarm/api/cmd/helloworld/v1",
+    importpath = "github.com/fjarm/fjarm/api/internal/helloworld/v1/cmd/helloworld",
     visibility = ["//visibility:private"],
     deps = [
         "//api/internal/helloworld/v1:helloworld",

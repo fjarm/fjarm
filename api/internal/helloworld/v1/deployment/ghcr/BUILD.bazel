@@ -5,14 +5,14 @@ load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_load", "oc
 # Put the cross compiled helloworld go_binary's into a tar layer.
 tar(
     name = "helloworld_linux_arm64_tar",
-    srcs = ["//api/cmd/helloworld/v1:helloworld_linux_arm64"],
+    srcs = ["//api/internal/helloworld/v1/cmd/helloworld:helloworld_linux_arm64"],
     visibility = ["//visibility:private"],
 )
 
 oci_image(
     name = "helloworld_distroless_static_linux_arm64_v8",
     base = "@distroless_static_linux_arm64_v8",
-    entrypoint = ["api/cmd/helloworld/v1/helloworld_linux_arm64"],
+    entrypoint = ["/api/internal/helloworld/v1/cmd/helloworld/helloworld_linux_arm64"],
     tars = [":helloworld_linux_arm64_tar"],
 )
 
@@ -47,5 +47,5 @@ oci_push(
 oci_load(
     name = "helloworld_load",
     image = ":helloworld_distroless_static_linux_arm64_v8",
-    repo_tags = ["veganafro/helloworld:local"],
+    repo_tags = ["fjarm/helloworld:local"],
 )
