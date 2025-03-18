@@ -1,4 +1,4 @@
-package v1
+package users
 
 import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"

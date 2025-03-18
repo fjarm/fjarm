@@ -1,4 +1,4 @@
-package v1
+package users
 
 import (
 	idempotencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/idempotency/v1"

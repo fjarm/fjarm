@@ -1,4 +1,4 @@
-package v1
+package users
 
 import (
 	consistencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/consistency/v1"

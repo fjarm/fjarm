@@ -10,7 +10,7 @@ go_library(
         "user.go",
         "utils.go",
     ],
-    importpath = "github.com/fjarm/fjarm/api/internal/users/v1",
+    importpath = "github.com/fjarm/fjarm/api/internal/users/v1/internal/users",
     visibility = ["//api:__subpackages__"],
     deps = [
         "//api/internal/authentication/v1/pkg/passwords",
