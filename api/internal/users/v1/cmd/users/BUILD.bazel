@@ -3,13 +3,13 @@ load("@rules_go//go:def.bzl", "go_binary", "go_library")
 go_library(
     name = "users_lib",
     srcs = ["main.go"],
-    importpath = "github.com/fjarm/fjarm/api/cmd/users/v1",
+    importpath = "github.com/fjarm/fjarm/api/internal/users/v1/cmd/users",
     visibility = ["//visibility:public"],
     deps = ["@build_buf_gen_go_fjarm_fjarm_connectrpc_go//fjarm/users/v1/usersv1connect"],
 )
 
 go_binary(
-    name = "v1",
+    name = "users",
     embed = [":users_lib"],
     visibility = ["//visibility:public"],
 )
