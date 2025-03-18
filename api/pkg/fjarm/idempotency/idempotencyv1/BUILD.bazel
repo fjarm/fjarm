@@ -1,16 +1,16 @@
 load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
-    name = "idempotency",
+    name = "idempotencyv1",
     srcs = ["idempotency.go"],
-    importpath = "github.com/fjarm/fjarm/api/pkg/fjarm/idempotency/v1",
+    importpath = "github.com/fjarm/fjarm/api/pkg/fjarm/idempotency/idempotencyv1",
     visibility = ["//visibility:public"],
 )
 
 go_test(
-    name = "idempotency_test",
+    name = "idempotencyv1_test",
     srcs = ["idempotency_key_test.go"],
-    embed = [":idempotency"],
+    embed = [":idempotencyv1"],
     deps = [
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/idempotency/v1:idempotency",
         "@com_github_bufbuild_protovalidate_go//:protovalidate-go",
