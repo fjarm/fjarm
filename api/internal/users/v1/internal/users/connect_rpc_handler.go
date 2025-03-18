@@ -89,35 +89,14 @@ func (h *ConnectRPCHandler) DeleteUser(
 }
 
 // NewConnectRPCHandler creates a concrete users ConnectRPC service with logging and business/domain logic.
-func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
-	logger := l.With(
-		slog.String(logkeys.Tag, connectRPCHandlerTag),
-	)
-
-	validator, err := protovalidate.New(
-		protovalidate.WithDisableLazy(),
-		protovalidate.WithFailFast(),
-		protovalidate.WithMessages(
-			&userspb.CreateUserRequest{},
-			&userspb.CreateUserResponse{},
-			&userspb.GetUserRequest{},
-			&userspb.GetUserResponse{},
-		),
-	)
-
-	if err != nil {
-		logger.Error(
-			"failed to create message validator",
-			slog.Any(logkeys.Err, err),
-		)
-		return nil
-	}
-
-	rep := newInMemoryRepository(l)
-	dom := newUserDomain(l, rep, validator)
+func NewConnectRPCHandler(
+	logger *slog.Logger,
+	domain userDomain,
+	validator protovalidate.Validator,
+) *ConnectRPCHandler {
 	han := ConnectRPCHandler{
-		domain:    dom,
-		logger:    l,
+		domain:    domain,
+		logger:    logger,
 		validator: validator,
 	}
 	return &han

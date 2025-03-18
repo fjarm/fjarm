@@ -6,6 +6,8 @@ import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"connectrpc.com/connect"
 	"context"
+	"github.com/bufbuild/protovalidate-go"
+	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
@@ -21,7 +23,24 @@ var srv *httptest.Server = nil
 func TestMain(m *testing.M) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 
-	connectRPCHandler := NewConnectRPCHandler(logger)
+	validator, err := protovalidate.New(
+		protovalidate.WithDisableLazy(),
+		protovalidate.WithFailFast(),
+		protovalidate.WithMessages(
+			&userspb.CreateUserRequest{},
+			&userspb.CreateUserResponse{},
+			&userspb.GetUserRequest{},
+			&userspb.GetUserResponse{},
+		),
+	)
+
+	if err != nil {
+		logger.Error("failed to create message validator", slog.Any(logkeys.Err, err))
+		os.Exit(1)
+	}
+	rep := newInMemoryRepository(logger)
+	dom := newUserDomain(logger, rep, validator)
+	connectRPCHandler := NewConnectRPCHandler(logger, dom, validator)
 	path, handler := usersv1connect.NewUserServiceHandler(connectRPCHandler)
 
 	mux := http.NewServeMux()
