@@ -1,5 +1,4 @@
 # gazelle:prefix github.com/fjarm/fjarm
-# gazelle:resolve go github.com/fjarm/fjarm/api/pkg/helloworld/v1 //api/pkg/helloworld/v1:helloworld_library
 
 load("@gazelle//:def.bzl", "gazelle", "gazelle_binary")
 
