@@ -18,8 +18,8 @@ type userRepository interface {
 	createUser(ctx context.Context, user *userspb.User) (*user, error)
 }
 
-// IdempotencyCache is an interface that describes how idempotency is leveraged in the users domain.
-type IdempotencyCache interface {
+// idempotencyCache is an interface that describes how idempotency is leveraged in the users domain.
+type idempotencyCache interface {
 	// Get retrieves the value for a given key if it exists. If the key doesn't exist, a nil slice is returned without
 	// any error.
 	Get(ctx context.Context, key string) ([]byte, error)
@@ -34,6 +34,7 @@ type IdempotencyCache interface {
 
 type domain struct {
 	logger    *slog.Logger
+	idemCache idempotencyCache
 	repo      userRepository
 	validator protovalidate.Validator
 }
