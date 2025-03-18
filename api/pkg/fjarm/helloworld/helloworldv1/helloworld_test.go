@@ -1,4 +1,4 @@
-package v1
+package helloworldv1
 
 import (
 	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/helloworld/v1"
