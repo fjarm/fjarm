@@ -7,6 +7,7 @@ import (
 	"connectrpc.com/connect"
 	"context"
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -38,8 +39,9 @@ func TestMain(m *testing.M) {
 		logger.Error("failed to create message validator", slog.Any(logkeys.Err, err))
 		os.Exit(1)
 	}
-	rep := newInMemoryRepository(logger)
-	dom := newUserDomain(logger, rep, validator)
+	cache := remote.NewFakeRedisCache()
+	repo := newInMemoryRepository(logger)
+	dom := newUserDomain(logger, cache, repo, validator)
 	connectRPCHandler := NewConnectRPCHandler(logger, dom, validator)
 	path, handler := usersv1connect.NewUserServiceHandler(connectRPCHandler)
 

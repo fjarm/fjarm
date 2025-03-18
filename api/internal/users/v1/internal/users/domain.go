@@ -39,9 +39,10 @@ type domain struct {
 	validator protovalidate.Validator
 }
 
-func newUserDomain(l *slog.Logger, r userRepository, v protovalidate.Validator) userDomain {
+func newUserDomain(l *slog.Logger, c idempotencyCache, r userRepository, v protovalidate.Validator) userDomain {
 	dom := &domain{
 		logger:    l,
+		idemCache: c,
 		repo:      r,
 		validator: v,
 	}

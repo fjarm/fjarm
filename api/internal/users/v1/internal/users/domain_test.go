@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"github.com/bufbuild/protovalidate-go"
+	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
@@ -15,12 +16,13 @@ import (
 
 func TestUserDomain_createUser(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	cache := remote.NewFakeRedisCache()
 	repo := newInMemoryRepository(logger)
 	validator, err := protovalidate.New()
 	if err != nil {
 		t.Errorf("failed to create a new validator: %v", err)
 	}
-	dom := newUserDomain(logger, repo, validator)
+	dom := newUserDomain(logger, cache, repo, validator)
 
 	tests := map[string]struct {
 		reqs []*userspb.CreateUserRequest
