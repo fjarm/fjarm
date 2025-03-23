@@ -6,12 +6,15 @@ go_library(
         "fake_redis_cache.go",
         "redis_cache.go",
         "redis_client.go",
+        "redis_lock.go",
+        "redis_utils.go",
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote",
     visibility = ["//api:__subpackages__"],
     deps = [
         "//api/internal/cache",
         "//api/internal/logkeys",
+        "@com_github_google_uuid//:uuid",
         "@com_github_redis_rueidis//:rueidis",
     ],
 )
