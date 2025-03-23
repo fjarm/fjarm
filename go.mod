@@ -7,6 +7,7 @@ require (
 	buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.5-20250220235546-9eca9e174ab9.1
 	connectrpc.com/connect v1.18.1
 	github.com/bufbuild/protovalidate-go v0.9.2
+	github.com/google/uuid v1.6.0
 	github.com/redis/rueidis v1.0.55
 	github.com/testcontainers/testcontainers-go/modules/redis v0.35.0
 	golang.org/x/crypto v0.33.0
@@ -36,7 +37,6 @@ require (
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/google/cel-go v0.23.2 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/klauspost/compress v1.17.4 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
