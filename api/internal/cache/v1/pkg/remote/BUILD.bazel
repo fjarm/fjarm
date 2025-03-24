@@ -4,6 +4,7 @@ go_library(
     name = "remote",
     srcs = [
         "fake_redis_cache.go",
+        "fake_redis_lock.go",
         "redis_cache.go",
         "redis_client.go",
         "redis_lock.go",
@@ -21,7 +22,11 @@ go_library(
 
 go_test(
     name = "remote_test",
-    srcs = ["redis_cache_test.go"],
+    srcs = [
+        "redis_cache_test.go",
+        "redis_lock_test.go",
+        "redis_setup_test.go",
+    ],
     embed = [":remote"],
     deps = [
         "//api/internal/cache",
