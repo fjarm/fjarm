@@ -17,5 +17,8 @@ var ErrInvalidKey = fmt.Errorf("invalid key")
 // that either another process owns the key/lock or that the key/lock has already been deleted.
 var ErrLockReleaseFailed = fmt.Errorf("failed to release lock")
 
+// ErrLockVerifyFailed is returned when a attempting to verify a lock that is not owned by the current goroutine.
+var ErrLockVerifyFailed = fmt.Errorf("failed to verify lock")
+
 // ErrKeyExists is returned when a key already exists in the cache.
 var ErrKeyExists = fmt.Errorf("key exists")

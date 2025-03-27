@@ -82,5 +82,5 @@ func (c *RedisCache) VerifyLock(cxt context.Context, lockKey string, lockVal str
 	if string(val) == lockVal {
 		return true, nil
 	}
-	return false, nil
+	return false, cachev1.ErrLockVerifyFailed
 }
