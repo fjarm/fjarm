@@ -56,23 +56,29 @@ type remoteLock interface {
 
 type domain struct {
 	logger    *slog.Logger
-	idemCache idempotencyCache
+	cache     idempotencyCache
 	locker    remoteLock
 	repo      userRepository
 	validator protovalidate.Validator
 }
 
-func newUserDomain(l *slog.Logger, c idempotencyCache, r userRepository, v protovalidate.Validator) userDomain {
+func newUserDomain(
+	logger *slog.Logger,
+	cache idempotencyCache,
+	locker remoteLock,
+	repo userRepository,
+	validator protovalidate.Validator,
+) userDomain {
 	dom := &domain{
-		logger:    l,
-		idemCache: c,
-		repo:      r,
-		validator: v,
+		logger:    logger,
+		cache:     cache,
+		locker:    locker,
+		repo:      repo,
+		validator: validator,
 	}
 	return dom
 }
 
-// TODO(2025-02-27): Idempotency needs to be handled here after Redis-based caching is introduced.
 func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error) {
 	logger := dom.logger.With(
 		slog.String(logkeys.Tag, domainTag),
@@ -92,7 +98,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	}
 
 	idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, req.GetIdempotencyKey().GetIdempotencyKey())
-	_, err = dom.idemCache.Get(ctx, idempotencyKey)
+	_, err = dom.cache.Get(ctx, idempotencyKey)
 	if err == nil {
 		// Found a cached response. We can return a successful response without creating the user again.
 		return &userspb.User{}, nil
@@ -136,7 +142,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 				return nil, ErrOperationFailed
 			default:
 				// Try to get the result of the primary server's operation from the cache.
-				_, err = dom.idemCache.Get(ctx, idempotencyKey)
+				_, err = dom.cache.Get(ctx, idempotencyKey)
 				if err == nil {
 					// Found a cached response. We can return a successful response without creating the user again.
 					return &userspb.User{}, nil
@@ -174,7 +180,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 		logger.WarnContext(ctx, "attempted to create duplicate user", slog.Any(logkeys.Err, err))
 		// User creation is idempotent. But, we don't want to leak this information to the client. So, instead of
 		// returning the error, we return a successful response without the user's details.
-		err = dom.idemCache.Set(ctx, idempotencyKey, []byte(""), idempotencyKeyTTL)
+		err = dom.cache.Set(ctx, idempotencyKey, []byte(""), idempotencyKeyTTL)
 		if err != nil {
 			logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, err))
 		}
@@ -187,7 +193,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	}
 	// Creating a user is dead simple because enrolling is not the same as authenticating. Users first sign up then
 	// log in.
-	err = dom.idemCache.Set(ctx, idempotencyKey, []byte(""), idempotencyKeyTTL)
+	err = dom.cache.Set(ctx, idempotencyKey, []byte(""), idempotencyKeyTTL)
 	if err != nil {
 		logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, err))
 	}
