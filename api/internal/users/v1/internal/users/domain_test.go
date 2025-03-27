@@ -22,7 +22,7 @@ func TestUserDomain_createUser(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to create a new validator: %v", err)
 	}
-	dom := newUserDomain(logger, cache, repo, validator)
+	dom := newUserDomain(logger, cache, cache, repo, validator)
 
 	tests := map[string]struct {
 		reqs []*userspb.CreateUserRequest
