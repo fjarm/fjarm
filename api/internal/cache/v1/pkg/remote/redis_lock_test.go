@@ -68,7 +68,7 @@ func TestRedisLock_VerifyLock(t *testing.T) {
 	redisLock := NewRedisCache(rdb, logger)
 
 	// Acquiring a free lock should succeed.
-	lockKey := "testredislock:safereleaselock:lock"
+	lockKey := "testredislock:verifylock:lock"
 	acquiredLock, err := redisLock.AcquireLock(context.Background(), lockKey, 10*time.Second)
 	if err != nil || acquiredLock == "" {
 		t.Errorf("failed to acquire Redis lock: %v", err)
