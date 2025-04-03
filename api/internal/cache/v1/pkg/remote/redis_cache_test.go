@@ -79,7 +79,7 @@ func TestRedisCache_GetAndSet(t *testing.T) {
 			}
 		})
 	}
-	err := rdb.Do(ctx, rdb.B().Flushall().Build()).Error()
+	err := rdb.Do(ctx, rdb.B().Flushall().Sync().Build()).Error()
 	if err != nil {
 		t.Errorf("failed to flush Redis cache: %v", err)
 	}
@@ -162,7 +162,7 @@ func TestRedisCache_UpdateAndGet(t *testing.T) {
 			}
 		})
 	}
-	err := rdb.Do(ctx, rdb.B().Flushall().Build()).Error()
+	err := rdb.Do(ctx, rdb.B().Flushall().Sync().Build()).Error()
 	if err != nil {
 		t.Errorf("failed to flush Redis cache: %v", err)
 	}

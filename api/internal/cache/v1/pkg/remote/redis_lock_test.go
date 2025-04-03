@@ -14,7 +14,7 @@ func TestRedisLock_SafeReleaseLock(t *testing.T) {
 	// This test verifies that when the supplied lock key and value match what is contained in Redis, the safe release
 	// script works correctly - i.e. the key is deleted and the returned error is nil.
 	defer func() {
-		err := rdb.Do(context.Background(), rdb.B().Flushall().Build()).Error()
+		err := rdb.Do(context.Background(), rdb.B().Flushall().Sync().Build()).Error()
 		if err != nil {
 			t.Errorf("failed to flush Redis cache: %v", err)
 		}
@@ -58,7 +58,7 @@ func TestRedisLock_SafeReleaseLock(t *testing.T) {
 
 func TestRedisLock_VerifyLock(t *testing.T) {
 	defer func() {
-		err := rdb.Do(context.Background(), rdb.B().Flushall().Build()).Error()
+		err := rdb.Do(context.Background(), rdb.B().Flushall().Sync().Build()).Error()
 		if err != nil {
 			t.Errorf("failed to flush Redis cache: %v", err)
 		}
