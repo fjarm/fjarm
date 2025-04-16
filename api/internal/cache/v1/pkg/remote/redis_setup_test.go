@@ -23,6 +23,7 @@ func TestMain(m *testing.M) {
 	)
 	if err != nil {
 		slog.Error("failed to start Redis container", slog.Any(logkeys.Err, err))
+		os.Exit(1)
 	}
 	// Clean up the container after the test
 	defer func() {

@@ -28,6 +28,11 @@ go_test(
         "redis_setup_test.go",
     ],
     embed = [":remote"],
+    env = {
+        # SEE: https://podman-desktop.io/tutorial/testcontainers-with-podman
+        # Disable reaper now that Podman (not Docker) is used to manage containers
+        "TESTCONTAINERS_RYUK_DISABLED": "true",
+    },
     deps = [
         "//api/internal/cache",
         "//api/internal/logkeys",
