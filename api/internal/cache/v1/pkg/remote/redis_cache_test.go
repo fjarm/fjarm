@@ -11,6 +11,13 @@ import (
 )
 
 func TestRedisCache_GetAndSet(t *testing.T) {
+	defer func() {
+		err := rdb.Do(context.Background(), rdb.B().Flushall().Sync().Build()).Error()
+		if err != nil {
+			t.Errorf("failed to flush Redis cache: %v", err)
+		}
+	}()
+
 	ctx := context.Background()
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	type testcase struct {
@@ -79,13 +86,16 @@ func TestRedisCache_GetAndSet(t *testing.T) {
 			}
 		})
 	}
-	err := rdb.Do(ctx, rdb.B().Flushall().Sync().Build()).Error()
-	if err != nil {
-		t.Errorf("failed to flush Redis cache: %v", err)
-	}
 }
 
 func TestRedisCache_UpdateAndGet(t *testing.T) {
+	defer func() {
+		err := rdb.Do(context.Background(), rdb.B().Flushall().Sync().Build()).Error()
+		if err != nil {
+			t.Errorf("failed to flush Redis cache: %v", err)
+		}
+	}()
+
 	ctx := context.Background()
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	type testcase struct {
@@ -161,9 +171,5 @@ func TestRedisCache_UpdateAndGet(t *testing.T) {
 				}
 			}
 		})
-	}
-	err := rdb.Do(ctx, rdb.B().Flushall().Sync().Build()).Error()
-	if err != nil {
-		t.Errorf("failed to flush Redis cache: %v", err)
 	}
 }
