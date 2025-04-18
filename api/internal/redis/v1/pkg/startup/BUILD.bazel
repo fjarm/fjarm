@@ -3,6 +3,10 @@ load("@rules_go//go:def.bzl", "go_library")
 go_library(
     name = "startup",
     srcs = [
+        "redis_config_bootstrap.go",
+        "redis_config_commands.go",
+        "redis_config_file.go",
+        "redis_config_user.go",
         "redis_startup.go",
         "redis_startup_errors.go",
     ],
