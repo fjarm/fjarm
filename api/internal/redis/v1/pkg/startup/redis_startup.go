@@ -13,13 +13,13 @@ import (
 // TODO(2025-03-15): Create Redis admin client.
 // TODO(2025-03-15): Use Redis admin client to setup ACLs and TLS.
 
-type redisServerStarter struct {
+type RedisServerStarter struct {
 	logger *slog.Logger
 }
 
-// createConfigFile creates an empty redis.conf file with the name specified by fname. The caller is responsible for
+// CreateConfigFile creates an empty redis.conf file with the name specified by fname. The caller is responsible for
 // closing the file if non-nil, non-error values are returned.
-func (rs *redisServerStarter) createConfigFile(fname string) (*os.File, error) {
+func (rs *RedisServerStarter) CreateConfigFile(fname string) (*os.File, error) {
 	f, err := os.Create(fname)
 	if err != nil && f != nil {
 		return nil, fmt.Errorf(
@@ -34,17 +34,17 @@ func (rs *redisServerStarter) createConfigFile(fname string) (*os.File, error) {
 	return f, nil
 }
 
-func (rs *redisServerStarter) fetchCertificates() error {
+func (rs *RedisServerStarter) fetchCertificates() error {
 	return ErrUnimplemented
 }
 
-func (rs *redisServerStarter) saveCertificates() error {
+func (rs *RedisServerStarter) saveCertificates() error {
 	return ErrUnimplemented
 }
 
-// writeNewRedisPrimaryConfigFile creates a redisServerConfig struct with parameters that fit a Redis primary node and
+// WriteNewRedisPrimaryConfigFile creates a redisServerConfig struct with parameters that fit a Redis primary node and
 // translates that struct to a redis.conf file using text templating.
-func (rs *redisServerStarter) writeNewRedisPrimaryConfigFile(
+func (rs *RedisServerStarter) WriteNewRedisPrimaryConfigFile(
 	ctx context.Context,
 	masteruser string,
 	masterauth string,
@@ -75,6 +75,6 @@ func (rs *redisServerStarter) writeNewRedisPrimaryConfigFile(
 	return nil
 }
 
-func newRedisServerStarter() *redisServerStarter {
-	return &redisServerStarter{}
+func NewRedisServerStarter() *RedisServerStarter {
+	return &RedisServerStarter{}
 }
