@@ -44,7 +44,12 @@ func (rs *redisServerStarter) saveCertificates() error {
 
 // writeNewRedisPrimaryConfigFile creates a redisServerConfig struct with parameters that fit a Redis primary node and
 // translates that struct to a redis.conf file using text templating.
-func (rs *redisServerStarter) writeNewRedisPrimaryConfigFile(ctx context.Context, destination io.WriteCloser) error {
+func (rs *redisServerStarter) writeNewRedisPrimaryConfigFile(
+	ctx context.Context,
+	masteruser string,
+	masterauth string,
+	destination io.WriteCloser,
+) error {
 	defer func() {
 		err := destination.Close()
 		if err != nil {
@@ -52,7 +57,7 @@ func (rs *redisServerStarter) writeNewRedisPrimaryConfigFile(ctx context.Context
 		}
 	}()
 
-	replicaUser, err := newReplicaUser("replicauser", "youshallnotpass")
+	replicaUser, err := newReplicaUser(masteruser, masterauth)
 	if err != nil {
 		return err
 	}

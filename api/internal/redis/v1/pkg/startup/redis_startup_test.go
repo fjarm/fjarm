@@ -27,7 +27,7 @@ func TestWriteNewRedisPrimaryConfigFile(t *testing.T) {
 
 	rss := redisServerStarter{logger: logger}
 
-	err := rss.writeNewRedisPrimaryConfigFile(context.Background(), &swc)
+	err := rss.writeNewRedisPrimaryConfigFile(context.Background(), "replicauser", "youshallnotpass", &swc)
 	if err != nil {
 		t.Errorf("writeNewRedisPrimaryConfigFile got an unexpected error: %v", err)
 	}

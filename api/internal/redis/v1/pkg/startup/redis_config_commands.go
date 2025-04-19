@@ -15,7 +15,7 @@ const auth = "AUTH"
 const info = "INFO"
 const ping = "PING"
 const psync = "PSYNC"
-const replicaof = "replicaof"
+const replicaof = "REPLICAOF"
 const replconf = "REPLCONF"
 const role = "ROLE"
 
