@@ -19,7 +19,7 @@ tls-key-file {{ .TLSKeyFile }}
 
 # The CA certificate or bundle used to authenticate TLS clients/peers
 # This or tls-ca-cert-dir /etc/ssl/certs must be specified
-tls-ca-cert-file {{ .TLSCaCertFile }}
+tls-ca-cert-file {{ .TLSCACertFile }}
 
 # Enable TLS for replication and cluster communication
 tls-replication yes
@@ -60,7 +60,9 @@ user default off
 {{ end }}
 
 # The user replicauser is allowed to execute commands required for replication purposes
-user replicauser on ><password> -@all +PSYNC +REPLCONF +PING
+{{ range $index, $user := .Users }}
+user {{ $user.Username }} on >{{ $user.Password }} {{ range $cmd := $user.EnabledCommands }}{{ $cmd }} {{ end }}
+{{ end }}
 
 # The user userservice is allowed to reference keys starting with "userservice:"
 # Its password is randomly generated and supplied at Redis Cluster creation

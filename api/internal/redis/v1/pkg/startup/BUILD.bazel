@@ -1,9 +1,9 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "startup",
     srcs = [
-        "redis_config_bootstrap.go",
+        "redis_config.go",
         "redis_config_commands.go",
         "redis_config_file.go",
         "redis_config_user.go",
@@ -12,4 +12,11 @@ go_library(
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/redis/v1/pkg/startup",
     visibility = ["//api:__subpackages__"],
+    deps = ["//api/internal/logkeys"],
+)
+
+go_test(
+    name = "startup_test",
+    srcs = ["redis_startup_test.go"],
+    embed = [":startup"],
 )

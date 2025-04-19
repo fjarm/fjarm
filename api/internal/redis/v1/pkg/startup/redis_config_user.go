@@ -1,9 +1,9 @@
 package startup
 
 type redisUser struct {
-	username        string
-	password        string
-	enabledCommands []string
+	Username        string
+	Password        string
+	EnabledCommands []string
 }
 
 // newRedisUser creates a Redis user with the given username, password, and enabled commands. By default, command groups
@@ -25,9 +25,9 @@ func newRedisUser(username string, password string, enabledCommands ...string) (
 	allCommands = append(allCommands, removed...)
 
 	return &redisUser{
-		username:        username,
-		password:        password,
-		enabledCommands: allCommands,
+		Username:        username,
+		Password:        password,
+		EnabledCommands: allCommands,
 	}, nil
 }
 
@@ -51,9 +51,9 @@ func newReplicaUser(username string, password string) (*redisUser, error) {
 	allCommands = append(allCommands, added...)
 
 	replicaUser := redisUser{
-		username:        username,
-		password:        password,
-		enabledCommands: allCommands,
+		Username:        username,
+		Password:        password,
+		EnabledCommands: allCommands,
 	}
 	return &replicaUser, nil
 }

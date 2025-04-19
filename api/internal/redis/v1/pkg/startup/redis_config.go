@@ -23,11 +23,6 @@ func newDefaultRedisPrimaryServerConfig(
 	masterUser string,
 	users ...*redisUser,
 ) (*redisServerConfig, error) {
-	replicaUser, err := newReplicaUser(masterUser, masterAuth)
-	if err != nil {
-		return nil, err
-	}
-
 	return &redisServerConfig{
 		Port:              0,
 		TLSPort:           6379,
@@ -38,6 +33,6 @@ func newDefaultRedisPrimaryServerConfig(
 		MasterAuth:        masterAuth,
 		MasterUser:        masterUser,
 		EnableDefaultUser: false,
-		Users:             append(users, replicaUser),
+		Users:             users,
 	}, nil
 }
