@@ -40,11 +40,21 @@ oci.pull(
         "linux/arm64/v8",
     ],
 )
+oci.pull(
+    name = "redis_8_alpine_latest",
+    digest = "sha256:ca3b8357132901ad1f69568f910aca7865eca82ee84bc63ca2d2a867493c1f15",
+    image = "docker.io/library/redis:8.0-M04-alpine3.21",
+    platforms = [
+        "linux/arm64/v8",
+    ],
+)
 use_repo(
     oci,
     "distroless_static",
     "distroless_static_linux_amd64",
     "distroless_static_linux_arm64_v8",
+    "redis_8_alpine_latest",
+    "redis_8_alpine_latest_linux_arm64_v8",
 )
 
 # This dependency is only needed because testcontainers-go adds a transitive dependency on gogo/protobuf.

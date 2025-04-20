@@ -272,7 +272,7 @@
     "@@rules_oci+//oci:extensions.bzl%oci": {
       "general": {
         "bzlTransitiveDigest": "pw7u/vJcN/lRAfn8lmremTngQIMGVNAXNFQfOw9IuAw=",
-        "usagesDigest": "H2SvX9jpJNXblHMf7yvU83yPrdi8BNGHtdGaGWwoVhE=",
+        "usagesDigest": "dn9eneUzMfRPpWh7JjS+n1Y16Z7rBD2lSm25shspWgU=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -314,6 +314,33 @@
                 "@@platforms//cpu:arm64": "@distroless_static_linux_arm64_v8"
               },
               "bzlmod_repository": "distroless_static",
+              "reproducible": true
+            }
+          },
+          "redis_8_alpine_latest_linux_arm64_v8": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_pull",
+            "attributes": {
+              "scheme": "https",
+              "registry": "index.docker.io",
+              "repository": "library/redis",
+              "identifier": "sha256:ca3b8357132901ad1f69568f910aca7865eca82ee84bc63ca2d2a867493c1f15",
+              "platform": "linux/arm64/v8",
+              "target_name": "redis_8_alpine_latest_linux_arm64_v8",
+              "bazel_tags": []
+            }
+          },
+          "redis_8_alpine_latest": {
+            "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_alias",
+            "attributes": {
+              "target_name": "redis_8_alpine_latest",
+              "scheme": "https",
+              "registry": "index.docker.io",
+              "repository": "library/redis",
+              "identifier": "sha256:ca3b8357132901ad1f69568f910aca7865eca82ee84bc63ca2d2a867493c1f15",
+              "platforms": {
+                "@@platforms//cpu:arm64": "@redis_8_alpine_latest_linux_arm64_v8"
+              },
+              "bzlmod_repository": "redis_8_alpine_latest",
               "reproducible": true
             }
           },
@@ -682,7 +709,9 @@
           "explicitRootModuleDirectDeps": [
             "distroless_static",
             "distroless_static_linux_amd64",
-            "distroless_static_linux_arm64_v8"
+            "distroless_static_linux_arm64_v8",
+            "redis_8_alpine_latest",
+            "redis_8_alpine_latest_linux_arm64_v8"
           ],
           "explicitRootModuleDirectDevDeps": [],
           "useAllRepos": "NO",
