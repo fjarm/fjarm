@@ -13,7 +13,6 @@ import (
 
 const redisCacheTag = "redis_cache"
 
-// TODO(2025-03-09): Setup Redis Sentinel in docker-compose.yaml file.
 // TODO(2025-03-09): Manually configure Redis connection pooling.
 // TODO(2025-03-09): Add OpenTelemetry-based monitoring to Redis.
 
