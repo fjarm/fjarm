@@ -272,7 +272,7 @@
     "@@rules_oci+//oci:extensions.bzl%oci": {
       "general": {
         "bzlTransitiveDigest": "pw7u/vJcN/lRAfn8lmremTngQIMGVNAXNFQfOw9IuAw=",
-        "usagesDigest": "I1dfVQI7Wjk2IY+TlAnAt+T8hG6BvujF4trqmZ940Qs=",
+        "usagesDigest": "oaQI42+CFsDEjdYdBuuUbp1ilTxuOO9aCUmMZ5h8AXI=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -304,30 +304,30 @@
               "reproducible": true
             }
           },
-          "redis_8_alpine_latest_linux_arm64_v8": {
+          "redis_alpine_latest_linux_arm64_v8": {
             "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_pull",
             "attributes": {
               "scheme": "https",
               "registry": "index.docker.io",
               "repository": "library/redis",
-              "identifier": "sha256:ca3b8357132901ad1f69568f910aca7865eca82ee84bc63ca2d2a867493c1f15",
+              "identifier": "sha256:02419de7eddf55aa5bcf49efb74e88fa8d931b4d77c07eff8a6b2144472b6952",
               "platform": "linux/arm64/v8",
-              "target_name": "redis_8_alpine_latest_linux_arm64_v8",
+              "target_name": "redis_alpine_latest_linux_arm64_v8",
               "bazel_tags": []
             }
           },
-          "redis_8_alpine_latest": {
+          "redis_alpine_latest": {
             "repoRuleId": "@@rules_oci+//oci/private:pull.bzl%oci_alias",
             "attributes": {
-              "target_name": "redis_8_alpine_latest",
+              "target_name": "redis_alpine_latest",
               "scheme": "https",
               "registry": "index.docker.io",
               "repository": "library/redis",
-              "identifier": "sha256:ca3b8357132901ad1f69568f910aca7865eca82ee84bc63ca2d2a867493c1f15",
+              "identifier": "sha256:02419de7eddf55aa5bcf49efb74e88fa8d931b4d77c07eff8a6b2144472b6952",
               "platforms": {
-                "@@platforms//cpu:arm64": "@redis_8_alpine_latest_linux_arm64_v8"
+                "@@platforms//cpu:arm64": "@redis_alpine_latest_linux_arm64_v8"
               },
-              "bzlmod_repository": "redis_8_alpine_latest",
+              "bzlmod_repository": "redis_alpine_latest",
               "reproducible": true
             }
           },
@@ -696,8 +696,8 @@
           "explicitRootModuleDirectDeps": [
             "distroless_static",
             "distroless_static_linux_arm64_v8",
-            "redis_8_alpine_latest",
-            "redis_8_alpine_latest_linux_arm64_v8"
+            "redis_alpine_latest",
+            "redis_alpine_latest_linux_arm64_v8"
           ],
           "explicitRootModuleDirectDevDeps": [],
           "useAllRepos": "NO",
