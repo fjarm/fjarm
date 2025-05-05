@@ -23,6 +23,13 @@ func (c *FakeRedisCache) SafeReleaseLock(ctx context.Context, key string, value 
 	if strings.TrimSpace(key) == "" || strings.Contains(key, " ") {
 		return fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or whitespace")
 	}
+	val, err := c.Get(ctx, key)
+	if err != nil {
+		return err
+	}
+	if string(val) != value {
+		return fmt.Errorf("%w: %s", cachev1.ErrLockReleaseFailed, "failed to release lock. value does not match")
+	}
 	c.removeExpiredValues()
 	delete(c.rdb, key)
 	return nil
