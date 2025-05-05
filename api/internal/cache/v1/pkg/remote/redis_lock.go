@@ -19,7 +19,7 @@ func (c *RedisCache) AcquireLock(ctx context.Context, key string, ttl time.Durat
 		return "", fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or whitespace")
 	}
 	if ttl <= 0 {
-		return "", fmt.Errorf("%w: %s", cachev1.ErrInvalidExpiration, "ttl must be greater than or equal to 0")
+		return "", fmt.Errorf("%w: %s", cachev1.ErrInvalidExpiration, "ttl must be greater than 0")
 	}
 
 	lockVal := uuid.NewString()
@@ -68,12 +68,12 @@ func (c *RedisCache) SafeReleaseLock(ctx context.Context, key string, value stri
 
 // VerifyLock checks if the calling process owns the lock in Redis. If the key doesn't exist or if the value doesn't
 // match the value of the key in Redis, an error is returned.
-func (c *RedisCache) VerifyLock(cxt context.Context, lockKey string, lockVal string) (bool, error) {
+func (c *RedisCache) VerifyLock(ctx context.Context, lockKey string, lockVal string) (bool, error) {
 	if strings.TrimSpace(lockKey) == "" || strings.Contains(lockKey, " ") {
 		return false, fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or whitespace")
 	}
 
-	val, err := c.Get(cxt, lockKey)
+	val, err := c.Get(ctx, lockKey)
 	if err != nil {
 		// This could be a real Redis error or a cache miss because the key doesn't exist. If it's a cache miss, the
 		// lock key could have been deleted or expired. In either case, the client may choose to abort the operation.
