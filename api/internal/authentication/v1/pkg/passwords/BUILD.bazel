@@ -1,0 +1,20 @@
+load("@rules_go//go:def.bzl", "go_library", "go_test")
+
+go_library(
+    name = "passwords",
+    srcs = [
+        "common_errors.go",
+        "hash_params.go",
+        "passwords.go",
+        "salts.go",
+    ],
+    importpath = "github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords",
+    visibility = ["//api:__subpackages__"],
+    deps = ["@org_golang_x_crypto//argon2"],
+)
+
+go_test(
+    name = "passwords_test",
+    srcs = ["passwords_test.go"],
+    embed = [":passwords"],
+)

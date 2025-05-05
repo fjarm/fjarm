@@ -1,0 +1,33 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_cross_binary", "go_library")
+
+go_library(
+    name = "helloworld_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/fjarm/fjarm/api/internal/helloworld/v1/cmd/helloworld",
+    visibility = ["//visibility:private"],
+    deps = [
+        "//api/internal/helloworld/v1/internal/helloworld",
+        "//api/internal/logkeys",
+        "//api/internal/obfuscation/v1/pkg/interceptor",
+        "//api/internal/tracing/v1/pkg/interceptor",
+        "@build_buf_gen_go_fjarm_fjarm_connectrpc_go//fjarm/helloworld/v1/helloworldv1connect",
+        "@com_connectrpc_connect//:connect",
+    ],
+)
+
+go_binary(
+    name = "helloworld",
+    embed = [":helloworld_lib"],
+    visibility = ["//visibility:private"],
+)
+
+# SEE: https://go.dev/doc/install/source#environment
+# The valid OS and CPU architecture combinations can be found above.
+# Cross compiled binaries for Linux make sure that local compilation from MacOS doesn't lead to `exec format error`
+# bugs when running the binary inside a Linux container.
+go_cross_binary(
+    name = "helloworld_linux_arm64",
+    platform = "@rules_go//go/toolchain:linux_arm64",
+    target = ":helloworld",
+    visibility = ["//visibility:public"],
+)

@@ -7,7 +7,7 @@ on:
         required: true
         type: choice
         options:
-          - helloworld/v1:helloworld_push
+          - api/internal/helloworld/v1/deployment/ghcr:helloworld_push
 env:
   REGISTRY: ghcr.io
 jobs:
@@ -46,4 +46,4 @@ jobs:
           bazel build //api/...
       - name: Run oci_push target
         run: |
-          bazel run //api/deployment/${{ inputs.module }} --config=release
+          bazel run ${{ inputs.module }} --config=release

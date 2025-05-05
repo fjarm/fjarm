@@ -7,13 +7,13 @@ on:
         required: true
         type: choice
         options:
-          - ./api/deployment/helloworld
+          - ./api/internal/helloworld/v1/deployment/flyio
       image:
         description: 'API image version to deploy'
         required: true
         type: choice
         options:
-          - veganafro/helloworld
+          - ghcr.io/fjarm/helloworld
       version:
         description: 'API service version to deploy'
         required: true

@@ -22,6 +22,9 @@ use_repo(
     "build_buf_gen_go_fjarm_fjarm_protocolbuffers_go",
     "com_connectrpc_connect",
     "com_github_bufbuild_protovalidate_go",
+    "com_github_google_uuid",
+    "com_github_redis_rueidis",
+    "com_github_testcontainers_testcontainers_go_modules_redis",
     "org_golang_google_protobuf",
     "org_golang_x_crypto",
 )
@@ -33,15 +36,40 @@ oci.pull(
     digest = "sha256:5c7e2b465ac6a2a4e5f4f7f722ce43b147dabe87cb21ac6c4007ae5178a1fa58",
     image = "gcr.io/distroless/static",
     platforms = [
-        "linux/amd64",
+        "linux/arm64/v8",
+    ],
+)
+oci.pull(
+    name = "redis_alpine_latest",
+    digest = "sha256:02419de7eddf55aa5bcf49efb74e88fa8d931b4d77c07eff8a6b2144472b6952",
+    image = "docker.io/library/redis:7.4.2-alpine3.21",
+    platforms = [
         "linux/arm64/v8",
     ],
 )
 use_repo(
     oci,
     "distroless_static",
-    "distroless_static_linux_amd64",
     "distroless_static_linux_arm64_v8",
+    "redis_alpine_latest",
+    "redis_alpine_latest_linux_arm64_v8",
 )
+
+# This dependency is only needed because testcontainers-go adds a transitive dependency on gogo/protobuf.
+bazel_dep(name = "toolchains_protoc", version = "0.3.7")
+
+# Optional: choose a version of protoc rather than the latest.
+protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
+protoc.toolchain(
+    # Creates a repository to satisfy well-known-types dependencies such as
+    # deps=["@com_google_protobuf//:any_proto"]
+    # Add com_google_protobuf to the `use_repo` call below
+    # google_protobuf = "com_google_protobuf",
+    # Pin to any version of protoc
+    version = "v29.3",
+)
+use_repo(protoc, "toolchains_protoc_hub")
+
+register_toolchains("@toolchains_protoc_hub//:all")
 
 register_toolchains("//tools/toolchains:all")
