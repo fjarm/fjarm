@@ -94,6 +94,30 @@ To avoid downtime when restarting Redis, the following steps can be taken:
 - Handles large datasets through horizontal scaling
 - Uses 16384 hash slots for data distribution
 
+## Testing Redis
+
+Testing Redis is possible using the `testcontainers` Go module. Because that Go module imports `gogo/protofbuf`, adding
+it to `go.mod` also requires adding a dependency on the `protoc` Protobuf compiler in `MODULE.bazel`:
+
+```
+# This dependency is only needed because testcontainers-go adds a transitive dependency on gogo/protobuf.
+bazel_dep(name = "toolchains_protoc", version = "0.3.7")
+
+# Optional: choose a version of protoc rather than the latest.
+protoc = use_extension("@toolchains_protoc//protoc:extensions.bzl", "protoc")
+protoc.toolchain(
+    # Creates a repository to satisfy well-known-types dependencies such as
+    # deps=["@com_google_protobuf//:any_proto"]
+    # Add com_google_protobuf to the `use_repo` call below
+    # google_protobuf = "com_google_protobuf",
+    # Pin to any version of protoc
+    version = "v29.3",
+)
+use_repo(protoc, "toolchains_protoc_hub")
+
+register_toolchains("@toolchains_protoc_hub//:all")
+```
+
 ## Documentation
 * [Redis OSS management](https://redis.io/docs/latest/operate/oss_and_stack/management/)
 * [Redis high availability with Sentinel](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/)

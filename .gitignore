@@ -19,3 +19,4 @@
 
 # Bazel generated output
 bazel-**
+genhtml

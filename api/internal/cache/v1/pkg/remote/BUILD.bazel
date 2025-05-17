@@ -33,10 +33,4 @@ go_test(
         # Disable reaper now that Podman (not Docker) is used to manage containers
         "TESTCONTAINERS_RYUK_DISABLED": "true",
     },
-    deps = [
-        "//api/internal/cache",
-        "//api/internal/logkeys",
-        "@com_github_redis_rueidis//:rueidis",
-        "@com_github_testcontainers_testcontainers_go_modules_redis//:redis",
-    ],
 )
