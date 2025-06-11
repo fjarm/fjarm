@@ -10,14 +10,9 @@ if ! podman machine list 2>/dev/null | grep -q "${MACHINE_NAME}.*${MACHINE_STATU
     exit 1
 fi
 
-CLUSTER_NAME="kind"
+kind delete cluster
 
-# Check if a cluster with the name "kind" already exists
-if kind get clusters 2>/dev/null | grep -q "^${CLUSTER_NAME}$"; then
-    echo "A Kind cluster named '${CLUSTER_NAME}' is already running. Skipping creation."
-    exit 0
-fi
-
-# Create the cluster if it doesn't exist
-echo "Creating Kind cluster '${CLUSTER_NAME}'..."
-kind create cluster --config kind-config.yaml
+podman container kill --all
+podman container rm --all
+podman image rm --all
+podman volume rm --all
