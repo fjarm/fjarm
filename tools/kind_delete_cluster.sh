@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 MACHINE_NAME="podman-machine-default"
 MACHINE_STATUS="Currently running"
