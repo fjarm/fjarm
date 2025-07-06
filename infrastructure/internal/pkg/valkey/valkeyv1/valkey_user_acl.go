@@ -12,7 +12,7 @@ var ErrTemplateParsingError = fmt.Errorf("error parsing ACL file template")
 
 const configTemplate = `
 # SEE: https://valkey.io/topics/acl/
-user default on >{{ .DefaultUserCredentials }} allchannels +multi +slaveof +ping +exec +subscribe +config|rewrite +role +publish +info +client|setname +client|kill +script|kill
+user default on >{{ .DefaultUserCredentials }} allchannels +psync +replconf +multi +slaveof +ping +exec +subscribe +config|rewrite +role +publish +info +client|setname +client|kill +script|kill
 user sentinel-user on >{{ .SentinelUserCredentials }} allchannels +multi +slaveof +ping +exec +subscribe +config|rewrite +role +publish +info +client|setname +client|kill +script|kill
 user replica-user on >{{ .ReplicaUserCredentials }} +psync +replconf +ping
 
