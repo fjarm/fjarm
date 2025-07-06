@@ -48,7 +48,7 @@ func DeployValkeyCluster(
 			{
 				Username:        "test",
 				Password:        "test",
-				EnabledCommands: []string{"+AUTH", "+ACL", "+PING", "+GET", "+SET", "~*"},
+				EnabledCommands: []string{"+AUTH", "+INFO", "+ACL", "+PING", "+GET", "+SET", "~*"},
 			},
 		},
 	}
