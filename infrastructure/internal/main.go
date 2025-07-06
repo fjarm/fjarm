@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/fjarm/fjarm/infrastructure/internal/pkg/certmanager/certmanagerv1"
+	"github.com/fjarm/fjarm/infrastructure/internal/pkg/valkey/valkeyv1"
 	"github.com/pulumi/pulumi-kubernetes/sdk/v4/go/kubernetes"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -18,13 +19,20 @@ func main() {
 		if err != nil {
 			return err
 		}
-		_, err = certmanagerv1.DeployCertManager(
+
+		certManagerDeps, err := certmanagerv1.DeployCertManager(
 			ctx,
 			k8sProvider,
 		)
 		if err != nil {
 			return err
 		}
-		return nil
+
+		_, err = valkeyv1.DeployValkeyCluster(
+			ctx,
+			k8sProvider,
+			certManagerDeps,
+		)
+		return err
 	})
 }
