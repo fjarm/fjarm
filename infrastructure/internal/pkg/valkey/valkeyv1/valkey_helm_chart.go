@@ -116,7 +116,8 @@ func newValkeyClusterHelmChartArgs(
 		Namespace: namespace.Metadata.Name(),
 		Version:   pulumi.String(chartVersion),
 		Values: pulumi.Map{
-			"architecture": pulumi.String("replication"),
+			"fullnameOverride": pulumi.String("valkey"),
+			"architecture":     pulumi.String("replication"),
 			"auth": pulumi.Map{
 				"enabled": pulumi.Bool(true),
 				// The password for the default user
@@ -132,6 +133,7 @@ func newValkeyClusterHelmChartArgs(
 				"image": pulumi.Map{
 					"digest": pulumi.String("sha256:071cb353bc17f27492655c710386d5e3afc5c36d8057ea5d48c5886da6f1bc3a"),
 				},
+				"primarySet": pulumi.String("valkey-primary"),
 				"resources": pulumi.Map{
 					"limits": pulumi.Map{
 						"cpu":    pulumi.String("600m"),
