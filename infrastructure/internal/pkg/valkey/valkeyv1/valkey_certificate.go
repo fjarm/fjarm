@@ -63,7 +63,7 @@ func newValkeyClusterCertificateArgs(
 			"spec": kubernetes.UntypedArgs{
 				"commonName": pulumi.String("valkey"),
 				"dnsNames": pulumi.StringArray{
-					pulumi.String("'*.valkey.valkey.svc.cluster.local'"),
+					pulumi.String("*.valkey.valkey.svc.cluster.local"),
 					pulumi.String("valkey.valkey.svc.cluster.local"),
 					pulumi.String("valkey.valkey.svc"),
 					pulumi.String("valkey.valkey"),
