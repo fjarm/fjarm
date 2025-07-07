@@ -1,4 +1,5 @@
 # gazelle:prefix github.com/fjarm/fjarm
+# gazelle:exclude infrastructure
 
 load("@gazelle//:def.bzl", "gazelle", "gazelle_binary")
 

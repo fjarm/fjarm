@@ -53,5 +53,3 @@ use_repo(
     "redis_alpine_latest",
     "redis_alpine_latest_linux_arm64_v8",
 )
-
-register_toolchains("//tools/toolchains:all")

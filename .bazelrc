@@ -9,4 +9,4 @@ common --incompatible_enable_proto_toolchain_resolution
 # SEE: https://github.com/bazel-contrib/bazel-lib/blob/0f5e1dcafd5a27b8ed6ba9805b6d3f59ab8307aa/docs/stamping.md
 # This tells Bazel how to interact with the version control system
 # Enable this with --config=release
-build:release --stamp --workspace_status_command=./tools/bazel_stamp_vars.sh
+build:release --stamp --workspace_status_command=./scripts/bazel_stamp_vars.sh
