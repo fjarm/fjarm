@@ -76,9 +76,6 @@ func newValkeyClusterCertificateArgs(
 					pulumi.String("localhost"),
 				},
 				"duration": pulumi.String("87600h0m0s"),
-				"ipAddresses": pulumi.StringArray{
-					pulumi.String("127.0.0.1"),
-				},
 				"issuerRef": kubernetes.UntypedArgs{
 					"kind":  pulumi.String("ClusterIssuer"),
 					"name":  pulumi.String(certmanagerv1.InternalClusterIssuerName),
