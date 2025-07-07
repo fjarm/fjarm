@@ -40,6 +40,7 @@ func DeployValkeyCluster(
 		return nil, err
 	}
 
+	// TODO(2025-07-06): Use better (Infisical) method to supply ACL credentials.
 	commonConfig := &valkeyConfig{
 		DefaultUserCredentials:  "somepassword",
 		SentinelUserCredentials: "somepassword",

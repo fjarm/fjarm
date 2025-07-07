@@ -119,7 +119,7 @@ func deployCertManagerHelmChart(
 // newCertManagerHelmChartArgs creates a Helm chart arguments. The Helm chart args can then be used by a Pulumi program
 // to deploy cert-manager.
 //
-// [kind] controls the [enableGatewayAPI] value by disable the GatewayAPI if the chart is deployed locally.
+// [kind] controls the [enableGatewayAPI] value by disabling the GatewayAPI if the chart is deployed locally.
 func newCertManagerHelmChartArgs(
 	namespace *corev1.Namespace,
 	kind bool,

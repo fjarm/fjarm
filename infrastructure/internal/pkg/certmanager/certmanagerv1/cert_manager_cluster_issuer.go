@@ -55,9 +55,9 @@ func newCertManagerInternalClusterIssuerArgs(
 				),
 			},
 		},
-		OtherFields: map[string]any{
-			"spec": map[string]any{
-				"ca": map[string]any{
+		OtherFields: kubernetes.UntypedArgs{
+			"spec": kubernetes.UntypedArgs{
+				"ca": kubernetes.UntypedArgs{
 					"secretName": secret.Metadata.Name(),
 				},
 			},
