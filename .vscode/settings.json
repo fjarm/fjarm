@@ -1,0 +1,43 @@
+{
+  "editor.rulers": [120],
+  "[markdown]":  {
+    "editor.wordWrap": "off"
+  },
+  "go.goroot": "~/development/fjarm/bazel-fjarm/external/rules_go++go_sdk+fjarm__download_0/",
+  "go.toolsEnvVars": {
+    "GOPACKAGESDRIVER": "~/development/fjarm/scripts/gopackagesdriver.sh"
+  },
+  "go.enableCodeLens": {
+    "runtest": false
+  },
+  "gopls": {
+    "build.workspaceFiles": [
+      "**/BUILD",
+      "**/WORKSPACE",
+      "**/*.{bzl,bazel}"
+    ],
+    "build.directoryFilters": [
+      "-bazel-bin",
+      "-bazel-out",
+      "-bazel-testlogs",
+      "-bazel-fjarm"
+    ],
+    "formatting.gofumpt": true,
+    "formatting.local": "github.com/fjarm/fjarm",
+    "ui.completion.usePlaceholders": true,
+    "ui.semanticTokens": true,
+    "ui.codelenses": {
+      "gc_details": false,
+      "regenerate_cgo": false,
+      "generate": false,
+      "test": false,
+      "tidy": false,
+      "upgrade_dependency": false,
+      "vendor": false
+    }
+  },
+  "go.useLanguageServer": true,
+  "go.buildOnSave": "off",
+  "go.lintOnSave": "off",
+  "go.vetOnSave": "off"
+}
