@@ -20,7 +20,13 @@
       "-bazel-bin",
       "-bazel-out",
       "-bazel-testlogs",
-      "-bazel-fjarm"
+      "-bazel-fjarm",
+      "-.idea",
+      "-.vscode",
+      "-.ijwb",
+      "-android",
+      "-docs",
+      "-proto"
     ],
     "formatting.gofumpt": true,
     "formatting.local": "github.com/fjarm/fjarm",
