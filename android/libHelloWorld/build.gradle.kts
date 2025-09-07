@@ -11,5 +11,6 @@ java {
 dependencies {
     implementation(libs.grpcAndroid)
     implementation(libs.grpcOkHttp)
-    implementation(libs.helloWorldSdk)
+    implementation(libs.fjarmGrpcSdk)
+    implementation(libs.fjarmConnectSdk)
 }
