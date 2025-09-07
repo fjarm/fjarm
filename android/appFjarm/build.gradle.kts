@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "xyz.fjarm.fjarm"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "xyz.fjarm.fjarm"
