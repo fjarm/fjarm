@@ -1,7 +1,6 @@
 package xyz.fjarm.libhelloworld
 
-import build.buf.gen.helloworld.v1.GetHelloWorldResponse
-import build.buf.gen.helloworld.v1.HelloWorldServiceGrpcKt
+import build.buf.gen.fjarm.helloworld.v1.GetHelloWorldResponse
 
 interface HelloWorldClient {
 

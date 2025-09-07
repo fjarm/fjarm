@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "xyz.fjarm.helloworld"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "xyz.fjarm.helloworld"
@@ -54,7 +54,7 @@ dependencies {
     implementation(project(":libHelloWorld"))
     implementation(libs.grpcAndroid)
     implementation(libs.grpcOkHttp)
-    implementation(libs.helloWorldSdk)
+    implementation(libs.fjarmGrpcSdk)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
