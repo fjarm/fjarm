@@ -27,7 +27,7 @@ import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
 import xyz.fjarm.helloworld.ui.theme.HelloWorldTheme
 import xyz.fjarm.libhelloworld.HelloWorldClient
-import xyz.fjarm.libhelloworld.HelloWorldClientImpl
+import xyz.fjarm.libhelloworld.HelloWorldGrpcClientImpl
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        client = HelloWorldClientImpl(initOkHttpChannel())
+        client = HelloWorldGrpcClientImpl(initOkHttpChannel())
     }
 
     private fun initOkHttpChannel(): ManagedChannel {
