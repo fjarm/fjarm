@@ -11,6 +11,9 @@ composeBom = "2025.07.00"
 jetbrainsKotlinJvm = "2.0.0"
 
 # Our dependency versions below
+coroutinesCoreJvm = "1.10.2"
+
+# gRPC and ConnectRPC
 connectRpc = "0.7.4"
 fjarmConnectSdk = "0.7.4.1.20250220235546.9eca9e174ab9"
 fjarmGrpcSdk = "1.4.3.1.20250220235546.9eca9e174ab9"
@@ -35,6 +38,7 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 # Our dependencies below
+coroutinesCoreJvm = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core-jvm", version.ref = "coroutinesCoreJvm"}
 connectKotlin = { group = "com.connectrpc", name = "connect-kotlin", version.ref = "connectRpc"}
 connectKotlinGoogleJavaLiteExt = { group = "com.connectrpc", name = "connect-kotlin-google-javalite-ext", version.ref = "connectRpc"}
 connectKotlinOkHttp = { group = "com.connectrpc", name = "connect-kotlin-okhttp", version.ref = "connectRpc"}
