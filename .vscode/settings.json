@@ -45,5 +45,7 @@
   "go.useLanguageServer": true,
   "go.buildOnSave": "off",
   "go.lintOnSave": "off",
-  "go.vetOnSave": "off"
+  "go.vetOnSave": "off",
+  "buf.commandLine.path": "",
+  "buf.log-format": "json"
 }
