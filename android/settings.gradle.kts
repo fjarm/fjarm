@@ -30,3 +30,4 @@ rootProject.name = "android"
 include(":appFjarm")
 include(":appHelloWorld")
 include(":libHelloWorld")
+include(":libServerTransport")
