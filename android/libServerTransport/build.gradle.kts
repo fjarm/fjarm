@@ -9,9 +9,6 @@ java {
 }
 
 dependencies {
-    implementation(libs.coroutinesCoreJvm)
-    implementation(libs.grpcAndroid)
-    implementation(libs.grpcOkHttp)
     implementation(libs.connectKotlin)
     implementation(libs.connectKotlinGoogleJavaLiteExt)
     implementation(libs.connectKotlinOkHttp)
