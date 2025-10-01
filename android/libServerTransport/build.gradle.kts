@@ -10,6 +10,7 @@ java {
 
 dependencies {
     implementation(libs.connectKotlin)
+    implementation(libs.coroutinesCoreJvm)
     implementation(libs.okHttp3)
     implementation(libs.connectKotlinGoogleJavaLiteExt)
     implementation(libs.connectKotlinOkHttp)

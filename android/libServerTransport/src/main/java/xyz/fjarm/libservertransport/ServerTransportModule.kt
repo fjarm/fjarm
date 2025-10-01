@@ -7,6 +7,7 @@ import com.connectrpc.http.HTTPClientInterface
 import com.connectrpc.impl.ProtocolClient
 import com.connectrpc.okhttp.ConnectOkHttpClient
 import com.connectrpc.protocols.NetworkProtocol
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 
 class ServerTransportModule {
@@ -40,6 +41,7 @@ class ServerTransportModule {
             host = host,
             networkProtocol = networkProtocol,
             serializationStrategy = serializationStrategy,
+            ioCoroutineContext = Dispatchers.IO,
         )
     }
 
