@@ -3,9 +3,32 @@ package xyz.fjarm.libservertransport
 import com.connectrpc.ProtocolClientConfig
 import com.connectrpc.SerializationStrategy
 import com.connectrpc.extensions.GoogleJavaLiteProtobufStrategy
+import com.connectrpc.http.HTTPClientInterface
+import com.connectrpc.impl.ProtocolClient
+import com.connectrpc.okhttp.ConnectOkHttpClient
 import com.connectrpc.protocols.NetworkProtocol
+import okhttp3.OkHttpClient
 
 class ServerTransportModule {
+
+    fun provideProtocolClient(
+        httpClient: HTTPClientInterface,
+        protocolClientConfig: ProtocolClientConfig,
+    ): ProtocolClient {
+        return ProtocolClient(
+            httpClient = httpClient,
+            config = protocolClientConfig,
+        )
+    }
+
+    fun provideHttpClient(): HTTPClientInterface {
+        return ConnectOkHttpClient(
+            // TODO(2025-09-23): Investigate setting up options like Authenticator, x509TrustManager, and/or Interceptor
+            unaryClient = OkHttpClient
+                .Builder()
+                .build()
+        )
+    }
 
     fun provideProtocolClientConfig(
         host: String,
