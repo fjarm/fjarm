@@ -23,8 +23,9 @@ class HelloWorldConnectClientImpl(
         private const val GET_HELLO_WORLD_PATH = "fjarm.helloworld.v1.HelloWorldService/GetHelloWorld"
     }
 
-    override suspend fun getHelloWorld(): GetHelloWorldResponse {
-        val request = GetHelloWorldRequest.newBuilder().build()
+    override suspend fun getHelloWorld(
+        request: GetHelloWorldRequest
+    ): GetHelloWorldResponse {
         val headers = emptyMap<String, List<String>>()
         val response = getHelloWorld(request, headers)
         // The fold method can be used for more granular response/error handling.

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.lifecycleScope
+import build.buf.gen.fjarm.helloworld.v1.GetHelloWorldRequest
 import io.grpc.ManagedChannel
 import io.grpc.StatusException
 import io.grpc.android.AndroidChannelBuilder
@@ -67,7 +68,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             try {
                 val res = client
-                    .getHelloWorld()
+                    .getHelloWorld(GetHelloWorldRequest.newBuilder().build())
                 Log.println(Log.INFO, "MainActivity", "jmuhia, fetchGreeting, res: $res")
                 Toast.makeText(
                     this@MainActivity,

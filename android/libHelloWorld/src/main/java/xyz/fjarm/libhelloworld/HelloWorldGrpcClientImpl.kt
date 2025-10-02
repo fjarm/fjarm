@@ -15,11 +15,12 @@ class HelloWorldGrpcClientImpl(
     private val stub: HelloWorldServiceGrpcKt.HelloWorldServiceCoroutineStub =
         HelloWorldServiceGrpcKt.HelloWorldServiceCoroutineStub(channel)
 
-    override suspend fun getHelloWorld(): GetHelloWorldResponse {
+    override suspend fun getHelloWorld(
+        request: GetHelloWorldRequest,
+    ): GetHelloWorldResponse {
         return withContext(Dispatchers.IO) {
-            val req = GetHelloWorldRequest.newBuilder().build()
             stub.withDeadlineAfter(5, TimeUnit.SECONDS)
-                .getHelloWorld(req)
+                .getHelloWorld(request)
         }
     }
 }
