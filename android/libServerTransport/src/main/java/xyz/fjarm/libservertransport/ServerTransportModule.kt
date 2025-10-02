@@ -22,13 +22,19 @@ class ServerTransportModule {
         )
     }
 
-    fun provideHttpClient(): HTTPClientInterface {
+    fun provideHttpClientInterface(
+        okHttpClient: OkHttpClient,
+    ): HTTPClientInterface {
         return ConnectOkHttpClient(
-            // TODO(2025-09-23): Investigate setting up options like Authenticator, x509TrustManager, and/or Interceptor
-            unaryClient = OkHttpClient
-                .Builder()
-                .build()
+            unaryClient = okHttpClient
         )
+    }
+
+    fun provideOkHttpClient(): OkHttpClient {
+        // TODO(2025-09-23): Investigate setting up options like Authenticator, x509TrustManager, and/or Interceptor
+        return OkHttpClient
+            .Builder()
+            .build()
     }
 
     fun provideProtocolClientConfig(
