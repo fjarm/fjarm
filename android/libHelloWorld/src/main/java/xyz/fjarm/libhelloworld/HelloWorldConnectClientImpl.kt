@@ -16,9 +16,12 @@ class HelloWorldConnectClientImpl(
 ) : HelloWorldClient,
     HelloWorldServiceClientInterface
 {
-    // No need to inject this path. Service and schema upgrades can be done with rolling deploys on
-    // backend and force upgrade prompts on the app.
-    private val getHelloWorldPath = "fjarm.helloworld.v1.HelloWorldService/GetHelloWorld"
+
+    companion object {
+        // No need to inject this path. Service and schema upgrades can be done with rolling deploys on
+        // backend and force upgrade prompts on the app.
+        private const val GET_HELLO_WORLD_PATH = "fjarm.helloworld.v1.HelloWorldService/GetHelloWorld"
+    }
 
     override suspend fun getHelloWorld(): GetHelloWorldResponse {
         val request = GetHelloWorldRequest.newBuilder().build()
@@ -36,7 +39,7 @@ class HelloWorldConnectClientImpl(
             request,
             headers,
             MethodSpec(
-                getHelloWorldPath,
+                GET_HELLO_WORLD_PATH,
                 GetHelloWorldRequest::class,
                 GetHelloWorldResponse::class,
                 StreamType.UNARY,
