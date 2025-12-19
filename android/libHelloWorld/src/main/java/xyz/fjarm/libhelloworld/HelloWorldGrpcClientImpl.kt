@@ -10,17 +10,17 @@ import java.util.concurrent.TimeUnit
 
 class HelloWorldGrpcClientImpl(
     channel: ManagedChannel,
-) : HelloWorldClient {
-
     private val stub: HelloWorldServiceGrpcKt.HelloWorldServiceCoroutineStub =
-        HelloWorldServiceGrpcKt.HelloWorldServiceCoroutineStub(channel)
+        HelloWorldServiceGrpcKt
+            .HelloWorldServiceCoroutineStub(channel)
+            .withDeadlineAfter(5, TimeUnit.SECONDS)
+) : HelloWorldRepository {
 
     override suspend fun getHelloWorld(
         request: GetHelloWorldRequest,
     ): GetHelloWorldResponse {
         return withContext(Dispatchers.IO) {
-            stub.withDeadlineAfter(5, TimeUnit.SECONDS)
-                .getHelloWorld(request)
+            stub.getHelloWorld(request)
         }
     }
 }
