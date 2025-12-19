@@ -13,14 +13,18 @@ import com.connectrpc.http.Cancelable
 
 class HelloWorldConnectClientImpl(
     private val client: ProtocolClientInterface,
-) : HelloWorldClient,
+) : HelloWorldRepository,
     HelloWorldServiceClientInterface
 {
 
     companion object {
-        // No need to inject this path. Service and schema upgrades can be done with rolling deploys on
-        // backend and force upgrade prompts on the app.
-        private const val GET_HELLO_WORLD_PATH = "fjarm.helloworld.v1.HelloWorldService/GetHelloWorld"
+        // No need to inject this path. Service and schema upgrades can be done with rolling deploys
+        // on backend and force upgrade prompts on the app.
+        private const val GET_HELLO_WORLD_PATH =
+            "fjarm.helloworld.v1.HelloWorldService/GetHelloWorld"
+
+        private const val CALLBACK_NOT_SUPPORTED_MESSAGE =
+            "Connect client does not support callbacks"
     }
 
     override suspend fun getHelloWorld(
@@ -53,6 +57,6 @@ class HelloWorldConnectClientImpl(
         headers: Headers,
         onResult: (ResponseMessage<GetHelloWorldResponse>) -> Unit
     ): Cancelable {
-        TODO("Not yet implemented")
+        throw NotImplementedError(CALLBACK_NOT_SUPPORTED_MESSAGE)
     }
 }
