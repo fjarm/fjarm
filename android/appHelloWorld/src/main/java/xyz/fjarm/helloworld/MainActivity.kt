@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.lifecycleScope
+import build.buf.gen.fjarm.helloworld.v1.GetHelloWorldRequest
 import io.grpc.ManagedChannel
 import io.grpc.StatusException
 import io.grpc.android.AndroidChannelBuilder
@@ -26,13 +27,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
 import xyz.fjarm.helloworld.ui.theme.HelloWorldTheme
-import xyz.fjarm.libhelloworld.HelloWorldClient
+import xyz.fjarm.libhelloworld.HelloWorldRepository
 import xyz.fjarm.libhelloworld.HelloWorldGrpcClientImpl
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var client: HelloWorldClient
+    private lateinit var client: HelloWorldRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +68,7 @@ class MainActivity : ComponentActivity() {
         lifecycleScope.launch {
             try {
                 val res = client
-                    .getHelloWorld()
+                    .getHelloWorld(GetHelloWorldRequest.newBuilder().build())
                 Log.println(Log.INFO, "MainActivity", "jmuhia, fetchGreeting, res: $res")
                 Toast.makeText(
                     this@MainActivity,
