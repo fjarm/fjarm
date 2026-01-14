@@ -27,13 +27,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
 import xyz.fjarm.helloworld.ui.theme.HelloWorldTheme
-import xyz.fjarm.libhelloworld.HelloWorldClient
+import xyz.fjarm.libhelloworld.HelloWorldRepository
 import xyz.fjarm.libhelloworld.HelloWorldGrpcClientImpl
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
 
-    private lateinit var client: HelloWorldClient
+    private lateinit var client: HelloWorldRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
