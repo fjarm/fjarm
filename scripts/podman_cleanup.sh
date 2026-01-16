@@ -1,5 +1,12 @@
 #!/usr/bin/env sh
 
+set -e
+
+if ! command -v podman >/dev/null 2>&1; then
+    echo "Error: podman command not found." >&2
+    exit 1
+fi
+
 MACHINE_NAME="podman-machine-default"
 MACHINE_STATUS="Currently running"
 
