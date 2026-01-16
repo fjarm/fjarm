@@ -51,7 +51,7 @@ For Go server/client code, assuming the Go module is already depended on, the st
 1. **From the root directory, run `bazel run @rules_go//go -- get buf.build/gen/go/fjarm/fjarm/grpc/go@latest`
 2. **From the root directory, run `bazel run @rules_go//go -- mod tidy`
     * The two commands above should result in changes to `go.mod` and `go.sum`
-3. In some cases, other dependencies like `protovalidate-go` may need to be updated so run `bazel run @rules_go//go -- get github.com/bufbuild/protovalidate-go`
+3. In some cases, other dependencies like `protovalidate-go` may need to be updated so run `bazel run @rules_go//go -- get buf.build/go/protovalidate`
     * If this is needed, run `bazel run @rules_go//go -- mod tidy` once more
 
 See more in [these instructions](https://github.com/bazelbuild/rules_go/blob/master/docs/go/core/bzlmod.md#depending-on-tools).

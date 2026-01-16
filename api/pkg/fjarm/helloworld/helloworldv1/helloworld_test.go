@@ -2,7 +2,7 @@ package helloworldv1
 
 import (
 	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/helloworld/v1"
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"testing"
 )
 

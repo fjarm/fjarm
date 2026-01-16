@@ -2,7 +2,7 @@ package idempotencyv1
 
 import (
 	idempotencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/idempotency/v1"
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"google.golang.org/protobuf/types/known/timestamppb"
 	"testing"
 	"time"
