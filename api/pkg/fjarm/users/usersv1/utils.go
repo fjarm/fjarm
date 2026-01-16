@@ -3,7 +3,7 @@ package usersv1
 import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"strings"
 )
 

@@ -6,7 +6,7 @@ import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"connectrpc.com/connect"
 	"context"
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"google.golang.org/protobuf/proto"

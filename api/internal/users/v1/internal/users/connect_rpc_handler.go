@@ -5,7 +5,7 @@ import (
 	"connectrpc.com/connect"
 	"context"
 	"errors"
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"

@@ -2,7 +2,7 @@ package consistencyv1
 
 import (
 	consistencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/consistency/v1"
-	"github.com/bufbuild/protovalidate-go"
+	"buf.build/go/protovalidate"
 	"testing"
 )
 
