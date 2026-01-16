@@ -3,8 +3,8 @@ modules:
   - path: proto
     name: buf.build/fjarm/fjarm
 deps:
-  - buf.build/bufbuild/protovalidate:a3320276596649bcad929ac829d451f4
-  - buf.build/googleapis/googleapis:e93e34f48be043dab55be31b4b47f458
+  - buf.build/bufbuild/protovalidate:b52ab10f44684cb19d1fbcad56aedd36
+  - buf.build/googleapis/googleapis:72c8614f3bd0466ea67931ef2c43d608
 lint:
   use:
     - STANDARD
