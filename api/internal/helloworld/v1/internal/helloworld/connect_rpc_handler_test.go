@@ -1,14 +1,15 @@
 package helloworld
 
 import (
-	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/helloworld/v1/helloworldv1connect"
-	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/helloworld/v1"
-	"connectrpc.com/connect"
 	"context"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/helloworld/v1/helloworldv1connect"
+	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/helloworld/v1"
+	"connectrpc.com/connect"
 )
 
 var srv *httptest.Server = nil

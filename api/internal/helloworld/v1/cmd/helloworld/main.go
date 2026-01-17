@@ -1,20 +1,22 @@
 package main
 
 import (
-	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/helloworld/v1/helloworldv1connect"
-	"connectrpc.com/connect"
 	"context"
 	"errors"
 	"fmt"
-	"github.com/fjarm/fjarm/api/internal/helloworld/v1/internal/helloworld"
-	"github.com/fjarm/fjarm/api/internal/logkeys"
-	obfuscation "github.com/fjarm/fjarm/api/internal/obfuscation/v1/pkg/interceptor"
-	tracing "github.com/fjarm/fjarm/api/internal/tracing/v1/pkg/interceptor"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
+
+	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/helloworld/v1/helloworldv1connect"
+	"connectrpc.com/connect"
+
+	"github.com/fjarm/fjarm/api/internal/helloworld/v1/internal/helloworld"
+	"github.com/fjarm/fjarm/api/internal/logkeys"
+	obfuscation "github.com/fjarm/fjarm/api/internal/obfuscation/v1/pkg/interceptor"
+	tracing "github.com/fjarm/fjarm/api/internal/tracing/v1/pkg/interceptor"
 )
 
 const ip = "[::]"

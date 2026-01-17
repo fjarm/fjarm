@@ -1,14 +1,16 @@
 package helloworld
 
 import (
+	"context"
+	"log/slog"
+
 	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/helloworld/v1/helloworldv1connect"
 	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/helloworld/v1"
 	"buf.build/go/protovalidate"
 	"connectrpc.com/connect"
-	"context"
+
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
-	"log/slog"
 )
 
 const connectRPCHandlerTag = "connect_rpc_handler"
@@ -73,7 +75,6 @@ func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 			&pb.GetHelloWorldResponse{},
 		),
 	)
-
 	if err != nil {
 		logger.Error("failed to create message validator", slog.Any(logkeys.Err, err))
 		return nil
