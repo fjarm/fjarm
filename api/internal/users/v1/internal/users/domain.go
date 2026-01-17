@@ -2,10 +2,10 @@ package users
 
 import (
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+	"buf.build/go/protovalidate"
 	"context"
 	"errors"
 	"fmt"
-	"buf.build/go/protovalidate"
 	"github.com/fjarm/fjarm/api/internal/cache"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
