@@ -14,16 +14,16 @@ const delimiter = "$"
 
 // decodedHash describes a hashed and salted credential as well as the parameters used to encrypt the credential.
 type decodedHash struct {
-	params *HashParams
+	params *hashParams
 	salt   []byte
 	hash   []byte
 }
 
 // HashPassword creates a new hash of a plain-text password using Argon2id.
 func HashPassword(password string) (string, error) {
-	params := DefaultParams()
+	params := defaultParams()
 
-	saltString, err := generateSalt(params.SaltLength)
+	saltString, err := generateSalt(params.saltLength)
 	if err != nil {
 		return "", err
 	}
@@ -37,19 +37,19 @@ func HashPassword(password string) (string, error) {
 	hash := argon2.IDKey(
 		[]byte(password),
 		saltBytes,
-		params.Iterations,
-		params.Memory,
-		params.Parallelism,
-		params.KeyLength,
+		params.iterations,
+		params.memory,
+		params.parallelism,
+		params.keyLength,
 	)
 	hashString := base64.RawStdEncoding.EncodeToString(hash)
 
 	// Format: $argon2id$v=19$m=memory,t=iterations,p=parallelism$salt$hash
 	encodedHash := fmt.Sprintf(
 		"$argon2id$v=19$m=%d,t=%d,p=%d$%s$%s",
-		params.Memory,
-		params.Iterations,
-		params.Parallelism,
+		params.memory,
+		params.iterations,
+		params.parallelism,
 		saltString,
 		hashString,
 	)
@@ -59,9 +59,9 @@ func HashPassword(password string) (string, error) {
 
 // VerifyPassword checks if a supplied password matches a generated hash. Return `1` if the password matches the hash,
 // and `0` if it does not.
-func VerifyPassword(password string, encodedHash string) (bool, error) {
+func VerifyPassword(password string, encodedCredential string) (bool, error) {
 	// Parse the parameters, salt, and hash from the encoded string
-	creds, err := decodeHash(encodedHash)
+	creds, err := decodeHash(encodedCredential)
 	if err != nil {
 		return false, err
 	}
@@ -70,10 +70,10 @@ func VerifyPassword(password string, encodedHash string) (bool, error) {
 	otherHash := argon2.IDKey(
 		[]byte(password),
 		creds.salt,
-		creds.params.Iterations,
-		creds.params.Memory,
-		creds.params.Parallelism,
-		creds.params.KeyLength,
+		creds.params.iterations,
+		creds.params.memory,
+		creds.params.parallelism,
+		creds.params.keyLength,
 	)
 
 	// Compare the hashes in constant time to prevent timing attacks
@@ -91,13 +91,13 @@ func decodeHash(encodedHash string) (*decodedHash, error) {
 		return nil, ErrUnsupportedHashAlgorithm
 	}
 
-	params := HashParams{}
+	params := hashParams{}
 	_, err := fmt.Sscanf(
 		parts[3],
 		"m=%d,t=%d,p=%d",
-		&params.Memory,
-		&params.Iterations,
-		&params.Parallelism,
+		&params.memory,
+		&params.iterations,
+		&params.parallelism,
 	)
 	if err != nil {
 		return nil, err
@@ -107,13 +107,13 @@ func decodeHash(encodedHash string) (*decodedHash, error) {
 	if err != nil {
 		return nil, err
 	}
-	params.SaltLength = len(salt)
+	params.saltLength = len(salt)
 
 	hash, err := base64.RawStdEncoding.DecodeString(parts[5])
 	if err != nil {
 		return nil, err
 	}
-	params.KeyLength = uint32(len(hash))
+	params.keyLength = uint32(len(hash))
 
 	// return &params, salt, hash, nil
 	return &decodedHash{
