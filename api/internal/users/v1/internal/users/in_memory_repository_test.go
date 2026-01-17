@@ -1,13 +1,14 @@
 package users
 
 import (
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
 	"errors"
-	"google.golang.org/protobuf/proto"
 	"io"
 	"log/slog"
 	"testing"
+
+	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+	"google.golang.org/protobuf/proto"
 )
 
 func TestInMemoryRepository_createUser(t *testing.T) {

@@ -1,14 +1,16 @@
 package users
 
 import (
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
 	"fmt"
+	"log/slog"
+	"time"
+
+	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+
 	authentication "github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
-	"log/slog"
-	"time"
 )
 
 const inMemoryRepositoryTag = "in_memory_repository"
