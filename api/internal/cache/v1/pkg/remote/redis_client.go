@@ -1,21 +1,18 @@
 package remote
 
 import (
-	"crypto/tls"
-	"github.com/redis/rueidis"
 	"time"
+
+	"github.com/redis/rueidis"
 )
 
 // NewRedisClient creates a new Redis client using rueidis.
 func NewRedisClient(
-	tlsConfig *tls.Config,
 	authCredentials rueidis.AuthCredentials,
 	addrs []string,
 ) (rueidis.Client, error) {
 	client, err := rueidis.NewClient(
 		rueidis.ClientOption{
-			// TODO(2025-03-09): Implement TLS client and server support. Load TLS cert/key and CA cert using infisical.
-			TLSConfig: tlsConfig,
 			// TODO(2025-03-09): Supply AuthCredentialsFn to provide username and password for ACL support.
 			AuthCredentialsFn: func(authCtx rueidis.AuthCredentialsContext) (rueidis.AuthCredentials, error) {
 				return authCredentials, nil

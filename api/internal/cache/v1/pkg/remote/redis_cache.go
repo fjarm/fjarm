@@ -3,12 +3,14 @@ package remote
 import (
 	"context"
 	"fmt"
-	cachev1 "github.com/fjarm/fjarm/api/internal/cache"
-	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/redis/rueidis"
 	"log/slog"
 	"strings"
 	"time"
+
+	"github.com/redis/rueidis"
+
+	cachev1 "github.com/fjarm/fjarm/api/internal/cache"
+	"github.com/fjarm/fjarm/api/internal/logkeys"
 )
 
 const redisCacheTag = "redis_cache"

@@ -3,9 +3,10 @@ package remote
 import (
 	"context"
 	"fmt"
-	cachev1 "github.com/fjarm/fjarm/api/internal/cache"
 	"strings"
 	"time"
+
+	cachev1 "github.com/fjarm/fjarm/api/internal/cache"
 )
 
 // FakeRedisCache is a duplicate of RedisCache that doesn't actually connect to Redis. Instead, it uses an in-memory map
