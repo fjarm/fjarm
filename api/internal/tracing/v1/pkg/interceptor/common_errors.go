@@ -1,8 +1,9 @@
 package interceptor
 
 import (
-	"connectrpc.com/connect"
 	"fmt"
+
+	"connectrpc.com/connect"
 )
 
 // ErrRequestIDNotFound is returned when an incoming request does not contain a `request-id` key/value pair.
