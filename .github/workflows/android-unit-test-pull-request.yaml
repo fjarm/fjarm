@@ -23,6 +23,7 @@ jobs:
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: 'gradle'
       - uses: gradle/actions/setup-gradle@v5
         name: Set up Gradle
       - name: Build all tasks
