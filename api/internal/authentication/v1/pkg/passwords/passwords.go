@@ -42,17 +42,17 @@ func HashPassword(password string) (string, error) {
 	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
 	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
 
-	// Format: $argon2id$v=19$m=memory,t=iterations,p=parallelism$salt$hash
+	// Format: $argon2id$v=19$m=memory,t=iterations,p=parallelism$salt$hash.
 	// The format represents the algorithm identifier, algorithm version, hashing parameters (memory cost,
 	// iterations/time cost, parallelism/number of threads), salt, and hash.
-	encodedHash := fmt.Sprintf(
-		"$argon2id$v=19$m=%d,t=%d,p=%d$%s$%s",
-		params.memory,
-		params.iterations,
-		params.parallelism,
+	encodedHash := strings.Join([]string{
+		"",         // Leading delimiter
+		"argon2id", // Hashing algorithm
+		"v=19",     // Hashing algorithm version
+		fmt.Sprintf("m=%d,t=%d,p=%d", params.memory, params.iterations, params.parallelism),
 		b64Salt,
 		b64Hash,
-	)
+	}, delimiter)
 
 	return encodedHash, nil
 }
@@ -92,9 +92,19 @@ func decodeHash(encodedHash string) (*decodedHash, error) {
 		return nil, ErrUnsupportedHashAlgorithm
 	}
 
+	// Verify the version of argon2id that was used to hash the original credential is the one imported in argon2.
+	var version int
+	_, err := fmt.Sscanf(parts[2], "v=%d", &version)
+	if err != nil {
+		return nil, ErrInvalidHashAlgorithmVersionFormat
+	}
+	if version != argon2.Version {
+		return nil, fmt.Errorf("%w: got %d, expected %d", ErrIncompatibleHashAlgorithmVersion, version, argon2.Version)
+	}
+
 	// Parse the hashing parameters.
 	params := hashParams{}
-	_, err := fmt.Sscanf(
+	_, err = fmt.Sscanf(
 		parts[3],
 		"m=%d,t=%d,p=%d",
 		&params.memory,
