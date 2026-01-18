@@ -2,7 +2,7 @@ package passwords
 
 import "fmt"
 
-// ErrInvalidHashAlgorithmVersion is returned when the version of the hash algorithm (argon2id) used to hash the
+// ErrIncompatibleHashAlgorithmVersion is returned when the version of the hash algorithm (argon2id) used to hash the
 // credential does not match the version specified in argon2.Version.
 var ErrIncompatibleHashAlgorithmVersion = fmt.Errorf("incompatible hash algorithm")
 

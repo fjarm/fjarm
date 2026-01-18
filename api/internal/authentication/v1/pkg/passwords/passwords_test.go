@@ -39,6 +39,12 @@ func TestHashPassword(t *testing.T) {
 			if err == nil && tc.err {
 				t.Error("HashPassword expected an error but got nil")
 			}
+			if !strings.HasPrefix(hashed, "$argon2id") {
+				t.Errorf("HashPassword expected to use argon2id, got: %v", strings.Split(hashed, delimiter)[1])
+			}
+			if strings.Split(hashed, delimiter)[2] != "v=19" {
+				t.Errorf("HashPassword expected to use argon2id version 19, got: %v", strings.Split(hashed, delimiter)[2])
+			}
 
 			creds, err := decodeHash(hashed)
 			if err != nil {

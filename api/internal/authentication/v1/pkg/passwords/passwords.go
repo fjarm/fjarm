@@ -46,9 +46,9 @@ func HashPassword(password string) (string, error) {
 	// The format represents the algorithm identifier, algorithm version, hashing parameters (memory cost,
 	// iterations/time cost, parallelism/number of threads), salt, and hash.
 	encodedHash := strings.Join([]string{
-		"",         // Leading delimiter
-		"argon2id", // Hashing algorithm
-		"v=19",     // Hashing algorithm version
+		"",                                  // Leading delimiter
+		"argon2id",                          // Hashing algorithm
+		fmt.Sprintf("v=%d", argon2.Version), // Hashing algorithm version (should be 19)
 		fmt.Sprintf("m=%d,t=%d,p=%d", params.memory, params.iterations, params.parallelism),
 		b64Salt,
 		b64Hash,
