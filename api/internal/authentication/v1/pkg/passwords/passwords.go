@@ -23,12 +23,7 @@ type decodedHash struct {
 func HashPassword(password string) (string, error) {
 	params := defaultParams()
 
-	saltString, err := generateSalt(params.saltLength)
-	if err != nil {
-		return "", err
-	}
-
-	saltBytes, err := readSalt(saltString)
+	salt, err := generateSalt(params.saltLength)
 	if err != nil {
 		return "", err
 	}
@@ -36,22 +31,27 @@ func HashPassword(password string) (string, error) {
 	// Hash the password using Argon2id
 	hash := argon2.IDKey(
 		[]byte(password),
-		saltBytes,
+		salt,
 		params.iterations,
 		params.memory,
 		params.parallelism,
 		params.keyLength,
 	)
-	hashString := base64.RawStdEncoding.EncodeToString(hash)
+
+	// Convert the hash and salt to base64 encoded strings.
+	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
+	b64Hash := base64.RawStdEncoding.EncodeToString(hash)
 
 	// Format: $argon2id$v=19$m=memory,t=iterations,p=parallelism$salt$hash
+	// The format represents the algorithm identifier, algorithm version, hashing parameters (memory cost,
+	// iterations/time cost, parallelism/number of threads), salt, and hash.
 	encodedHash := fmt.Sprintf(
 		"$argon2id$v=19$m=%d,t=%d,p=%d$%s$%s",
 		params.memory,
 		params.iterations,
 		params.parallelism,
-		saltString,
-		hashString,
+		b64Salt,
+		b64Hash,
 	)
 
 	return encodedHash, nil
@@ -87,10 +87,12 @@ func decodeHash(encodedHash string) (*decodedHash, error) {
 		return nil, ErrInvalidHashFormat
 	}
 
+	// Verify the algorithm used to hash the original credential is argon2id.
 	if parts[1] != "argon2id" {
 		return nil, ErrUnsupportedHashAlgorithm
 	}
 
+	// Parse the hashing parameters.
 	params := hashParams{}
 	_, err := fmt.Sscanf(
 		parts[3],
@@ -115,7 +117,6 @@ func decodeHash(encodedHash string) (*decodedHash, error) {
 	}
 	params.keyLength = uint32(len(hash))
 
-	// return &params, salt, hash, nil
 	return &decodedHash{
 		params: &params,
 		salt:   salt,
