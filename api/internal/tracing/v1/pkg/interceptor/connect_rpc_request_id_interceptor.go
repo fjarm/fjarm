@@ -1,12 +1,14 @@
 package interceptor
 
 import (
-	"connectrpc.com/connect"
 	"context"
-	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
 	"time"
+
+	"connectrpc.com/connect"
+
+	"github.com/fjarm/fjarm/api/internal/logkeys"
+	"github.com/fjarm/fjarm/api/internal/tracing"
 )
 
 const connectRPCRequestIDInterceptorTag = "connect_rpc_request_id_interceptor"

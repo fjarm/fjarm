@@ -3,12 +3,14 @@ package remote
 import (
 	"context"
 	"fmt"
-	cachev1 "github.com/fjarm/fjarm/api/internal/cache"
-	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/google/uuid"
 	"log/slog"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+
+	cachev1 "github.com/fjarm/fjarm/api/internal/cache"
+	"github.com/fjarm/fjarm/api/internal/logkeys"
 )
 
 // AcquireLock attempts to "acquire a lock" - that is, write a key in Redis using SET NX (if the write is successful, we

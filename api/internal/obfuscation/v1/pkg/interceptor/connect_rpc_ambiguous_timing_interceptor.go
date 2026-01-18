@@ -1,14 +1,16 @@
 package interceptor
 
 import (
-	"connectrpc.com/connect"
 	"context"
 	"fmt"
-	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/tracing"
 	"log/slog"
 	"math/rand"
 	"time"
+
+	"connectrpc.com/connect"
+
+	"github.com/fjarm/fjarm/api/internal/logkeys"
+	"github.com/fjarm/fjarm/api/internal/tracing"
 )
 
 const connectRPCAmbiguousTimingInterceptorTag = "connect_rpc_ambiguous_timing_interceptor"

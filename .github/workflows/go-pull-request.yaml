@@ -18,7 +18,7 @@ jobs:
       # Run `git checkout`
       - uses: actions/checkout@v4
         name: Checkout repo
-      - uses: bazel-contrib/setup-bazel@0.12.1
+      - uses: bazel-contrib/setup-bazel@0.18.0
         name: Install Bazel CLI
         with:
           # Avoid downloading Bazel every time
@@ -36,3 +36,6 @@ jobs:
       - name: Test all targets under api
         run: |
           bazel test //api/...
+      - name: Run go vet
+        run: |
+          bazel run @rules_go//go -- vet ./...

@@ -1,4 +1,6 @@
 package logvals
 
-const Nil = "nil"
-const Redacted = "REDACTED"
+const (
+	Nil      = "nil"
+	Redacted = "REDACTED"
+)

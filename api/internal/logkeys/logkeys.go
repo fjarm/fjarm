@@ -1,12 +1,14 @@
 package logkeys
 
-const Addr = "addr"
-const Duration = "duration"
-const Err = "error"
-const Key = "key"
-const Raw = "raw"
-const Request = "req"
-const Rpc = "rpc"
-const Service = "service"
-const StartTime = "start"
-const Tag = "tag"
+const (
+	Addr      = "addr"
+	Duration  = "duration"
+	Err       = "error"
+	Key       = "key"
+	Raw       = "raw"
+	Request   = "req"
+	Rpc       = "rpc"
+	Service   = "service"
+	StartTime = "start"
+	Tag       = "tag"
+)

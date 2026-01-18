@@ -1,22 +1,22 @@
 package passwords
 
-// HashParams defines the parameters used by the Argon2id algorithm.
-type HashParams struct {
-	Memory      uint32
-	Iterations  uint32
-	Parallelism uint8
-	SaltLength  int
-	KeyLength   uint32
+// hashParams defines the parameters used by the Argon2id algorithm.
+type hashParams struct {
+	memory      uint32
+	iterations  uint32
+	parallelism uint8
+	saltLength  int
+	keyLength   uint32
 }
 
 // DefaultParams provides recommended parameters for Argon2id. These values should be adjusted based on the specific
 // security requirements.
-func DefaultParams() *HashParams {
-	return &HashParams{
-		Memory:      64 * 1024, // 64MB
-		Iterations:  3,
-		Parallelism: 2,
-		SaltLength:  16,
-		KeyLength:   32,
+func defaultParams() *hashParams {
+	return &hashParams{
+		memory:      64 * 1024, // 64MB
+		iterations:  3,
+		parallelism: 2,
+		saltLength:  16,
+		keyLength:   32,
 	}
 }

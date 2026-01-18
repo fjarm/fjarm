@@ -1,8 +1,10 @@
 package users
 
 import (
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"context"
+
+	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+
 	"github.com/fjarm/fjarm/api/internal/logvals"
 	"github.com/fjarm/fjarm/api/pkg/fjarm/users/usersv1"
 )

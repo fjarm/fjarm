@@ -2,10 +2,11 @@ package interceptor
 
 import (
 	"bytes"
-	"connectrpc.com/connect"
 	"context"
 	"log/slog"
 	"testing"
+
+	"connectrpc.com/connect"
 )
 
 func Benchmark_NewConnectRPCAmbiguousTimingInterceptor(b *testing.B) {

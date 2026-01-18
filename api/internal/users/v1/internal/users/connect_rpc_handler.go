@@ -1,14 +1,16 @@
 package users
 
 import (
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
-	"connectrpc.com/connect"
 	"context"
 	"errors"
+	"log/slog"
+
+	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"buf.build/go/protovalidate"
+	"connectrpc.com/connect"
+
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
-	"log/slog"
 )
 
 const connectRPCHandlerTag = "connect_rpc_handler"

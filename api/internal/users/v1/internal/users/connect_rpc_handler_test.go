@@ -1,22 +1,24 @@
 package users
 
 import (
-	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/users/v1/usersv1connect"
-	idempotencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/idempotency/v1"
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
-	"connectrpc.com/connect"
 	"context"
-	"buf.build/go/protovalidate"
-	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
-	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"io"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/users/v1/usersv1connect"
+	idempotencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/idempotency/v1"
+	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+	"buf.build/go/protovalidate"
+	"connectrpc.com/connect"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/types/known/timestamppb"
+
+	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
+	"github.com/fjarm/fjarm/api/internal/logkeys"
 )
 
 var srv *httptest.Server = nil
@@ -34,11 +36,11 @@ func TestMain(m *testing.M) {
 			&userspb.GetUserResponse{},
 		),
 	)
-
 	if err != nil {
 		logger.Error("failed to create message validator", slog.Any(logkeys.Err, err))
 		os.Exit(1)
 	}
+
 	cache := remote.NewFakeRedisCache()
 	repo := newInMemoryRepository(logger)
 	dom := newUserDomain(logger, cache, cache, repo, validator)

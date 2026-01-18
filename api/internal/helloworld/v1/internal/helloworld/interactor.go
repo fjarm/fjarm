@@ -3,9 +3,10 @@ package helloworld
 import (
 	"context"
 	"fmt"
+	"log/slog"
+
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
-	"log/slog"
 )
 
 const interactorTag = "interactor"

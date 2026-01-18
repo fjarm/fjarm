@@ -3,7 +3,7 @@
   "[markdown]":  {
     "editor.wordWrap": "off"
   },
-  "go.goroot": "${env:HOME}/development/fjarm/bazel-fjarm/external/rules_go++go_sdk+fjarm__download_0/",
+  "go.goroot": "${env:HOME}/development/fjarm/bazel-fjarm/external/rules_go++go_sdk+main___download_0/",
   "go.toolsEnvVars": {
     "GOPACKAGESDRIVER": "${env:HOME}/development/fjarm/scripts/gopackagesdriver.sh"
   },

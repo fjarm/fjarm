@@ -24,6 +24,10 @@ func TestHashPassword(t *testing.T) {
 			password: "$$%%$$$%%%",
 			err:      false,
 		},
+		"valid_mixed_character_and_alphabetic_password": {
+			password: "$$%%$abcd$efgh$%%%",
+			err:      false,
+		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -35,15 +39,21 @@ func TestHashPassword(t *testing.T) {
 			if err == nil && tc.err {
 				t.Error("HashPassword expected an error but got nil")
 			}
+			if !strings.HasPrefix(hashed, "$argon2id") {
+				t.Errorf("HashPassword expected to use argon2id, got: %v", strings.Split(hashed, delimiter)[1])
+			}
+			if strings.Split(hashed, delimiter)[2] != "v=19" {
+				t.Errorf("HashPassword expected to use argon2id version 19, got: %v", strings.Split(hashed, delimiter)[2])
+			}
 
-			_, _, decoded, err := decodeHash(hashed)
+			creds, err := decodeHash(hashed)
 			if err != nil {
 				t.Errorf("HashPassword output cannot be decoded: %v", err)
 			}
 
-			duped, _ := base64.RawStdEncoding.DecodeString(strings.Split(hashed, "$")[5])
-			if !bytes.Equal(duped, decoded) {
-				t.Errorf("HashPassword output and decoded value are not equal, got: %v, want: %v", []byte(hashed), decoded)
+			duped, _ := base64.RawStdEncoding.DecodeString(strings.Split(hashed, delimiter)[5])
+			if !bytes.Equal(duped, creds.hash) {
+				t.Errorf("HashPassword output and decoded value are not equal, got: %v, want: %v", []byte(hashed), creds.hash)
 			}
 		})
 	}

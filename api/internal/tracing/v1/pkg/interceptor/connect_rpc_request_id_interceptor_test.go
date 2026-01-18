@@ -2,11 +2,12 @@ package interceptor
 
 import (
 	"bytes"
-	"connectrpc.com/connect"
 	"context"
 	"log/slog"
 	"strings"
 	"testing"
+
+	"connectrpc.com/connect"
 )
 
 func TestNewConnectRPCRequestIDLoggingInterceptor_LogOutput(t *testing.T) {

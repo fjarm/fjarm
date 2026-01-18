@@ -3,10 +3,12 @@ package remote
 import (
 	"context"
 	"fmt"
-	cachev1 "github.com/fjarm/fjarm/api/internal/cache"
-	"github.com/google/uuid"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+
+	cachev1 "github.com/fjarm/fjarm/api/internal/cache"
 )
 
 func (c *FakeRedisCache) AcquireLock(ctx context.Context, key string, ttl time.Duration) (string, error) {

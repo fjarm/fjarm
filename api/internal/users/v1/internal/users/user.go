@@ -1,13 +1,14 @@
 package users
 
 import (
-	consistencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/consistency/v1"
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"crypto/sha256"
 	"encoding/base64"
 	"fmt"
-	"google.golang.org/protobuf/proto"
 	"time"
+
+	consistencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/consistency/v1"
+	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+	"google.golang.org/protobuf/proto"
 )
 
 // user defines the entity as represented in persisted storage like a SQL database. This type is internal to the users
@@ -15,6 +16,8 @@ import (
 //
 // Note  that pointer fields are optional. Thus, pointers are used to distinguish between a valid value, an explicit
 // null (nil pointer), or a zero value.
+//
+// TODO(2026-01-17): Remove the following fields - GivenName, FamilyName.
 type user struct {
 	UserID       string    `db:"user_id"`
 	GivenName    string    `db:"given_name"`
@@ -27,7 +30,11 @@ type user struct {
 	CreatedAt    time.Time `db:"created_at"`
 }
 
-func (usr *user) calculateETag() string {
+func calculateETag(usr *user) (string, error) {
+	if usr == nil {
+		return "", fmt.Errorf("%w: cannot calculate eTag for nil user", ErrOperationFailed)
+	}
+
 	hasher := sha256.New()
 
 	// Note: We're explicitly ordering fields to ensure consistency
@@ -44,27 +51,30 @@ func (usr *user) calculateETag() string {
 
 	// Convert hash to base64 for a shorter string representation
 	// Use RawURLEncoding to ensure URL-safe characters
-	return base64.RawURLEncoding.EncodeToString(hasher.Sum(nil))
+	return base64.RawURLEncoding.EncodeToString(hasher.Sum(nil)), nil
 }
 
-func storageUserToWireUser(su *user) (*userspb.User, error) {
-	if su == nil {
+func storageUserToWireUser(storageUser *user) (*userspb.User, error) {
+	if storageUser == nil {
 		return nil, fmt.Errorf("%w: cannot convert nil user to user message", ErrInvalidArgument)
 	}
-	usr := userspb.User{
-		UserId: &userspb.UserId{UserId: &su.UserID},
+	userMsg := userspb.User{
+		UserId: &userspb.UserId{UserId: &storageUser.UserID},
 		FullName: &userspb.UserFullName{
-			FamilyName: &su.FamilyName,
-			GivenName:  &su.GivenName,
+			FamilyName: &storageUser.FamilyName,
+			GivenName:  &storageUser.GivenName,
 		},
-		Handle:       &userspb.UserHandle{Handle: &su.Handle},
-		EmailAddress: &userspb.UserEmailAddress{EmailAddress: &su.EmailAddress},
-		Avatar:       &userspb.UserAvatar{Avatar: su.Avatar},
+		Handle:       &userspb.UserHandle{Handle: &storageUser.Handle},
+		EmailAddress: &userspb.UserEmailAddress{EmailAddress: &storageUser.EmailAddress},
+		Avatar:       &userspb.UserAvatar{Avatar: storageUser.Avatar},
 	}
-	etag := su.calculateETag()
-	usr.SetETag(&consistencypb.EntityTag{EntityTag: &etag})
+	etag, err := calculateETag(storageUser)
+	if err != nil {
+		return nil, err
+	}
+	userMsg.SetETag(&consistencypb.EntityTag{EntityTag: &etag})
 
-	return &usr, nil
+	return &userMsg, nil
 }
 
 func wireUserToStorageUser(msg *userspb.User) (*user, error) {

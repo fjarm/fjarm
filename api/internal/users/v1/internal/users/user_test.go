@@ -68,9 +68,9 @@ func TestCalculateETag(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			e1 := tc.u1.calculateETag()
-			e2 := tc.u2.calculateETag()
-			if e1 != e2 && tc.equal {
+			eTag1, _ := calculateETag(&tc.u1)
+			eTag2, _ := calculateETag(&tc.u2)
+			if eTag1 != eTag2 && tc.equal {
 				t.Errorf("unexpected two unequal users")
 			}
 		})
@@ -168,11 +168,19 @@ func TestStorageUserToWireUser_EtagCalculation(t *testing.T) {
 			if tc.err && err == nil {
 				t.Errorf("storageUserToWireUser did not return an error")
 			}
-			if msg.GetETag().GetEntityTag() != tc.usr.calculateETag() {
+
+			eTag, err := calculateETag(&tc.usr)
+			if err != nil && !tc.err {
+				t.Errorf("calculateETag got an unexpected error: %v", err)
+			}
+			if tc.err && err == nil {
+				t.Errorf("calculateETag did not return an error")
+			}
+			if msg.GetETag().GetEntityTag() != eTag {
 				t.Errorf(
 					"unexpected etag calculation got %v, want %v",
 					msg.GetETag().GetEntityTag(),
-					tc.usr.calculateETag(),
+					eTag,
 				)
 			}
 		})
