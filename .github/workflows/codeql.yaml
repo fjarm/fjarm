@@ -102,7 +102,7 @@ jobs:
       shell: bash
       working-directory: ./android
       env:
-        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dkotlin.compiler.execution.strategy=in-process -Xmx4096m -XX:MaxMetaspaceSize=1024m"
+        GRADLE_OPTS: "-Dkotlin.compiler.execution.strategy=in-process -Xmx4096m -XX:MaxMetaspaceSize=1024m"
         JAVA_OPTS: "-Xmx4096m"
       run: |
         ./gradlew build
