@@ -101,8 +101,11 @@ jobs:
       if: matrix.build-mode == 'manual'
       shell: bash
       working-directory: ./android
+      env:
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dkotlin.compiler.execution.strategy=in-process -Xmx4096m -XX:MaxMetaspaceSize=1024m"
+        JAVA_OPTS: "-Xmx4096m"
       run: |
-        ./gradlew build --no-daemon --stacktrace
+        ./gradlew build
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
