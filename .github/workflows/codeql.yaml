@@ -101,9 +101,7 @@ jobs:
       if: matrix.build-mode == 'manual'
       shell: bash
       working-directory: ./android
-      env:
-        GRADLE_OPTS: "-Dkotlin.compiler.execution.strategy=in-process -Xmx4096m -XX:MaxMetaspaceSize=1024m"
-        JAVA_OPTS: "-Xmx4096m"
+    # SEE: https://github.com/github/codeql/issues/20661
       run: |
         ./gradlew build
 
