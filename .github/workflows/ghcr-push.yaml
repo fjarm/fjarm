@@ -3,11 +3,11 @@ on:
   workflow_dispatch:
     inputs:
       module:
-        description: 'Bazel oci_push target to build and push'
+        description: 'Bazel module containing an oci_push target to build and push'
         required: true
         type: choice
         options:
-          - api/internal/helloworld/v1/deployment/ghcr:helloworld_push
+          - helloworld
 env:
   REGISTRY: ghcr.io
 jobs:
@@ -29,7 +29,7 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
-      - uses: bazel-contrib/setup-bazel@0.12.1
+      - uses: bazel-contrib/setup-bazel@0.18.0
         name: Install Bazel CLI
         with:
           # Avoid downloading Bazel every time
@@ -44,6 +44,9 @@ jobs:
       - name: Build all targets under api
         run: |
           bazel build //api/...
+      - name: Test all targets under api
+        run: |
+          bazel test //api/...
       - name: Run oci_push target
         run: |
-          bazel run ${{ inputs.module }} --config=release
+          bazel run $(bazel query 'attr(name, ${{inputs.module}}_push, //...)') --config=release
