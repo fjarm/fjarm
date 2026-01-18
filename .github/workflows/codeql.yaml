@@ -102,7 +102,7 @@ jobs:
       shell: bash
       working-directory: ./android
       run: |
-        ./gradlew build
+        ./gradlew build --no-daemon --stacktrace
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v4
