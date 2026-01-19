@@ -4,5 +4,5 @@ import build.buf.gen.fjarm.helloworld.v1.HelloWorldOutput
 
 interface GetHelloWorldUseCase {
 
-    suspend fun getHelloWorld(): HelloWorldOutput
+    suspend operator fun invoke(): HelloWorldOutput
 }
