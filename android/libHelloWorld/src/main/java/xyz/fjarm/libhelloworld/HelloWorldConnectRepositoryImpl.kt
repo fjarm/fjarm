@@ -11,7 +11,7 @@ import com.connectrpc.StreamType
 import com.connectrpc.getOrThrow
 import com.connectrpc.http.Cancelable
 
-class HelloWorldConnectClientImpl(
+class HelloWorldConnectRepositoryImpl(
     private val client: ProtocolClientInterface,
 ) : HelloWorldRepository,
     HelloWorldServiceClientInterface

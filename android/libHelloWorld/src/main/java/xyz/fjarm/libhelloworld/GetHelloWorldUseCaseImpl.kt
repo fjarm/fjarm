@@ -7,7 +7,7 @@ import com.connectrpc.ConnectException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GetHelloWorldUseCaseImpl constructor(
+class GetHelloWorldUseCaseImpl(
     private val repository: HelloWorldRepository,
 ) : GetHelloWorldUseCase {
 
@@ -17,6 +17,10 @@ class GetHelloWorldUseCaseImpl constructor(
         private const val UNAVAILABLE_MESSAGE = "Something went wrong on our end. Try again later."
     }
 
+    /**
+     * This particular use case does not return a [Result] because the same behavior applies in the
+     * success and failure case. A toast with a message is shown in both cases.
+     */
     override suspend fun invoke(): HelloWorldOutput {
         return withContext(Dispatchers.IO) {
             try {
