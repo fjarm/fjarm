@@ -5,9 +5,9 @@ import build.buf.gen.fjarm.helloworld.v1.HelloWorldOutput
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class HelloWorldInteractorImpl constructor(
+class GetHelloWorldUseCaseImpl constructor(
     private val repository: HelloWorldRepository,
-) : HelloWorldInteractor {
+) : GetHelloWorldUseCase {
 
     companion object {
         private const val ERROR_GREETING = "RUH-ROH!"
