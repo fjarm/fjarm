@@ -1,6 +1,7 @@
 package xyz.fjarm.libservertransport
 
 import com.connectrpc.ProtocolClientConfig
+import com.connectrpc.ProtocolClientInterface
 import com.connectrpc.SerializationStrategy
 import com.connectrpc.extensions.GoogleJavaLiteProtobufStrategy
 import com.connectrpc.http.HTTPClientInterface
@@ -15,7 +16,7 @@ class ServerTransportModule {
     fun provideProtocolClient(
         httpClient: HTTPClientInterface,
         protocolClientConfig: ProtocolClientConfig,
-    ): ProtocolClient {
+    ): ProtocolClientInterface {
         return ProtocolClient(
             httpClient = httpClient,
             config = protocolClientConfig,
