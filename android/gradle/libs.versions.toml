@@ -20,6 +20,7 @@ okHttp3 = "5.3.2"
 connectRpc = "0.7.4"
 fjarmConnectSdk = "0.7.4.1.20250220235546.9eca9e174ab9"
 fjarmGrpcSdk = "1.4.3.1.20250220235546.9eca9e174ab9"
+fjarmProtobufLiteSdk = "31.1.0.1.20250220235546.9eca9e174ab9"
 grpcAndroid = "1.78.0"
 grpcOkHttp = "1.78.0"
 
@@ -50,6 +51,7 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 connectKotlin = { group = "com.connectrpc", name = "connect-kotlin", version.ref = "connectRpc" }
 connectKotlinGoogleJavaLiteExt = { group = "com.connectrpc", name = "connect-kotlin-google-javalite-ext", version.ref = "connectRpc" }
 connectKotlinOkHttp = { group = "com.connectrpc", name = "connect-kotlin-okhttp", version.ref = "connectRpc" }
+fjarmProtobufLiteSdk = { group = "build.buf.gen", name = "fjarm_fjarm_protocolbuffers_java_lite", version.ref = "fjarmProtobufLiteSdk" }
 fjarmConnectSdk = { group = "build.buf.gen", name = "fjarm_fjarm_connectrpc_kotlin_lite", version.ref = "fjarmConnectSdk" }
 fjarmGrpcSdk = { group = "build.buf.gen", name = "fjarm_fjarm_grpc_kotlin_lite", version.ref = "fjarmGrpcSdk" }
 grpcAndroid = { group = "io.grpc", name = "grpc-android", version.ref = "grpcAndroid" }
