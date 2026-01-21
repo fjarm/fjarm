@@ -62,7 +62,7 @@ dependencies {
 
     // Library deps
     implementation(project(":libHelloWorld"))
-    implementation(libs.fjarmConnectSdk)
+    implementation(libs.fjarmProtobufLiteSdk)
 
     // Dagger and Hilt deps
     implementation(libs.com.google.dagger.hilt.android)
