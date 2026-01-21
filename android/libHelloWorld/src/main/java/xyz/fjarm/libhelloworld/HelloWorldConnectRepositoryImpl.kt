@@ -20,7 +20,7 @@ class HelloWorldConnectRepositoryImpl(
     companion object {
         // No need to inject this path. Service and schema upgrades can be done with rolling deploys
         // on backend and force upgrade prompts on the app.
-        private const val GET_HELLO_WORLD_PATH =
+        private const val GET_HELLO_WORLD_V1_PATH =
             "fjarm.helloworld.v1.HelloWorldService/GetHelloWorld"
 
         private const val CALLBACK_NOT_SUPPORTED_MESSAGE =
@@ -44,7 +44,7 @@ class HelloWorldConnectRepositoryImpl(
             request,
             headers,
             MethodSpec(
-                GET_HELLO_WORLD_PATH,
+                GET_HELLO_WORLD_V1_PATH,
                 GetHelloWorldRequest::class,
                 GetHelloWorldResponse::class,
                 StreamType.UNARY,
