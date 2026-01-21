@@ -56,11 +56,8 @@ android {
 
 dependencies {
 
-    // gRPC deps
+    // Library deps
     implementation(project(":libHelloWorld"))
-    implementation(libs.grpcAndroid)
-    implementation(libs.grpcOkHttp)
-    implementation(libs.fjarmGrpcSdk)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
