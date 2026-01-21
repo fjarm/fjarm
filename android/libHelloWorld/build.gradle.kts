@@ -14,12 +14,10 @@ java {
 dependencies {
     implementation(project(":libServerTransport"))
 
-    implementation(libs.grpcAndroid)
-    implementation(libs.grpcOkHttp)
-    implementation(libs.fjarmGrpcSdk)
     implementation(libs.fjarmConnectSdk)
+    implementation(libs.fjarmProtobufLiteSdk)
 
     // Dagger and Hilt related deps
-    implementation(libs.com.google.dagger.hilt.core)
     ksp(libs.com.google.dagger.hilt.compiler)
+    implementation(libs.com.google.dagger.hilt.core)
 }

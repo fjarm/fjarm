@@ -13,12 +13,12 @@ java {
 
 dependencies {
     implementation(libs.connectKotlin)
-    implementation(libs.coroutinesCoreJvm)
-    implementation(libs.okHttp3)
     implementation(libs.connectKotlinGoogleJavaLiteExt)
     implementation(libs.connectKotlinOkHttp)
+    implementation(libs.coroutinesCoreJvm)
+    implementation(libs.okHttp3)
 
     // Dagger and Hilt related deps
-    implementation(libs.com.google.dagger.hilt.core)
     ksp(libs.com.google.dagger.hilt.compiler)
+    implementation(libs.com.google.dagger.hilt.core)
 }
