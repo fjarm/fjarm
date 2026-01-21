@@ -8,11 +8,20 @@ import com.connectrpc.http.HTTPClientInterface
 import com.connectrpc.impl.ProtocolClient
 import com.connectrpc.okhttp.ConnectOkHttpClient
 import com.connectrpc.protocols.NetworkProtocol
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
+import javax.inject.Singleton
 
+@Module
+@InstallIn(SingletonComponent::class)
 class ServerTransportModule {
 
+    @Provides
+    @Singleton
     fun provideProtocolClient(
         httpClient: HTTPClientInterface,
         protocolClientConfig: ProtocolClientConfig,
@@ -23,6 +32,8 @@ class ServerTransportModule {
         )
     }
 
+    @Provides
+    @Singleton
     fun provideHttpClientInterface(
         okHttpClient: OkHttpClient,
     ): HTTPClientInterface {
@@ -31,6 +42,8 @@ class ServerTransportModule {
         )
     }
 
+    @Provides
+    @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         // TODO(2025-09-23): Investigate setting up options like Authenticator, x509TrustManager, and/or Interceptor
         return OkHttpClient
@@ -38,8 +51,9 @@ class ServerTransportModule {
             .build()
     }
 
+    @Provides
     fun provideProtocolClientConfig(
-        host: String,
+        @ServerHost host: String,
         networkProtocol: NetworkProtocol,
         serializationStrategy: SerializationStrategy,
     ): ProtocolClientConfig {
@@ -52,15 +66,22 @@ class ServerTransportModule {
         )
     }
 
+    @Provides
+    @Singleton
+    @ServerHost
     fun provideHost(): String {
         // TODO(2025-09-23): Dagger inject an address instead of hardcoding localhost
         return "10.0.2.2"
     }
 
+    @Provides
+    @Singleton
     fun provideNetworkProtocol(): NetworkProtocol {
         return NetworkProtocol.CONNECT
     }
 
+    @Provides
+    @Singleton
     fun provideSerializationStrategy(): SerializationStrategy {
         return GoogleJavaLiteProtobufStrategy()
     }
