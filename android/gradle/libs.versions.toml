@@ -56,6 +56,10 @@ grpcAndroid = { group = "io.grpc", name = "grpc-android", version.ref = "grpcAnd
 grpcOkHttp = { group = "io.grpc", name = "grpc-okhttp", version.ref = "grpcOkHttp" }
 okHttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okHttp3" }
 
+# Dagger and Hilt related deps
+com-google-dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+com-google-dagger-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
