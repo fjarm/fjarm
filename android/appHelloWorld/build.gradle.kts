@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
+    // Dagger and Hilt related plugins
+    alias(libs.plugins.com.google.devtools.ksp)
+    alias(libs.plugins.com.google.dagger.hilt.android)
 }
 
 android {
@@ -58,6 +62,10 @@ dependencies {
 
     // Library deps
     implementation(project(":libHelloWorld"))
+
+    // Dagger and Hilt deps
+    implementation(libs.com.google.dagger.hilt.android)
+    ksp(libs.com.google.dagger.hilt.android.compiler)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
