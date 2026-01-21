@@ -1,6 +1,9 @@
 plugins {
     id("java-library")
     alias(libs.plugins.jetbrainsKotlinJvm)
+
+    // Dagger and Hilt related plugins
+    alias(libs.plugins.com.google.devtools.ksp)
 }
 
 java {
@@ -14,4 +17,8 @@ dependencies {
     implementation(libs.okHttp3)
     implementation(libs.connectKotlinGoogleJavaLiteExt)
     implementation(libs.connectKotlinOkHttp)
+
+    // Dagger and Hilt related deps
+    implementation(libs.com.google.dagger.hilt.core)
+    ksp(libs.com.google.dagger.hilt.compiler)
 }
