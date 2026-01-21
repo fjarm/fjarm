@@ -42,7 +42,7 @@ class GetHelloWorldUseCaseImpl @Inject constructor(
                 }
                 HelloWorldOutput
                     .newBuilder()
-                    .setOutput("$ERROR_GREETING $message}")
+                    .setOutput("$ERROR_GREETING $message")
                     .build()
             } catch (_: Exception) {
                 // Generic error handling is reserved for truly exceptional errors that happen
