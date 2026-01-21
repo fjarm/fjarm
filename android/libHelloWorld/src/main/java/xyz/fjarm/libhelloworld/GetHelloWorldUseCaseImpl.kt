@@ -36,7 +36,7 @@ class GetHelloWorldUseCaseImpl @Inject constructor(
                 val message = when (e.code) {
                     Code.UNAVAILABLE -> UNAVAILABLE_MESSAGE
                     else -> {
-                        // Consider logging this unexpected exception
+                        // In a production app, consider logging this unexpected exception.
                         HIDDEN_ERROR
                     }
                 }

@@ -52,12 +52,13 @@ class ServerTransportModule {
     }
 
     @Provides
+    @Singleton
     fun provideProtocolClientConfig(
         @ServerHost host: String,
         networkProtocol: NetworkProtocol,
         serializationStrategy: SerializationStrategy,
     ): ProtocolClientConfig {
-        // TODO(2025-09-23): Investigate using the request compression tools.
+        // TODO(2025-09-23): Investigate using request compression tools and adding interceptors.
         return ProtocolClientConfig(
             host = host,
             networkProtocol = networkProtocol,
