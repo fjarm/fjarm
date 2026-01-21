@@ -10,8 +10,11 @@ import com.connectrpc.ResponseMessage
 import com.connectrpc.StreamType
 import com.connectrpc.getOrThrow
 import com.connectrpc.http.Cancelable
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class HelloWorldConnectRepositoryImpl(
+@Singleton
+class HelloWorldConnectRepositoryImpl @Inject constructor(
     private val client: ProtocolClientInterface,
 ) : HelloWorldRepository,
     HelloWorldServiceClientInterface

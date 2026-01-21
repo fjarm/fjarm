@@ -6,8 +6,11 @@ import com.connectrpc.Code
 import com.connectrpc.ConnectException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class GetHelloWorldUseCaseImpl(
+@Singleton
+class GetHelloWorldUseCaseImpl @Inject constructor(
     private val repository: HelloWorldRepository,
 ) : GetHelloWorldUseCase {
 
