@@ -10,14 +10,14 @@ plugins {
 
 android {
     namespace = "xyz.fjarm.helloworld"
-    compileSdk = 36
+    compileSdk = Config.COMPILE_SDK
 
     defaultConfig {
         applicationId = "xyz.fjarm.helloworld"
-        minSdk = 31
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = Config.MIN_SDK
+        targetSdk = Config.TARGET_SDK
+        versionCode = Config.VERSION_CODE
+        versionName = Config.VERSION_NAME
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
