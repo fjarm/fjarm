@@ -1,6 +1,9 @@
 plugins {
     id("java-library")
     alias(libs.plugins.jetbrainsKotlinJvm)
+
+    // Dagger and Hilt related plugins
+    alias(libs.plugins.com.google.devtools.ksp)
 }
 
 java {
@@ -9,8 +12,12 @@ java {
 }
 
 dependencies {
-    implementation(libs.grpcAndroid)
-    implementation(libs.grpcOkHttp)
-    implementation(libs.fjarmGrpcSdk)
+    implementation(project(":libServerTransport"))
+
     implementation(libs.fjarmConnectSdk)
+    implementation(libs.fjarmProtobufLiteSdk)
+
+    // Dagger and Hilt related deps
+    ksp(libs.com.google.dagger.hilt.compiler)
+    implementation(libs.com.google.dagger.hilt.core)
 }

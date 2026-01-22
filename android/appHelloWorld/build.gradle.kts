@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
+    // Dagger and Hilt related plugins
+    alias(libs.plugins.com.google.devtools.ksp)
+    alias(libs.plugins.com.google.dagger.hilt.android)
 }
 
 android {
@@ -55,15 +59,19 @@ android {
 }
 
 dependencies {
-
-    // gRPC deps
     implementation(project(":libHelloWorld"))
-    implementation(libs.grpcAndroid)
-    implementation(libs.grpcOkHttp)
-    implementation(libs.fjarmGrpcSdk)
+
+    implementation(libs.fjarmProtobufLiteSdk)
+
+    // Dagger and Hilt deps
+    ksp(libs.com.google.dagger.hilt.android.compiler)
+    implementation(libs.com.google.dagger.hilt.android)
 
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
