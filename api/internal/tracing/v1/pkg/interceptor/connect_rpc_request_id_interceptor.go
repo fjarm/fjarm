@@ -3,7 +3,6 @@ package interceptor
 import (
 	"context"
 	"log/slog"
-	"time"
 
 	"connectrpc.com/connect"
 
@@ -19,8 +18,6 @@ const connectRPCRequestIDInterceptorTag = "connect_rpc_request_id_interceptor"
 func NewConnectRPCRequestIDLoggingInterceptor(l *slog.Logger) connect.UnaryInterceptorFunc {
 	return func(next connect.UnaryFunc) connect.UnaryFunc {
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			start := time.Now()
-
 			reqID, err := getRequestIDFromReqHeaders(req)
 			lvl := slog.LevelInfo
 			if err != nil {
@@ -39,24 +36,14 @@ func NewConnectRPCRequestIDLoggingInterceptor(l *slog.Logger) connect.UnaryInter
 			logger.Log(
 				ctx,
 				lvl,
-				"intercepted request",
-				slog.Time(logkeys.StartTime, start),
+				"verified request contains request-id header",
 				slog.Any(logkeys.Err, err),
 			)
 
-			var res connect.AnyResponse = nil
+			var res connect.AnyResponse
 			if err == nil {
 				res, err = next(context.WithValue(ctx, tracing.RequestIDKey, reqID), req)
 			}
-
-			duration := time.Since(start)
-
-			logger.InfoContext(
-				ctx,
-				"completed request",
-				slog.Duration(logkeys.Duration, duration),
-				slog.Any(logkeys.Err, err),
-			)
 
 			return res, err
 		}
