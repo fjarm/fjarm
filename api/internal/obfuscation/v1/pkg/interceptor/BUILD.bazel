@@ -10,7 +10,6 @@ go_library(
     visibility = ["//api:__subpackages__"],
     deps = [
         "//api/internal/logkeys",
-        "//api/internal/tracing",
         "@com_connectrpc_connect//:connect",
     ],
 )

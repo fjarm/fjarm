@@ -10,7 +10,6 @@ import (
 	"connectrpc.com/connect"
 
 	"github.com/fjarm/fjarm/api/internal/logkeys"
-	"github.com/fjarm/fjarm/api/internal/tracing"
 )
 
 const connectRPCAmbiguousTimingInterceptorTag = "connect_rpc_ambiguous_timing_interceptor"
@@ -25,7 +24,6 @@ func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) c
 		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
 			logger := l.With(
 				slog.String(logkeys.Tag, connectRPCAmbiguousTimingInterceptorTag),
-				slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
 				slog.String(logkeys.Rpc, req.Spec().Procedure),
 			)
 
@@ -34,7 +32,12 @@ func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) c
 			// Introduce a random delay between 0 and dd milliseconds (usually 15 seconds).
 			delay := time.Duration(rand.Intn(int(dd))) * time.Millisecond
 
-			logger.InfoContext(ctx, "introduced ambiguous delay", slog.Duration("delay", delay))
+			logger.InfoContext(
+				ctx,
+				"introduced ambiguous delay",
+				slog.Duration("delay", delay),
+				slog.Int64(logkeys.StartTime, start.Unix()),
+			)
 
 			res, err := next(ctx, req)
 
@@ -44,16 +47,34 @@ func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) c
 				select {
 				case <-time.After(delay - duration):
 					// Return the response after the delay
+					logger.InfoContext(
+						ctx,
+						"completed request with ambigious delay",
+						slog.Duration("delay", delay),
+						slog.Duration(logkeys.Duration, duration),
+						slog.Any(logkeys.Err, err),
+					)
 					return res, err
 				case <-ctx.Done():
 					// Handle context cancellation
-					logger.ErrorContext(ctx, "terminated request", slog.Any("err", ctx.Err()))
+					logger.ErrorContext(
+						ctx,
+						"terminated request with cancelled context",
+						slog.Any("err", ctx.Err()),
+						slog.Duration("delay", delay),
+						slog.Duration(logkeys.Duration, duration),
+					)
 					return nil, connect.NewError(connect.CodeAborted, fmt.Errorf("terminated request"))
 				}
 			} else {
 				// If the request took longer than the delay, return the response immediately.
 				// This generally shouldn't happen, but it's possible if the delay is set too low.
-				logger.WarnContext(ctx, "processed for longer than the minimum delay")
+				logger.WarnContext(
+					ctx,
+					"processed for longer than the minimum delay",
+					slog.Duration("delay", delay),
+					slog.Duration(logkeys.Duration, duration),
+				)
 				return res, err
 			}
 		}
