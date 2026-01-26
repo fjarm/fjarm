@@ -49,7 +49,7 @@ func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) c
 					// Return the response after the delay
 					logger.InfoContext(
 						ctx,
-						"completed request with ambigious delay",
+						"completed request with ambiguous delay",
 						slog.Duration("delay", delay),
 						slog.Duration(logkeys.Duration, duration),
 						slog.Any(logkeys.Err, err),
