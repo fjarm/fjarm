@@ -36,17 +36,17 @@ func TestNewConnectRPCRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 		},
 		"invalid_empty_value_request_id": {
 			headers:  map[string]string{"request-id": ""},
-			expected: []string{"WARN", "msg=\"verified request contains request-id header\"", "request-id=\"\""},
+			expected: []string{"WARN", "msg=\"failed to verify request-id header\""},
 			err:      true,
 		},
 		"invalid_empty_request_id": {
 			headers:  map[string]string{},
-			expected: []string{"WARN", "msg=\"verified request contains request-id header\"", "request-id=\"\""},
+			expected: []string{"WARN", "msg=\"failed to verify request-id header\""},
 			err:      true,
 		},
 		"invalid_incorrect_key_request_id": {
 			headers:  map[string]string{"Request-id": "abc123"},
-			expected: []string{"WARN", "msg=\"verified request contains request-id header\"", "request-id=\"\""},
+			expected: []string{"WARN", "msg=\"failed to verify request-id header\""},
 			err:      true,
 		},
 	}
