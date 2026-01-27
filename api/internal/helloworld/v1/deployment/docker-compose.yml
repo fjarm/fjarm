@@ -1,0 +1,19 @@
+services:
+  helloworld:
+    image: helloworld:local
+    container_name: helloworld
+    ports:
+      # Map the PORT env var to host - supports dynamic port configuration.
+      # If needed, use bash parameter expansion for sensible defaults, i.e. ${PORT:-8080}.
+      - "${PORT}:${PORT}"
+    environment:
+      # PORT will be injected by Infisical.
+      - PORT=${PORT}
+    restart: unless-stopped
+    networks:
+      - helloworld-network
+  
+
+networks:
+  helloworld-network:
+    driver: bridge
