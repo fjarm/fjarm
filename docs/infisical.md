@@ -40,3 +40,7 @@ After bringing up the services locally, testing can be done either using the rel
 ```bash
 curl -X POST --data '{}' --header "Content-Type: application/json" --header "request-id: abc123" -o - http://localhost:8000/fjarm.helloworld.v1.HelloWorldService/GetHelloWorld
 ```
+
+## References and links
+
+* [Podman compose setup docs](https://podman-desktop.io/docs/compose/setting-up-compose)
