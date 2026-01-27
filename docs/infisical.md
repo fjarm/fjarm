@@ -44,3 +44,4 @@ curl -X POST --data '{}' --header "Content-Type: application/json" --header "req
 ## References and links
 
 * [Podman compose setup docs](https://podman-desktop.io/docs/compose/setting-up-compose)
+* [Infisical CLI config docs](https://infisical.com/docs/cli/project-config)
