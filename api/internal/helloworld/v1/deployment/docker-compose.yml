@@ -5,10 +5,10 @@ services:
     ports:
       # Map the PORT env var to host - supports dynamic port configuration.
       # If needed, use bash parameter expansion for sensible defaults, i.e. ${PORT:-8080}.
-      - "${PORT}:${PORT}"
+      - "${PORT:-8000}:${PORT:-8000}"
     environment:
       # PORT will be injected by Infisical.
-      - PORT=${PORT}
+      - PORT=${PORT:-8000}
     restart: unless-stopped
     networks:
       - helloworld-network
