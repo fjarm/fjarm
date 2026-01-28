@@ -49,7 +49,6 @@ func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) c
 					logger.InfoContext(
 						ctx,
 						"completed request with timing delay",
-						slog.Duration("delay", delay),
 						slog.Duration(logkeys.Duration, duration),
 						slog.Any(logkeys.Err, err),
 					)
@@ -60,7 +59,6 @@ func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) c
 						ctx,
 						"terminated request with cancelled context",
 						slog.Any("err", ctx.Err()),
-						slog.Duration("delay", delay),
 						slog.Duration(logkeys.Duration, duration),
 					)
 					return nil, connect.NewError(connect.CodeAborted, fmt.Errorf("terminated request"))
@@ -71,7 +69,6 @@ func NewConnectRPCAmbiguousTimingInterceptor(l *slog.Logger, dd DelayDuration) c
 				logger.WarnContext(
 					ctx,
 					"processed for longer than the minimum delay",
-					slog.Duration("delay", delay),
 					slog.Duration(logkeys.Duration, duration),
 				)
 				return res, err
