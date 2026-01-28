@@ -33,7 +33,7 @@ func (h *ConnectRPCHandler) GetHelloWorld(
 ) (*connect.Response[pb.GetHelloWorldResponse], error) {
 	callInfo, ok := connect.CallInfoForHandlerContext(ctx)
 	if !ok {
-		return nil, ErrRequestIDNotFound
+		return nil, tracing.ErrRequestIDNotFound
 	}
 
 	requestID := callInfo.RequestHeader().Get(tracing.RequestIDKey)

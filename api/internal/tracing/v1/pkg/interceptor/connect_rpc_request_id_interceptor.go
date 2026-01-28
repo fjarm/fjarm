@@ -51,7 +51,7 @@ func NewConnectRPCRequestIDLoggingInterceptor(l *slog.Logger) connect.UnaryInter
 func getRequestIDFromReqHeaders(req connect.AnyRequest) (string, error) {
 	header := req.Header().Get(tracing.RequestIDKey)
 	if header == "" {
-		return "", ErrRequestIDNotFound
+		return "", tracing.ErrRequestIDNotFound
 	}
 	return header, nil
 }
