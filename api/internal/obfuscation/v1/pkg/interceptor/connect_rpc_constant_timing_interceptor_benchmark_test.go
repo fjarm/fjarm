@@ -9,7 +9,7 @@ import (
 	"connectrpc.com/connect"
 )
 
-func Benchmark_NewConnectRPCAmbiguousTimingInterceptor(b *testing.B) {
+func Benchmark_NewConnectRPCConstantTimingInterceptor(b *testing.B) {
 	dl := slog.Default()
 	defer slog.SetDefault(dl)
 
@@ -22,7 +22,7 @@ func Benchmark_NewConnectRPCAmbiguousTimingInterceptor(b *testing.B) {
 		return connect.NewResponse(&res), nil
 	}
 
-	interceptor := NewConnectRPCAmbiguousTimingInterceptor(l, DelayDuration(1))(next)
+	interceptor := NewConnectRPCConstantTimingInterceptor(l, DelayDuration(1))(next)
 
 	for i := 0; i < b.N; i++ {
 		req := connect.NewRequest(

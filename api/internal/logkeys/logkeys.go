@@ -3,6 +3,7 @@ package logkeys
 const (
 	Addr      = "addr"
 	Duration  = "duration"
+	EndTime   = "end"
 	Err       = "error"
 	Key       = "key"
 	Raw       = "raw"
