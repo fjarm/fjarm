@@ -60,12 +60,12 @@ android {
 
 dependencies {
     implementation(project(":libHelloWorld"))
-
     implementation(libs.fjarmProtobufLiteSdk)
 
     // Dagger and Hilt deps
     ksp(libs.com.google.dagger.hilt.android.compiler)
     implementation(libs.com.google.dagger.hilt.android)
+    implementation(libs.androidx.hilt.hilt.navigation.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
