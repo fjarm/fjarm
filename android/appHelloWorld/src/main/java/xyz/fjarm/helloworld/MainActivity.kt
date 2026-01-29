@@ -22,12 +22,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import xyz.fjarm.helloworld.ui.theme.HelloWorldTheme
 
 @AndroidEntryPoint
@@ -58,14 +62,29 @@ class MainActivity: ComponentActivity() {
 @Composable
 fun Greeting(
     modifier: Modifier = Modifier,
-    helloWorldViewModel: HelloWorldViewModel = viewModel(),
+    helloWorldViewModel: HelloWorldViewModel = hiltViewModel<HelloWorldViewModel>(),
+) {
+    Greeting(
+        modifier = modifier,
+        state = helloWorldViewModel.state,
+        sideEffect = helloWorldViewModel.sideEffect,
+        processEvent = helloWorldViewModel::processEvent,
+    )
+}
+
+@Composable
+fun Greeting(
+    modifier: Modifier = Modifier,
+    state: StateFlow<HelloWorldState>,
+    sideEffect: SharedFlow<HelloWorldSideEffect>,
+    processEvent: (HelloWorldEvent) -> Unit,
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(Unit) {
         // Ensure that side effect collection only happens when the UI is in the STARTED state.
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            helloWorldViewModel.sideEffect.collect { sideEffect ->
+            sideEffect.collect { sideEffect ->
                 when (sideEffect) {
                     is HelloWorldSideEffect.ShowToast -> {
                         Toast.makeText(
@@ -79,18 +98,17 @@ fun Greeting(
         }
     }
 
-    val state = helloWorldViewModel.state.collectAsStateWithLifecycle()
+    val state = state.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(vertical = Dp(24f)),
+            .padding(Dp(24f)),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = stringResource(id = state.value.promptText))
         Button(
-            onClick = { helloWorldViewModel.processEvent(HelloWorldEvent.ButtonClicked) }
+            onClick = { processEvent(HelloWorldEvent.ButtonClicked) }
         ) {
             Text(text = stringResource(id = state.value.buttonText))
         }
@@ -101,6 +119,16 @@ fun Greeting(
 @Composable
 fun GreetingPreview() {
     HelloWorldTheme {
-        Greeting()
+        Greeting(
+            modifier = Modifier,
+            state = MutableStateFlow(
+                HelloWorldState(
+                    promptText = R.string.prompt_text,
+                    buttonText = R.string.button_text,
+                )
+            ),
+            sideEffect = MutableSharedFlow(),
+            processEvent = { },
+        )
     }
 }
