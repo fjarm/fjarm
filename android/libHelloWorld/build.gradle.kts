@@ -20,4 +20,11 @@ dependencies {
     // Dagger and Hilt related deps
     ksp(libs.com.google.dagger.hilt.compiler)
     implementation(libs.com.google.dagger.hilt.core)
+
+    testImplementation(libs.junit)
+
+    testImplementation(libs.connectKotlin)
+
+    testImplementation(libs.fjarmConnectSdk)
+    testImplementation(libs.fjarmProtobufLiteSdk)
 }
