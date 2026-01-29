@@ -10,7 +10,7 @@ import (
 	"connectrpc.com/connect"
 )
 
-func TestNewConnectRPCAmbiguousTimingInterceptor_LogOutput(t *testing.T) {
+func TestNewConnectRPCConstantTimingInterceptor_LogOutput(t *testing.T) {
 	dl := slog.Default()
 	defer slog.SetDefault(dl)
 
@@ -29,17 +29,17 @@ func TestNewConnectRPCAmbiguousTimingInterceptor_LogOutput(t *testing.T) {
 	}{
 		"valid_delay": {
 			delay:  DelayDuration(1000),
-			output: []string{"level=INFO", "msg=\"introduced ambiguous delay\"", "delay"},
+			output: []string{"level=INFO", "msg=\"introduced timing delay\"", "delay"},
 		},
 		"invalid_negative_delay": {
 			delay:  DelayDuration(-1),
-			output: []string{"level=INFO", "level=WARN", "msg=\"introduced ambiguous delay\"", "msg=\"invalid delay duration\"", "delay"},
+			output: []string{"level=INFO", "level=WARN", "msg=\"introduced timing delay\"", "msg=\"invalid delay duration\"", "delay"},
 		},
 	}
 	t.Parallel()
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			interceptor := NewConnectRPCAmbiguousTimingInterceptor(l, tc.delay)(next)
+			interceptor := NewConnectRPCConstantTimingInterceptor(l, tc.delay)(next)
 			req := connect.NewRequest(
 				&[]string{"a", "cool", "request"},
 			)

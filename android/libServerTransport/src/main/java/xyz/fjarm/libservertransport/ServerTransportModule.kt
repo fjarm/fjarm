@@ -72,7 +72,7 @@ class ServerTransportModule {
     @ServerHost
     fun provideHost(): String {
         // TODO(2025-09-23): Dagger inject an address instead of hardcoding localhost
-        return "10.0.2.2"
+        return "http://10.0.2.2:8000"
     }
 
     @Provides

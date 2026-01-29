@@ -31,9 +31,19 @@ func (h *ConnectRPCHandler) GetHelloWorld(
 	ctx context.Context,
 	req *connect.Request[pb.GetHelloWorldRequest],
 ) (*connect.Response[pb.GetHelloWorldResponse], error) {
+	callInfo, ok := connect.CallInfoForHandlerContext(ctx)
+	if !ok {
+		return nil, tracing.ErrRequestIDNotFound
+	}
+
+	requestID := callInfo.RequestHeader().Get(tracing.RequestIDKey)
+	if requestID == "" {
+		return nil, tracing.ErrRequestIDNotFound
+	}
+
 	logger := h.logger.With(
 		slog.String(logkeys.Rpc, helloworldv1connect.HelloWorldServiceGetHelloWorldProcedure),
-		slog.String(tracing.RequestIDKey, req.Header().Get(tracing.RequestIDKey)),
+		slog.String(tracing.RequestIDKey, requestID),
 	)
 
 	logger.InfoContext(

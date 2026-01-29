@@ -42,7 +42,7 @@ func main() {
 	addr := fmt.Sprintf("%s:%s", ip, port)
 
 	interceptors := connect.WithInterceptors(
-		obfuscation.NewConnectRPCAmbiguousTimingInterceptor(logger, obfuscation.DelayDuration_15000ms),
+		obfuscation.NewConnectRPCConstantTimingInterceptor(logger, obfuscation.DelayDuration_100ms),
 		tracing.NewConnectRPCRequestIDLoggingInterceptor(logger),
 	)
 	connectRPCHandler := helloworld.NewConnectRPCHandler(logger)

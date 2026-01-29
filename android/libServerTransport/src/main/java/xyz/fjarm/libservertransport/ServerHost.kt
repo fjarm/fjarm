@@ -3,5 +3,5 @@ package xyz.fjarm.libservertransport
 import javax.inject.Qualifier
 
 @Qualifier
-@Retention(AnnotationRetention.RUNTIME)
+@Retention(AnnotationRetention.BINARY)
 annotation class ServerHost

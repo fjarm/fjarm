@@ -13,3 +13,6 @@ local.properties
 # buildSrc build outputs
 buildSrc/build/
 buildSrc/.gradle/
+
+# Antigravity generated files
+**bin**
