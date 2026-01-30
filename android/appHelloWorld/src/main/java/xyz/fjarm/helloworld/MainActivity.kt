@@ -81,7 +81,9 @@ fun Greeting(
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    LaunchedEffect(Unit) {
+
+    // If the SharedFlow changes, cancel the old collection and start a new one
+    LaunchedEffect(sideEffect, lifecycleOwner) {
         // Ensure that side effect collection only happens when the UI is in the STARTED state.
         lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
             sideEffect.collect { sideEffect ->
