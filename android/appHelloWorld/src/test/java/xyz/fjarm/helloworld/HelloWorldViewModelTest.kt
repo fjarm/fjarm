@@ -55,4 +55,34 @@ class HelloWorldViewModelTest {
             (sideEffect as HelloWorldSideEffect.ShowToast).message,
         )
     }
+
+    @Test
+    fun processEvent_ButtonClicked_withSuccessUseCaseInvoke_stateRemainsConstant() = runTest {
+        // Given a use case that returns valid, non empty output
+        val expectedOutput = "blah blah"
+        val fakeUseCase = object : GetHelloWorldUseCase {
+            override suspend fun invoke(): HelloWorldOutput {
+                return HelloWorldOutput.newBuilder()
+                    .setOutput(expectedOutput)
+                    .build()
+            }
+        }
+        val viewModel = HelloWorldViewModel(fakeUseCase)
+
+        val collectedStates = mutableListOf<HelloWorldState>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.state.collect { collectedStates.add(it) }
+        }
+
+        // When a ButtonClicked event is processed by the ViewModel
+        viewModel.processEvent(HelloWorldEvent.ButtonClicked)
+        advanceUntilIdle()
+
+        // Then the state remains constant and does not emit more than once
+        val state = collectedStates.firstOrNull()
+        assert(collectedStates.size == 1)
+        assert(state is HelloWorldState)
+        assertEquals(R.string.prompt_text, (state as HelloWorldState).promptText)
+        assertEquals(R.string.button_text, state.buttonText)
+    }
 }
