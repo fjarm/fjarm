@@ -22,9 +22,4 @@ dependencies {
     implementation(libs.com.google.dagger.hilt.core)
 
     testImplementation(libs.junit)
-
-    testImplementation(libs.connectKotlin)
-
-    testImplementation(libs.fjarmConnectSdk)
-    testImplementation(libs.fjarmProtobufLiteSdk)
 }
