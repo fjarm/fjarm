@@ -6,7 +6,7 @@ import build.buf.gen.fjarm.helloworld.v1.HelloWorldOutput
 import com.connectrpc.Code
 import com.connectrpc.ConnectException
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class GetHelloWorldUseCaseImplTest {
@@ -31,7 +31,7 @@ class GetHelloWorldUseCaseImplTest {
         val output = runBlocking { getHelloWorldUseCase() }
 
         // Then no exception is thrown and the output should contain a non-empty string
-        assert(output.output.isNotEmpty())
+        assertTrue(output.output.isNotEmpty())
     }
 
     @Test
@@ -52,7 +52,7 @@ class GetHelloWorldUseCaseImplTest {
 
         // Then the exception handling in the use case ensures a valid HelloWorldOutput is still
         // returned
-        assertFalse(output.output.isEmpty())
+        assertTrue(output.output.isNotEmpty())
     }
 
     @Test
@@ -70,6 +70,6 @@ class GetHelloWorldUseCaseImplTest {
 
         // Then the exception handling in the use case ensures a valid HelloWorldOutput is still
         // returned
-        assertFalse(output.output.isEmpty())
+        assertTrue(output.output.isNotEmpty())
     }
 }

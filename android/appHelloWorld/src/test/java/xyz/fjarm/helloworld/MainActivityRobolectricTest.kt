@@ -11,6 +11,7 @@ import dagger.hilt.android.testing.HiltAndroidTest
 import dagger.hilt.android.testing.HiltTestApplication
 import dagger.hilt.android.testing.UninstallModules
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -66,7 +67,7 @@ class MainActivityRobolectricTest {
         val toastMessage = ShadowToast.getTextOfLatestToast()
 
         // Then a toast is shown with the expected message
-        assert(latestToast != null)
+        assertNotNull(latestToast)
         assertEquals(expectedMessage, toastMessage)
         assertEquals(Toast.LENGTH_SHORT, latestToast.duration)
     }

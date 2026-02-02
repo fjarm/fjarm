@@ -10,6 +10,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import xyz.fjarm.libhelloworld.GetHelloWorldUseCase
@@ -48,8 +49,8 @@ class HelloWorldViewModelTest {
 
         // Then a ShowToast side effect is emitted with the expected output
         val sideEffect = collectedSideEffects.firstOrNull()
-        assert(collectedSideEffects.size == 1)
-        assert(sideEffect is HelloWorldSideEffect.ShowToast)
+        assertEquals(1, collectedSideEffects.size)
+        assertTrue(sideEffect is HelloWorldSideEffect.ShowToast)
         assertEquals(
             expectedOutput,
             (sideEffect as HelloWorldSideEffect.ShowToast).message,
@@ -80,8 +81,8 @@ class HelloWorldViewModelTest {
 
         // Then the state remains constant and does not emit more than once
         val state = collectedStates.firstOrNull()
-        assert(collectedStates.size == 1)
-        assert(state is HelloWorldState)
+        assertEquals(1, collectedStates.size)
+        assertTrue(state is HelloWorldState)
         assertEquals(R.string.prompt_text, (state as HelloWorldState).promptText)
         assertEquals(R.string.button_text, state.buttonText)
     }
