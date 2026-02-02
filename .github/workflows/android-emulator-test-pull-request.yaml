@@ -56,7 +56,9 @@ jobs:
           api-level: ${{ matrix.api-level }}
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
-          disable-animations: false
+          disable-animations: true
+          arch: x86_64
+          target: default
           script: echo "Generated AVD snapshot for caching."
 
       - uses: reactivecircus/android-emulator-runner@v2
