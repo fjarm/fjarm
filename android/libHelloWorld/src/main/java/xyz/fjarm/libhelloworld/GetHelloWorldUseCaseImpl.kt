@@ -29,6 +29,7 @@ class GetHelloWorldUseCaseImpl @Inject constructor(
             try {
                 val request = GetHelloWorldRequest.newBuilder().build()
                 val response = repository.getHelloWorld(request)
+                require(response.hasOutput() && response.output.hasOutput())
                 response.output
             } catch (e: ConnectException) {
                 // ConnectRPC always throws a ConnectException. Specific error handling has to look

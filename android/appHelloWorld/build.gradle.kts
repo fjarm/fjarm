@@ -56,16 +56,21 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
     implementation(project(":libHelloWorld"))
-
     implementation(libs.fjarmProtobufLiteSdk)
 
     // Dagger and Hilt deps
     ksp(libs.com.google.dagger.hilt.android.compiler)
     implementation(libs.com.google.dagger.hilt.android)
+    implementation(libs.androidx.hilt.hilt.navigation.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
@@ -78,7 +83,14 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+
+    testImplementation(libs.androidx.ui.test.junit4)
+    testImplementation(libs.com.google.dagger.hilt.android.testing)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    kspTest(libs.com.google.dagger.hilt.android.compiler)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

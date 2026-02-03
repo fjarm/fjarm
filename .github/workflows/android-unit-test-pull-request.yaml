@@ -1,4 +1,4 @@
-name: Android PR checks
+name: Android unit test PR checks
 permissions:
   contents: read
   pull-requests: write
@@ -18,18 +18,22 @@ jobs:
       # Run `git checkout`
       - uses: actions/checkout@v4
         name: Checkout repo
+
       - uses: actions/setup-java@v5
         name: Set up JDK 21
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
+
       - uses: gradle/actions/setup-gradle@v5
         name: Set up Gradle
+
       - name: Build all tasks
         working-directory: ./android
         run: |
           ./gradlew build
+
       - name: Run all unit tests
         working-directory: ./android
         run: |
