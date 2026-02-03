@@ -59,6 +59,7 @@ jobs:
           disable-animations: true
           arch: x86_64
           target: default
+          working-directory: ./android
           script: echo "Generated AVD snapshot for caching."
 
       - uses: reactivecircus/android-emulator-runner@v2
@@ -70,4 +71,5 @@ jobs:
           disable-animations: true
           arch: x86_64
           target: default
+          working-directory: ./android
           script: ./gradlew connectedAndroidTest
