@@ -27,7 +27,7 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "android"
-include(":appFjarm")
-include(":appHelloWorld")
-include(":libHelloWorld")
-include(":libServerTransport")
+include(":fjarmApp")
+include(":helloWorldApp")
+include(":helloWorldLib")
+include(":serverTransportLib")
