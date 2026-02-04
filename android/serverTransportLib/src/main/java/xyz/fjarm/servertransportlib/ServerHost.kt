@@ -1,4 +1,4 @@
-package xyz.fjarm.libservertransport
+package xyz.fjarm.servertransportlib
 
 import javax.inject.Qualifier
 

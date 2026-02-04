@@ -12,8 +12,8 @@ java {
 }
 
 dependencies {
-    implementation(project(":libServerTransport"))
 
+    implementation(project(":serverTransportLib"))
     implementation(libs.fjarmConnectSdk)
     implementation(libs.fjarmProtobufLiteSdk)
 

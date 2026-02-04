@@ -1,4 +1,4 @@
-package xyz.fjarm.libservertransport
+package xyz.fjarm.servertransportlib
 
 import com.connectrpc.ProtocolClientConfig
 import com.connectrpc.ProtocolClientInterface
