@@ -19,8 +19,8 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowToast
-import xyz.fjarm.libhelloworld.GetHelloWorldUseCase
-import xyz.fjarm.libhelloworld.GetHelloWorldUseCase.GetHelloWorldUseCaseModule
+import xyz.fjarm.helloworldlib.GetHelloWorldUseCase
+import xyz.fjarm.helloworldlib.GetHelloWorldUseCase.GetHelloWorldUseCaseModule
 
 @HiltAndroidTest
 @UninstallModules(GetHelloWorldUseCaseModule::class)

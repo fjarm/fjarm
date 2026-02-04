@@ -15,7 +15,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import xyz.fjarm.libhelloworld.GetHelloWorldUseCase
+import xyz.fjarm.helloworldlib.GetHelloWorldUseCase
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class HelloWorldViewModelTest {

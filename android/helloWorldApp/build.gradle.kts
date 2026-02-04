@@ -64,7 +64,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":libHelloWorld"))
+    implementation(project(":helloWorldLib"))
     implementation(libs.fjarmProtobufLiteSdk)
 
     // Dagger and Hilt deps

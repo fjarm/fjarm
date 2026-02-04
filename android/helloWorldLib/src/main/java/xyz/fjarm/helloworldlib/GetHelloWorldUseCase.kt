@@ -1,4 +1,4 @@
-package xyz.fjarm.libhelloworld
+package xyz.fjarm.helloworldlib
 
 import build.buf.gen.fjarm.helloworld.v1.HelloWorldOutput
 import dagger.Binds
