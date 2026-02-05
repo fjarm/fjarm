@@ -54,6 +54,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":fjarmThemeLib"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
