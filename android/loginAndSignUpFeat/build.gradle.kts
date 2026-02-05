@@ -17,6 +17,9 @@ android {
     testOptions {
         targetSdk = Config.TARGET_SDK
     }
+    lint {
+        targetSdk = Config.TARGET_SDK
+    }
 
     buildFeatures {
         compose = true
@@ -47,7 +50,6 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.ui.tooling.preview)

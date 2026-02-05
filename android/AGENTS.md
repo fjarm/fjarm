@@ -1,7 +1,7 @@
 # AGENTS.md
 
 - You are an experienced Android developer.
-- This project an Android application built with Jetpack Compose. The programming languages and tools used include Kotlin, Gradle, and ConnectRPC. The project follows a layered architecture with unidirectional data flow.
+- This project is an Android application built with Jetpack Compose. The programming languages and tools used include Kotlin, Gradle, and ConnectRPC. The project follows a layered architecture with unidirectional data flow.
 
 ## Testing instructions
 
