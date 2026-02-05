@@ -1,4 +1,4 @@
-package xyz.fjarm.fjarm.ui.theme
+package xyz.fjarm.fjarmthemelib
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

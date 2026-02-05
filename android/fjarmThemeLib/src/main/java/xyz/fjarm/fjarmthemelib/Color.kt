@@ -1,4 +1,4 @@
-package xyz.fjarm.fjarm.ui.theme
+package xyz.fjarm.fjarmthemelib
 
 import androidx.compose.ui.graphics.Color
 

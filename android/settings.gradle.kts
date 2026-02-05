@@ -28,6 +28,8 @@ dependencyResolutionManagement {
 
 rootProject.name = "android"
 include(":fjarmApp")
+include(":fjarmThemeLib")
 include(":helloWorldApp")
 include(":helloWorldLib")
+include(":loginAndSignUpFeat")
 include(":serverTransportLib")
