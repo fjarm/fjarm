@@ -30,6 +30,7 @@ fun LoginAndSignUpScreen(
                 onValueChange = {  },
                 label = { Text("Username") },
                 isError = false, // Highlights the text field in red if there's an error. Should align with the error below
+                shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth(),
             )
@@ -46,6 +47,7 @@ fun LoginAndSignUpScreen(
                 label = { Text("Password") },
                 isError = false,
                 visualTransformation = PasswordVisualTransformation(),
+                shape = RoundedCornerShape(8.dp),
                 modifier = Modifier
                     .fillMaxWidth(),
             )
