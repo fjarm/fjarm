@@ -13,9 +13,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.fjarm.fjarmthemelib.FjarmTheme
+import xyz.fjarm.previewslib.PreviewFontScales
+import xyz.fjarm.previewslib.PreviewLightDarkTheme
+import xyz.fjarm.previewslib.PreviewPhoneSizes
 
 @Composable
 fun LoginAndSignUpScreen(
@@ -71,7 +73,9 @@ fun LoginAndSignUpScreen(
     }
 }
 
-@Preview(showBackground = true)
+@PreviewPhoneSizes
+@PreviewFontScales
+@PreviewLightDarkTheme
 @Composable
 fun LoginAndSignUpScreenPreview() {
     LoginAndSignUpScreen(
