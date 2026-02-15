@@ -197,7 +197,7 @@ jobs:
             echo "| Restartable | $BASE_RESTARTABLE | $PR_RESTARTABLE | $(format_diff $DIFF_RESTARTABLE) |"
             echo "| Skippable | $BASE_SKIPPABLE | $PR_SKIPPABLE | $(format_diff $DIFF_SKIPPABLE) |"
             echo "| **Stable Classes** | $BASE_STABLE | $PR_STABLE | $(format_diff $DIFF_STABLE) |"
-            echo "| Unstable Classes | $BASE_UNSTABLE | $PR_UNSTABLE | $(format_diff $DIFF_UNSTABLE) |"
+            echo "| **Unstable Classes** | $BASE_UNSTABLE | $PR_UNSTABLE | $(format_diff $DIFF_UNSTABLE) |"
             
             # Check for concerning changes
             if [ $DIFF_UNSTABLE -gt 0 ] || [ $DIFF_SKIPPABLE -lt 0 ]; then
@@ -254,13 +254,6 @@ jobs:
             - **Unstable Classes**: Classes preventing composable skipping
             
             **Goal:** Maximize skippable composables and stable classes.
-            
-            </details>
-            
-            <details>
-            <summary>📋 Full metrics in artifacts</summary>
-            
-            Download \`pr-compose-metrics-all-modules\` artifact for detailed metrics of each module.
             
             </details>
             
