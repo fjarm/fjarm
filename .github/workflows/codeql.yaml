@@ -49,8 +49,8 @@ jobs:
           build-mode: autobuild
         # TODO(2026-02-04): Enable JVM codeql when the Kotlin language version is supported.
         # SEE: https://github.com/github/codeql/issues/20661
-        # - language: java-kotlin
-        #   build-mode: manual
+        - language: java-kotlin
+          build-mode: manual
         # TODO(2026-01-18): Update this if an iOS app is ever introduced.
         # - language: javascript-typescript
         #   build-mode: autobuild
