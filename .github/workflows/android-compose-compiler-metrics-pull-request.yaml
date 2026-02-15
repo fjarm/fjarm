@@ -31,7 +31,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v5
         name: Set up Gradle
       
-      - name: Detect Changed Modules
+      - name: Detect changed modules
         id: detect-modules
         run: |
           # Get list of changed files
@@ -72,7 +72,7 @@ jobs:
             echo "has_modules=true" >> $GITHUB_OUTPUT
           fi
           
-      - name: Generate PR Metrics for Changed Modules
+      - name: Generate PR metrics for changed modules
         if: steps.detect-modules.outputs.has_modules == 'true'
         working-directory: android
         run: |
@@ -82,7 +82,7 @@ jobs:
             ./gradlew :$module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build $module"
           done
           
-      - name: Save PR Metrics
+      - name: Save PR metrics
         if: steps.detect-modules.outputs.has_modules == 'true'
         run: |
           mkdir -p /tmp/pr-metrics
@@ -228,16 +228,22 @@ jobs:
       - uses: actions/github-script@v8
         name: Comment PR with report
         if: steps.detect-modules.outputs.has_modules == 'true'
+        env:
+          METRICS_REPORT: ${{ steps.compare.outputs.report }}
+          MODULE_LIST: ${{ steps.detect-modules.outputs.modules }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
         with:
           script: |
-            const modules = '${{ steps.detect-modules.outputs.modules }}'.split(',');
+            const report = process.env.METRICS_REPORT;
+            const modules = process.env.MODULE_LIST.split(',');
             const moduleList = modules.map(m => `\`${m}\``).join(', ');
             
             const summary = `## 🎨 Compose Compiler Metrics (Android)
             
             **Changed modules:** ${moduleList}
             
-            ${{ steps.compare.outputs.report }}
+            ${report}
             
             <details>
             <summary>📖 Understanding the metrics</summary>
@@ -259,7 +265,7 @@ jobs:
             </details>
             
             ---
-            *Comparing ${{ github.event.pull_request.head.sha }} with ${{ github.event.pull_request.base.sha }}*`;
+            *Comparing ${process.env.PR_HEAD_SHA} with ${process.env.PR_BASE_SHA}*`;
             
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
