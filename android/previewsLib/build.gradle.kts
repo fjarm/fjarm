@@ -48,6 +48,14 @@ android {
     }
 }
 
+composeCompiler {
+    // Only generate reports if we pass the flag -PcomposeCompilerReports=true
+    if (project.findProperty("composeCompilerReports") == "true") {
+        reportsDestination = layout.buildDirectory.dir("compose_compiler")
+        metricsDestination = layout.buildDirectory.dir("compose_compiler")
+    }
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.ui.tooling.preview)
