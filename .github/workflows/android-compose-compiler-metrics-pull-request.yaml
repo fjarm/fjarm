@@ -121,27 +121,33 @@ jobs:
           count_pattern() {
             local file=$1
             local pattern=$2
+            local result
             if [ -f "$file" ]; then
-              grep -c "$pattern" "$file" 2>/dev/null || echo "0"
+              result=$(grep -c "$pattern" "$file" 2>/dev/null || true)
+              if [ -z "$result" ]; then
+                result="0"
+              fi
             else
-              echo "0"
+              result="0"
             fi
+            echo "$result"
           }
           
           # Function to calculate difference
           calc_diff() {
-            echo $(($1 - $2))
+            local result=$(($1 - $2))
+            echo "$result"
           }
           
           # Function to format difference with emoji
           format_diff() {
             local diff=$1
-            if [ $diff -gt 0 ]; then
+            if [ "$diff" -gt 0 ]; then
               echo "+$diff ⬆️"
-            elif [ $diff -lt 0 ]; then
+            elif [ "$diff" -lt 0 ]; then
               echo "$diff ⬇️"
             else
-              echo "±0"
+              echo "+/- 0"
             fi
           }
           
