@@ -6,6 +6,9 @@ plugins {
     // Dagger and Hilt related plugins
     alias(libs.plugins.com.google.devtools.ksp)
     alias(libs.plugins.com.google.dagger.hilt.android)
+
+    // Use the ComposeCompilerMetricsConventionPlugin to enable Compose Compiler Metrics
+    id("convention.compose.metrics")
 }
 
 android {
@@ -54,14 +57,6 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
-    }
-}
-
-composeCompiler {
-    // Only generate reports if we pass the flag -PcomposeCompilerReports=true
-    if (project.findProperty("composeCompilerReports") == "true") {
-        reportsDestination = layout.buildDirectory.dir("compose_compiler")
-        metricsDestination = layout.buildDirectory.dir("compose_compiler")
     }
 }
 

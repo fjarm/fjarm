@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
+    // Use the ComposeCompilerMetricsConventionPlugin to enable Compose Compiler Metrics
+    id("convention.compose.metrics")
 }
 
 android {
@@ -45,14 +48,6 @@ android {
             )
         }
         jvmToolchain(JavaVersion.VERSION_21.majorVersion.toInt())
-    }
-}
-
-composeCompiler {
-    // Only generate reports if we pass the flag -PcomposeCompilerReports=true
-    if (project.findProperty("composeCompilerReports") == "true") {
-        reportsDestination = layout.buildDirectory.dir("compose_compiler")
-        metricsDestination = layout.buildDirectory.dir("compose_compiler")
     }
 }
 
