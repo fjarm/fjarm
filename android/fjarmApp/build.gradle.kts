@@ -2,6 +2,10 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
+    // Dagger and Hilt related plugins
+    alias(libs.plugins.com.google.devtools.ksp)
+    alias(libs.plugins.com.google.dagger.hilt.android)
 }
 
 android {
@@ -63,6 +67,12 @@ composeCompiler {
 
 dependencies {
     implementation(project(":fjarmThemeLib"))
+
+    // Dagger and Hilt deps
+    ksp(libs.com.google.dagger.hilt.android.compiler)
+    kspTest(libs.com.google.dagger.hilt.android.compiler)
+    implementation(libs.com.google.dagger.hilt.android)
+    implementation(libs.androidx.hilt.hilt.navigation.compose)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
