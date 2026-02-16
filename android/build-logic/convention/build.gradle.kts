@@ -17,6 +17,10 @@ gradlePlugin {
             id = "convention.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
+        register("androidLibraryCompose") {
+            id = "convention.android.library.compose"
+            implementationClass = "AndroidLibraryComposeConventionPlugin"
+        }
         register("composeMetrics") {
             id = "convention.compose.metrics"
             implementationClass = "ComposeCompilerMetricsConventionPlugin"
