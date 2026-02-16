@@ -1,0 +1,301 @@
+name: Compose compiler metrics
+permissions:
+  contents: read
+  pull-requests: write
+on:
+  pull_request:
+    paths:
+      - 'android/**.kt'
+      - 'android/**.kts'
+      - 'android/gradle/**'
+      - 'android/build.gradle.kts'
+      - 'android/settings.gradle.kts'
+jobs:
+  compose-compiler-metrics:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+        name: Checkout repo
+        with:
+          fetch-depth: 0  # Need full history to detect changes
+        
+      - uses: actions/setup-java@v5
+        name: Set up JDK 21
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+          
+      - uses: gradle/actions/setup-gradle@v5
+        name: Set up Gradle
+      
+      - name: Detect changed modules
+        id: detect-modules
+        run: |
+          # Get list of changed files
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
+          
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
+          
+          # Filter to only files in android/ directory and extract module paths
+          # Pattern: android/moduleName/src/... -> moduleName
+          MODULES=$(echo "$CHANGED_FILES" | grep -E '^android/[^/]+/src/' | sed 's|^android/||' | cut -d'/' -f1 | sort -u)
+          
+          echo "Detected modules in android/:"
+          echo "$MODULES"
+          
+          # Filter to only modules with Compose (have build.gradle.kts with compose plugin)
+          COMPOSE_MODULES=""
+          for module in $MODULES; do
+            if [ -f "android/$module/build.gradle.kts" ]; then
+              if grep -q "compose" "android/$module/build.gradle.kts"; then
+                COMPOSE_MODULES="$COMPOSE_MODULES $module"
+              fi
+            fi
+          done
+          
+          # Remove leading/trailing whitespace
+          COMPOSE_MODULES=$(echo "$COMPOSE_MODULES" | xargs)
+          
+          if [ -z "$COMPOSE_MODULES" ]; then
+            echo "No Compose modules changed"
+            echo "modules=" >> $GITHUB_OUTPUT
+            echo "has_modules=false" >> $GITHUB_OUTPUT
+          else
+            echo "Compose modules changed: $COMPOSE_MODULES"
+            # Convert space-separated to comma-separated for easier parsing
+            MODULES_CSV=$(echo "$COMPOSE_MODULES" | tr ' ' ',')
+            echo "modules=$MODULES_CSV" >> $GITHUB_OUTPUT
+            echo "has_modules=true" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Generate PR metrics for changed modules
+        if: steps.detect-modules.outputs.has_modules == 'true'
+        working-directory: android
+        run: |
+          IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
+          for module in "${MODULES[@]}"; do
+            echo "Building $module with metrics..."
+            ./gradlew :$module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build $module"
+          done
+          
+      - name: Save PR metrics
+        if: steps.detect-modules.outputs.has_modules == 'true'
+        run: |
+          mkdir -p /tmp/pr-metrics
+          IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
+          for module in "${MODULES[@]}"; do
+            METRICS_DIR="android/$module/build/compose_compiler"
+            if [ -d "$METRICS_DIR" ]; then
+              mkdir -p "/tmp/pr-metrics/$module"
+              cp -r "$METRICS_DIR"/* "/tmp/pr-metrics/$module/" || echo "No metrics for $module"
+            fi
+          done
+          
+      - uses: actions/checkout@v4
+        name: Checkout base branch
+        if: steps.detect-modules.outputs.has_modules == 'true'
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          clean: true
+          
+      - name: Generate base metrics for changed modules
+        if: steps.detect-modules.outputs.has_modules == 'true'
+        working-directory: android
+        continue-on-error: true
+        run: |
+          IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
+          for module in "${MODULES[@]}"; do
+            echo "Building base $module with metrics..."
+            ./gradlew :$module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build base $module"
+          done
+          
+      - name: Compare metrics per module
+        if: steps.detect-modules.outputs.has_modules == 'true'
+        id: compare
+        run: |
+          # Function to count patterns in file
+          count_pattern() {
+            local file=$1
+            local pattern=$2
+            local result
+            if [ -f "$file" ]; then
+              result=$(grep -c "$pattern" "$file" 2>/dev/null || true)
+              if [ -z "$result" ]; then
+                result="0"
+              fi
+            else
+              result="0"
+            fi
+            echo "$result"
+          }
+          
+          # Function to calculate difference
+          calc_diff() {
+            local result=$(($1 - $2))
+            echo "$result"
+          }
+          
+          # Function to format difference with emoji
+          format_diff() {
+            local diff=$1
+            if [ "$diff" -gt 0 ]; then
+              echo "+$diff ⬆️"
+            elif [ "$diff" -lt 0 ]; then
+              echo "$diff ⬇️"
+            else
+              echo "+/- 0"
+            fi
+          }
+          
+          # Function to analyze a single module
+          analyze_module() {
+            local module=$1
+            local pr_dir="/tmp/pr-metrics/$module"
+            local base_dir="android/$module/build/compose_compiler"
+            
+            # Find the metrics file prefix (e.g., app_release, helloWorld_release)
+            local prefix=$(ls "$pr_dir" 2>/dev/null | grep -o '^[^-]*' | head -1)
+            
+            if [ -z "$prefix" ]; then
+              echo "⚠️ No metrics found for $module"
+              return
+            fi
+            
+            # PR Metrics
+            local pr_composables="$pr_dir/${prefix}-composables.txt"
+            local pr_classes="$pr_dir/${prefix}-classes.txt"
+            
+            # Base Metrics
+            local base_composables="$base_dir/${prefix}-composables.txt"
+            local base_classes="$base_dir/${prefix}-classes.txt"
+            
+            # Count metrics
+            PR_RESTARTABLE=$(count_pattern "$pr_composables" "restartable")
+            PR_SKIPPABLE=$(count_pattern "$pr_composables" "skippable")
+            PR_TOTAL=$(count_pattern "$pr_composables" "fun ")
+            PR_STABLE=$(count_pattern "$pr_classes" "stable class")
+            PR_UNSTABLE=$(count_pattern "$pr_classes" "unstable class")
+            
+            BASE_RESTARTABLE=$(count_pattern "$base_composables" "restartable")
+            BASE_SKIPPABLE=$(count_pattern "$base_composables" "skippable")
+            BASE_TOTAL=$(count_pattern "$base_composables" "fun ")
+            BASE_STABLE=$(count_pattern "$base_classes" "stable class")
+            BASE_UNSTABLE=$(count_pattern "$base_classes" "unstable class")
+            
+            # Calculate differences
+            DIFF_TOTAL=$(calc_diff $PR_TOTAL $BASE_TOTAL)
+            DIFF_RESTARTABLE=$(calc_diff $PR_RESTARTABLE $BASE_RESTARTABLE)
+            DIFF_SKIPPABLE=$(calc_diff $PR_SKIPPABLE $BASE_SKIPPABLE)
+            DIFF_STABLE=$(calc_diff $PR_STABLE $BASE_STABLE)
+            DIFF_UNSTABLE=$(calc_diff $PR_UNSTABLE $BASE_UNSTABLE)
+            
+            # Create module section
+            echo ""
+            echo "### 📦 \`$module\`"
+            echo ""
+            echo "| Metric | Base | PR | Change |"
+            echo "|--------|------|----|---------:|"
+            echo "| **Total Composables** | $BASE_TOTAL | $PR_TOTAL | $(format_diff $DIFF_TOTAL) |"
+            echo "| Restartable | $BASE_RESTARTABLE | $PR_RESTARTABLE | $(format_diff $DIFF_RESTARTABLE) |"
+            echo "| Skippable | $BASE_SKIPPABLE | $PR_SKIPPABLE | $(format_diff $DIFF_SKIPPABLE) |"
+            echo "| **Stable Classes** | $BASE_STABLE | $PR_STABLE | $(format_diff $DIFF_STABLE) |"
+            echo "| **Unstable Classes** | $BASE_UNSTABLE | $PR_UNSTABLE | $(format_diff $DIFF_UNSTABLE) |"
+            
+            # Check for concerning changes
+            if [ $DIFF_UNSTABLE -gt 0 ] || [ $DIFF_SKIPPABLE -lt 0 ]; then
+              echo ""
+              if [ $DIFF_UNSTABLE -gt 0 ]; then
+                echo "> ⚠️ Unstable classes increased by $DIFF_UNSTABLE"
+              fi
+              if [ $DIFF_SKIPPABLE -lt 0 ]; then
+                echo "> ⚠️ Skippable composables decreased by ${DIFF_SKIPPABLE#-}"
+              fi
+            fi
+          }
+          
+          # Process all modules
+          REPORT=""
+          IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
+          for module in "${MODULES[@]}"; do
+            MODULE_REPORT=$(analyze_module "$module")
+            REPORT+="$MODULE_REPORT"
+            REPORT+=$'\n'
+          done
+          
+          # Save report
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          echo "$REPORT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+      - uses: actions/github-script@v8
+        name: Comment PR with report
+        if: steps.detect-modules.outputs.has_modules == 'true'
+        env:
+          METRICS_REPORT: ${{ steps.compare.outputs.report }}
+          MODULE_LIST: ${{ steps.detect-modules.outputs.modules }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        with:
+          script: |
+            const report = process.env.METRICS_REPORT;
+            const modules = process.env.MODULE_LIST.split(',');
+            const moduleList = modules.map(m => `\`${m}\``).join(', ');
+            
+            const summary = `## 🎨 Compose Compiler Metrics (Android)
+            
+            **Changed modules:** ${moduleList}
+            
+            ${report}
+            
+            <details>
+            <summary>📖 Understanding the metrics</summary>
+            
+            - **Restartable**: Composables that can be restarted when inputs change
+            - **Skippable**: Composables that skip recomposition if inputs unchanged (⚡ better performance)
+            - **Stable Classes**: Classes enabling skipping optimizations
+            - **Unstable Classes**: Classes preventing composable skipping
+            
+            **Goal:** Maximize skippable composables and stable classes.
+            
+            </details>
+            
+            ---
+            *Comparing ${process.env.PR_HEAD_SHA} with ${process.env.PR_BASE_SHA}*`;
+            
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const botComment = comments.find(comment => 
+              comment.user.type === 'Bot' && 
+              comment.body.includes('🎨 Compose Compiler Metrics (Android)')
+            );
+            
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: summary
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: summary
+              });
+            }
+            
+      - name: No Compose Modules Changed
+        if: steps.detect-modules.outputs.has_modules == 'false'
+        run: |
+          echo "No modules with Compose changes detected in android/ directory"
+          echo "Skipping metrics generation"

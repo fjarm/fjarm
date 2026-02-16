@@ -17,7 +17,6 @@ ksp = "2.3.4"
 lifecycle = "2.10.0"
 okHttp3 = "5.3.2"
 robolectric = "4.16.1"
-appcompat = "1.7.1"
 
 # gRPC and ConnectRPC
 connectRpc = "0.7.4"
@@ -66,8 +65,6 @@ com-google-dagger-hilt-android-testing = { group = "com.google.dagger", name = "
 com-google-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 com-google-dagger-hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hilt" }
 androidx-hilt-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidXHilt" }
-
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
