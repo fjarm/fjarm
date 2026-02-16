@@ -13,6 +13,10 @@ dependencies {
 
 gradlePlugin {
     plugins {
+        register("androidLibrary") {
+            id = "convention.android.library"
+            implementationClass = "AndroidLibraryConventionPlugin"
+        }
         register("composeMetrics") {
             id = "convention.compose.metrics"
             implementationClass = "ComposeCompilerMetricsConventionPlugin"
