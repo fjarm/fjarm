@@ -13,6 +13,10 @@ dependencies {
 
 gradlePlugin {
     plugins {
+        register("androidApplication") {
+            id = "convention.android.application"
+            implementationClass = "AndroidApplicationConventionPlugin"
+        }
         register("androidHilt") {
             id = "convention.android.hilt"
             implementationClass = "AndroidHiltConventionPlugin"
