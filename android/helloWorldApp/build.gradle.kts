@@ -1,7 +1,8 @@
 plugins {
-    alias(libs.plugins.androidApplication)
+    // Use the AndroidApplicationConventionPlugin to apply Android application configuration
+    id("convention.android.application")
+
     alias(libs.plugins.composeCompiler)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
 
     // Use the AndroidHiltConventionPlugin to apply Dagger Hilt configuration
     id("convention.android.hilt")
@@ -12,52 +13,18 @@ plugins {
 
 android {
     namespace = "xyz.fjarm.helloworld"
-    compileSdk = Config.COMPILE_SDK
 
     defaultConfig {
         applicationId = "xyz.fjarm.helloworld"
-        minSdk = Config.MIN_SDK
-        targetSdk = Config.TARGET_SDK
         versionCode = Config.VERSION_CODE
         versionName = Config.VERSION_NAME
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-    kotlin {
-        compilerOptions {
-            freeCompilerArgs = listOf(
-                "-XXLanguage:+PropertyParamAnnotationDefaultTargetMode",
-                "-XXLanguage:+WhenGuards",
-            )
-        }
-        jvmToolchain(JavaVersion.VERSION_21.majorVersion.toInt())
-    }
     buildFeatures {
         buildConfig = true
         compose = true
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
+
     testOptions {
         unitTests {
             isIncludeAndroidResources = true
