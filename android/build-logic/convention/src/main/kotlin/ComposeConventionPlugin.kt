@@ -1,26 +1,42 @@
 import AndroidConfig.configureComposeWithDependencies
+import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
 /**
- * Convention plugin for Android library modules with Jetpack Compose.
+ * Convention plugin for modules with Jetpack Compose.
+ * Works for both Android applications and libraries.
  *
  * Applies:
- * - Android library conventions (via convention.android.library)
+ * - Base Android conventions (via convention.android.library or convention.android.application)
  * - Compose Compiler plugin
- * - Compose dependencies (BOM, Material3, UI, etc.)
+ * - Common Compose dependencies (BOM, Material3, runtime, preview)
  *
- * Usage:
+ * Usage in library modules:
  *   plugins {
- *       id("convention.android.library") // NOTE: Must be applied before the Compose convention plugin
- *       id("convention.android.application") // NOTE: Alternative to the above dependency
+ *       id("convention.android.library")
+ *       id("convention.compose")
+ *   }
+ *
+ * Usage in application modules:
+ *   plugins {
+ *       id("convention.android.application")
  *       id("convention.compose")
  *   }
  *
  *   android {
- *       namespace = "com.example.yourmodule"
+ *       namespace = "com.your.module"
+ *       buildFeatures {
+ *           buildConfig = true  // If needed in app modules
+ *       }
+ *   }
+ *
+ *   dependencies {
+ *       // Add app-specific dependencies:
+ *       implementation(libs.androidx.activity.compose)
+ *       implementation(libs.androidx.lifecycle.viewmodel.compose)
  *   }
  */
 class ComposeConventionPlugin : Plugin<Project> {
@@ -29,9 +45,18 @@ class ComposeConventionPlugin : Plugin<Project> {
             // Apply Compose Compiler plugin
             pluginManager.apply("org.jetbrains.kotlin.plugin.compose")
 
-            // Enable Compose in Android
-            extensions.configure<LibraryExtension> {
-                configureComposeWithDependencies(this)
+            // Configure for library modules
+            pluginManager.withPlugin("com.android.library") {
+                extensions.configure<LibraryExtension> {
+                    configureComposeWithDependencies(this)
+                }
+            }
+
+            // Configure for application modules
+            pluginManager.withPlugin("com.android.application") {
+                extensions.configure<ApplicationExtension> {
+                    configureComposeWithDependencies(this)
+                }
             }
         }
     }
