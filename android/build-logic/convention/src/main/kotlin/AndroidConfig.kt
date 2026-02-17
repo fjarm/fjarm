@@ -82,18 +82,7 @@ internal object AndroidConfig {
         }
     }
 
-    /**
-     * Configures Jetpack Compose for Android modules.
-     */
-    fun Project.configureComposeWithDependencies(
-        commonExtension: CommonExtension<*, *, *, *, *, *>
-    ) {
-        commonExtension.apply {
-            buildFeatures {
-                compose = true
-            }
-        }
-
+    fun Project.addCommonComposeDependencies() {
         dependencies {
             val bom = catalog.findLibrary("androidx.compose.bom").get()
             add("implementation", platform(bom))
@@ -107,6 +96,34 @@ internal object AndroidConfig {
             add("debugImplementation", catalog.findLibrary("androidx.ui.tooling").get())
             add("androidTestImplementation", catalog.findLibrary("androidx.ui.test.junit4").get())
         }
+    }
+
+    fun Project.addCommonHiltAndroidDependencies() {
+        // Add Hilt dependencies
+        dependencies {
+            add("ksp", catalog.findLibrary("com.google.dagger.hilt.android.compiler").get())
+            add("kspTest", catalog.findLibrary("com.google.dagger.hilt.android.compiler").get())
+
+            add("implementation", catalog.findLibrary("com.google.dagger.hilt.android").get())
+            add("implementation", catalog.findLibrary("androidx.hilt.hilt.navigation.compose").get())
+
+            add("testImplementation", catalog.findLibrary("com.google.dagger.hilt.android.testing").get())
+        }
+    }
+
+    /**
+     * Configures Jetpack Compose for Android modules.
+     */
+    fun Project.configureComposeWithDependencies(
+        commonExtension: CommonExtension<*, *, *, *, *, *>
+    ) {
+        commonExtension.apply {
+            buildFeatures {
+                compose = true
+            }
+        }
+
+        addCommonComposeDependencies()
     }
 
     private val Project.catalog: VersionCatalog

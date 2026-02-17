@@ -4,10 +4,7 @@ import AndroidConfig.configureKotlin
 import com.android.build.api.dsl.ApplicationExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.getByType
 
 /**
  * Convention plugin for Android application modules.
@@ -75,14 +72,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
 
             // Add common dependencies using shared configuration
             addCommonAndroidDependencies()
-
-            // Add application-specific dependencies
-            dependencies {
-                add("implementation", catalog.findLibrary("androidx.lifecycle.runtime.ktx").get())
-            }
         }
     }
-
-    private val Project.catalog
-        get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
 }
