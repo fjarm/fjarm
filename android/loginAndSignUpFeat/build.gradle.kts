@@ -2,8 +2,8 @@ plugins {
     // Use the AndroidLibraryConventionPlugin to apply Android library configuration
     id("convention.android.library")
 
-    // Use the AndroidHiltConventionPlugin to apply Dagger Hilt configuration
-    id("convention.android.hilt")
+    // Use the HiltConventionPlugin to apply Dagger Hilt configuration
+    id("convention.hilt")
 
     // Use the ComposeConventionPlugin to apply Jetpack Compose configuration
     id("convention.compose")
