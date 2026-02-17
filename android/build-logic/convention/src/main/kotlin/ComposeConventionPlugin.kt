@@ -15,14 +15,15 @@ import org.gradle.kotlin.dsl.configure
  * Usage:
  *   plugins {
  *       id("convention.android.library") // NOTE: Must be applied before the Compose convention plugin
- *       id("convention.android.library.compose")
+ *       id("convention.android.application") // NOTE: Alternative to the above dependency
+ *       id("convention.compose")
  *   }
  *
  *   android {
  *       namespace = "com.example.yourmodule"
  *   }
  */
-class AndroidLibraryComposeConventionPlugin : Plugin<Project> {
+class ComposeConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             // Apply Compose Compiler plugin

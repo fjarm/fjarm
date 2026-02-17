@@ -5,8 +5,8 @@ plugins {
     // Use the AndroidHiltConventionPlugin to apply Dagger Hilt configuration
     id("convention.android.hilt")
 
-    // Use the AndroidLibraryComposeConventionPlugin to apply Jetpack Compose configuration
-    id("convention.android.library.compose")
+    // Use the ComposeConventionPlugin to apply Jetpack Compose configuration
+    id("convention.compose")
 
     // Use the ComposeCompilerMetricsConventionPlugin to enable Compose Compiler Metrics
     id("convention.compose.metrics")
