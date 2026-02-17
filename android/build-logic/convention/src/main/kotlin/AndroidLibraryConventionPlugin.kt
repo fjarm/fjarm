@@ -37,6 +37,14 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                 defaultConfig {
                     consumerProguardFiles("consumer-rules.pro")
                 }
+
+                testOptions {
+                    targetSdk = 36
+                }
+
+                lint {
+                    targetSdk = 36
+                }
             }
 
             // Configure Kotlin

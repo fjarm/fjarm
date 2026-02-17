@@ -37,14 +37,6 @@ internal object AndroidConfig {
                 targetCompatibility = JavaVersion.VERSION_21
             }
 
-            testOptions {
-                targetSdk = 36
-            }
-
-            lint {
-                targetSdk = 36
-            }
-
             buildTypes {
                 getByName("release") {
                     isMinifyEnabled = false
