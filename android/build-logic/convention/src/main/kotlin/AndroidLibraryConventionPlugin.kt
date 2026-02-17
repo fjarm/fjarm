@@ -4,9 +4,7 @@ import AndroidConfigConventionPlugin.configureKotlin
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.getByType
 
 /**
  * Convention plugin for Android library modules.
@@ -48,8 +46,4 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             addCommonAndroidDependencies()
         }
     }
-
-    private val Project.catalog
-        get() = extensions.getByType<VersionCatalogsExtension>()
-            .named("libs")
 }

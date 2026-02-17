@@ -21,7 +21,7 @@ internal object AndroidConfigConventionPlugin {
     /**
      * Configures common Android settings for both app and library modules.
      */
-    fun Project.configureAndroid(
+    fun configureAndroid(
         commonExtension: CommonExtension<*, *, *, *, *, *>
     ) {
         commonExtension.apply {
@@ -93,7 +93,7 @@ internal object AndroidConfigConventionPlugin {
     /**
      * Configures Jetpack Compose for Android modules.
      */
-    fun Project.configureCompose(
+    fun Project.configureComposeWithDependencies(
         commonExtension: CommonExtension<*, *, *, *, *, *>
     ) {
         commonExtension.apply {
