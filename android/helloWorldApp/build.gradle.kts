@@ -17,8 +17,8 @@ android {
 
     defaultConfig {
         applicationId = "xyz.fjarm.helloworld"
-        versionCode = Config.VERSION_CODE
-        versionName = Config.VERSION_NAME
+        versionCode = 1
+        versionName = "1.0.0"
     }
 
     buildFeatures {
