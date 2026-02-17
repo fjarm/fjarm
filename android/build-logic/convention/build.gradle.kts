@@ -17,10 +17,6 @@ gradlePlugin {
             id = "convention.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
-        register("androidHilt") {
-            id = "convention.android.hilt"
-            implementationClass = "AndroidHiltConventionPlugin"
-        }
         register("androidLibrary") {
             id = "convention.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
@@ -32,6 +28,10 @@ gradlePlugin {
         register("composeMetrics") {
             id = "convention.compose.metrics"
             implementationClass = "ComposeCompilerMetricsConventionPlugin"
+        }
+        register("hilt") {
+            id = "convention.hilt"
+            implementationClass = "HiltConventionPlugin"
         }
     }
 }

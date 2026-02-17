@@ -98,6 +98,14 @@ internal object AndroidConfig {
         }
     }
 
+    fun Project.addCommonHiltDependencies() {
+        // Add Hilt dependencies
+        dependencies {
+            add("ksp", catalog.findLibrary("com.google.dagger.hilt.compiler").get())
+            add("implementation", catalog.findLibrary("com.google.dagger.hilt.core").get())
+        }
+    }
+
     fun Project.addCommonHiltAndroidDependencies() {
         // Add Hilt dependencies
         dependencies {
