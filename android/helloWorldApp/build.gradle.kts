@@ -46,7 +46,6 @@ dependencies {
     implementation(libs.androidx.material3)
 
     testImplementation(libs.androidx.ui.test.junit4)
-    testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
 
