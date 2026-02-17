@@ -2,7 +2,8 @@ plugins {
     // Use the AndroidApplicationConventionPlugin to apply Android application configuration
     id("convention.android.application")
 
-    alias(libs.plugins.composeCompiler)
+    // Use ComposeConventionPlugin to apply Jetpack Compose configuration
+    id("convention.compose")
 
     // Use the AndroidHiltConventionPlugin to apply Dagger Hilt configuration
     id("convention.android.hilt")
@@ -22,7 +23,6 @@ android {
 
     buildFeatures {
         buildConfig = true
-        compose = true
     }
 
     testOptions {
