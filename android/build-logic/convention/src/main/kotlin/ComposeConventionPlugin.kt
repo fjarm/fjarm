@@ -1,4 +1,4 @@
-import AndroidConfig.configureComposeWithDependencies
+import Config.configureComposeWithDependencies
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin

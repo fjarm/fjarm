@@ -1,6 +1,6 @@
-import AndroidConfig.addCommonAndroidDependencies
-import AndroidConfig.configureAndroid
-import AndroidConfig.configureKotlin
+import Config.addCommonAndroidDependencies
+import Config.configureAndroid
+import Config.configureKotlin
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project

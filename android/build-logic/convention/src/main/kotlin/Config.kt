@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * This object provides common configuration functions that work on CommonExtension,
  * which is the parent of both LibraryExtension and ApplicationExtension.
  */
-internal object AndroidConfig {
+internal object Config {
 
     /**
      * Configures common Android settings for both app and library modules.

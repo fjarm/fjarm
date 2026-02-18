@@ -1,5 +1,5 @@
-import AndroidConfig.addCommonHiltAndroidDependencies
-import AndroidConfig.addCommonHiltDependencies
+import Config.addCommonHiltAndroidDependencies
+import Config.addCommonHiltDependencies
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
