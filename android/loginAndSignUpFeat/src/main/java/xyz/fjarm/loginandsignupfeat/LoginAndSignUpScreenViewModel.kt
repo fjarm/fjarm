@@ -1,11 +1,13 @@
 package xyz.fjarm.loginandsignupfeat
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,10 +37,18 @@ class LoginAndSignUpScreenViewModel @Inject constructor(
     fun processEvent(event: LoginAndSignUpEvent) {
         when (event) {
             is LoginAndSignUpEvent.SignUpButtonClicked -> {
-                // TODO
+                viewModelScope.launch {
+                    _sideEffect.emit(
+                        LoginAndSignUpSideEffect.NavigateToSignUp
+                    )
+                }
             }
             is LoginAndSignUpEvent.LogInButtonClicked -> {
-                // TODO
+                viewModelScope.launch {
+                    _sideEffect.emit(
+                        LoginAndSignUpSideEffect.NavigateToLogIn
+                    )
+                }
             }
         }
     }
