@@ -94,74 +94,66 @@ private fun LoginAndSignUpContent(
                     .padding(32.dp)
                     .fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween,
+                // SpacedBy ensures the header and buttons have distance if the screen is small
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
-                Column(
+                // 1. Header
+                Text(
+                    text = titleLine,
                     modifier = Modifier
-                        .padding(32.dp)
-                        .fillMaxSize(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    // SpacedBy ensures the header and buttons have distance if the screen is small
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                        .fillMaxWidth(),
+                    style = MaterialTheme.typography.headlineLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 32.sp,
+                    ),
+                    color = Color.Black,
+                )
+                Text(
+                    text = subtitleLine,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Black,
+                )
+
+                // 2. Illustration (Takes up all available remaining space)
+                Box(
+                    modifier = Modifier
+                        .size(280.dp)
+                        .weight(1f),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    // 1. Header (No longer wrapped in a Column)
+                    // Illustration goes here
+                }
+
+                // 3. Buttons
+                OutlinedButton(
+                    onClick = onJoinClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(4.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
+                    border = ButtonDefaults.outlinedButtonBorder(true).copy(width = 1.dp),
+                ) {
                     Text(
-                        text = titleLine,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        style = MaterialTheme.typography.headlineLarge.copy(
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 32.sp,
-                        ),
-                        color = Color.Black,
+                        text = signUpButtonText,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
                     )
+                }
+
+                TextButton(
+                    onClick = onLoginClick,
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                ) {
                     Text(
-                        text = subtitleLine,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = logInButtonText,
                         color = Color.Black,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp,
                     )
-
-                    // 2. Illustration (Takes up all available remaining space)
-                    Box(
-                        modifier = Modifier
-                            .size(280.dp)
-                            .weight(1f),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        // Illustration goes here
-                    }
-
-                    // 3. Buttons (Stacked directly in the parent Column)
-                    OutlinedButton(
-                        onClick = onJoinClick,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(4.dp),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
-                        border = ButtonDefaults.outlinedButtonBorder(true).copy(width = 1.dp),
-                    ) {
-                        Text(
-                            text = signUpButtonText,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
-                        )
-                    }
-
-                    TextButton(
-                        onClick = onLoginClick,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = logInButtonText,
-                            color = Color.Black,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 16.sp,
-                        )
-                    }
                 }
             }
         }
