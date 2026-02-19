@@ -19,6 +19,8 @@
 - As it specifically pertains to layered architecture, place business logic in uses cases to separate concerns.
 - Review any suggested code for memory leaks.
 - Review any suggested code for leaked coroutines.
+- Use Dagger and Hilt dependency injection where needed like in Composable functions that require ViewModel instances and Inject-able class dependencies.
+- Ensure that authored Composable functions are structured in a way that allows previewing.
 
 ## Dependency management
 
