@@ -21,6 +21,7 @@
 - Review any suggested code for leaked coroutines.
 - Use Dagger and Hilt dependency injection where needed like in Composable functions that require ViewModel instances and Inject-able class dependencies.
 - Ensure that authored Composable functions are structured in a way that allows previewing.
+- When a Composable function accepts parameters, prioritize stability and minimizing unnecessary recompositions.
 
 ## Dependency management
 
