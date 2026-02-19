@@ -13,6 +13,6 @@ dependencies {
     implementation(libs.connectKotlin)
     implementation(libs.connectKotlinGoogleJavaLiteExt)
     implementation(libs.connectKotlinOkHttp)
-    implementation(libs.coroutinesCoreJvm)
+    implementation(libs.kotlinx.coroutines.core.jvm)
     implementation(libs.okHttp3)
 }
