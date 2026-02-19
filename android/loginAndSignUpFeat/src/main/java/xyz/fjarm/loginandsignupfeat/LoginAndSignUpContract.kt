@@ -1,8 +1,8 @@
 package xyz.fjarm.loginandsignupfeat
 
 data class LoginAndSignUpState(
-    val titleLine: String,
-    val subtitleLine: String,
+    val titleLineText: String,
+    val subtitleLineText: String,
     // Construct a URI representing the drawable resource: android.resource://<package>/R.drawable.<drawable>
     val logo: String,
     val signUpButtonText: String,

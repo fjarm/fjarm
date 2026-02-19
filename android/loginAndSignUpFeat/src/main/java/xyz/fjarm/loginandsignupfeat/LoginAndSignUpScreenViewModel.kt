@@ -23,8 +23,8 @@ class LoginAndSignUpScreenViewModel @Inject constructor(
     }
 
     private val _state = MutableStateFlow<LoginAndSignUpState>(LoginAndSignUpState(
-        titleLine = TITLE_LINE,
-        subtitleLine = SUBTITLE_LINE,
+        titleLineText = TITLE_LINE,
+        subtitleLineText = SUBTITLE_LINE,
         logo = LOGO,
         signUpButtonText = SIGN_UP_BUTTON_TEXT,
         logInButtonText = LOG_IN_BUTTON_TEXT,
