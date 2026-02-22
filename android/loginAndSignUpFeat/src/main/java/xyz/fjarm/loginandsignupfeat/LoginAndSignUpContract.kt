@@ -1,12 +1,14 @@
 package xyz.fjarm.loginandsignupfeat
 
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+
 data class LoginAndSignUpState(
-    val titleLineText: String,
-    val subtitleLineText: String,
-    // Construct a URI representing the drawable resource: android.resource://<package>/R.drawable.<drawable>
-    val logo: String,
-    val signUpButtonText: String,
-    val logInButtonText: String,
+    @StringRes val titleLineText: Int,
+    @StringRes val subtitleLineText: Int,
+    @DrawableRes val logo: Int,
+    @StringRes val signUpButtonText: Int,
+    @StringRes val logInButtonText: Int,
 )
 
 sealed class LoginAndSignUpEvent {

@@ -14,20 +14,12 @@ import javax.inject.Inject
 class LoginAndSignUpScreenViewModel @Inject constructor(
 ): ViewModel() {
 
-    companion object {
-        private const val TITLE_LINE = "Fjarm"
-        private const val SUBTITLE_LINE = "Plan and execute workouts"
-        private const val LOGO = "android.resource://xyz.fjarm.loginandsignupfeat/fjarm_login_logo"
-        private const val SIGN_UP_BUTTON_TEXT = "Join for free"
-        private const val LOG_IN_BUTTON_TEXT = "Log in"
-    }
-
     private val _state = MutableStateFlow<LoginAndSignUpState>(LoginAndSignUpState(
-        titleLineText = TITLE_LINE,
-        subtitleLineText = SUBTITLE_LINE,
-        logo = LOGO,
-        signUpButtonText = SIGN_UP_BUTTON_TEXT,
-        logInButtonText = LOG_IN_BUTTON_TEXT,
+        titleLineText = R.string.title,
+        subtitleLineText = R.string.subtitle,
+        logo = R.drawable.runner_illustration,
+        signUpButtonText = R.string.sign_up_button,
+        logInButtonText = R.string.log_in_button,
     ))
     val state = _state.asStateFlow()
 

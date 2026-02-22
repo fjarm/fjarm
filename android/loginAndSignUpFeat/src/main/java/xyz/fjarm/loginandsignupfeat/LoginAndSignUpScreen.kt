@@ -1,5 +1,6 @@
 package xyz.fjarm.loginandsignupfeat
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,9 +22,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.getString
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -57,15 +61,16 @@ fun LoginAndSignUpScreen(
         }
     }
 
+    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LoginAndSignUpContent(
         modifier = modifier,
-        titleLine = state.titleLineText,
-        subtitleLine = state.subtitleLineText,
+        titleLine = getString(context, state.titleLineText),
+        subtitleLine = getString(context, state.subtitleLineText),
         logo = state.logo,
-        signUpButtonText = state.signUpButtonText,
-        logInButtonText = state.logInButtonText,
+        signUpButtonText = getString(context, state.signUpButtonText),
+        logInButtonText = getString(context, state.logInButtonText),
         onJoinClick = { viewModel.processEvent(LoginAndSignUpEvent.SignUpButtonClicked) },
         onLoginClick = { viewModel.processEvent(LoginAndSignUpEvent.LogInButtonClicked) }
     )
@@ -76,7 +81,7 @@ private fun LoginAndSignUpContent(
     modifier: Modifier = Modifier,
     titleLine: String = "Fjarm",
     subtitleLine: String = "Plan and execute workouts",
-    logo: String = "android.resource://xyz.fjarm.loginandsignupfeat/fjarm_login_logo",
+    logo: Int = R.drawable.runner_illustration,
     signUpButtonText: String = "Join for free",
     logInButtonText: String = "Log in",
     onJoinClick: () -> Unit = {},
@@ -124,6 +129,11 @@ private fun LoginAndSignUpContent(
                     contentAlignment = Alignment.Center,
                 ) {
                     // Illustration goes here
+                    Image(
+                        painter = painterResource(id = logo),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize(),
+                    )
                 }
 
                 // 3. Buttons

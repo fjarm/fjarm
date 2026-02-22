@@ -45,11 +45,11 @@ No API requests need to be made by this screen or its `ViewModel`.
 
 ```kotlin
 data class LoginAndSignUpState(
-    val titleLine: String,
-    val subtitleLine: String,
-    val logo: String,
-    val signUpButtonText: String,
-    val logInButtonText: String,
+    @StringRes val titleLineText: Int,
+    @StringRes val subtitleLineText: Int,
+    @DrawableRes val logo: Int,
+    @StringRes val signUpButtonText: Int,
+    @StringRes val logInButtonText: Int,
 )
 
 sealed class LoginAndSignUpEvent {
