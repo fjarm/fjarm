@@ -21,4 +21,6 @@ dependencies {
     implementation(project(":previewsLib"))
 
     implementation(libs.androidx.material3)
+
+    testImplementation(libs.kotlinx.coroutines.test)
 }
