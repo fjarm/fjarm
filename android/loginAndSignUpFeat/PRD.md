@@ -45,8 +45,8 @@ No API requests need to be made by this screen or its `ViewModel`.
 
 ```kotlin
 data class LoginAndSignUpState(
-    @StringRes val titleLine: Int,
-    @StringRes val subtitleLine: Int,
+    @StringRes val titleLineText: Int,
+    @StringRes val subtitleLineText: Int,
     @DrawableRes val logo: Int,
     @StringRes val signUpButtonText: Int,
     @StringRes val logInButtonText: Int,

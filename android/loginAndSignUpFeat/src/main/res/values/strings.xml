@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="log_in_button">Log in</string>
+    <string name="sign_up_button">Join for free</string>
+    <string name="subtitle">Plan and execute workouts</string>
+    <string name="title">Fjarm</string>
+</resources>

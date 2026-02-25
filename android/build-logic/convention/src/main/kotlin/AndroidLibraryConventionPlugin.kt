@@ -40,6 +40,12 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
                 testOptions {
                     targetSdk = 36
+
+                    // This is needed to allow Robolectric tests to access AndroidManifest.xml files
+                    // that are in debug source sets like the one that points to [TestActivity.kt].
+                    unitTests {
+                        isIncludeAndroidResources = true
+                    }
                 }
 
                 lint {
