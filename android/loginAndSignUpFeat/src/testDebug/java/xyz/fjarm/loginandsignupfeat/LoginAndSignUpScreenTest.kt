@@ -12,8 +12,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -65,8 +64,8 @@ class LoginAndSignUpScreenTest {
 
         // Then a NavigateToLogIn side effect is received
         val sideEffect = collectedSideEffects.firstOrNull()
-        assertEquals(1, collectedSideEffects.size)
-        assertTrue(
+        Assert.assertEquals(1, collectedSideEffects.size)
+        Assert.assertTrue(
             "Expected NavigateToSignUp side effect but received $sideEffect",
             sideEffect is LoginAndSignUpSideEffect.NavigateToLogIn
         )
@@ -98,8 +97,8 @@ class LoginAndSignUpScreenTest {
 
         // Then a NavigateToSignUp side effect is received
         val sideEffect = collectedSideEffects.firstOrNull()
-        assertEquals(1, collectedSideEffects.size)
-        assertTrue(
+        Assert.assertEquals(1, collectedSideEffects.size)
+        Assert.assertTrue(
             "Expected NavigateToSignUp side effect but received $sideEffect",
             sideEffect is LoginAndSignUpSideEffect.NavigateToSignUp
         )
