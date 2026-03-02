@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "xyz.fjarm.loginandsignuplib"
+    namespace = "xyz.fjarm.loginandsignupfeatlib"
 }
 
 dependencies {
