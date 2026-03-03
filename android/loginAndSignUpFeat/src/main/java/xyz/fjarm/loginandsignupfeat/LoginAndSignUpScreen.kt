@@ -157,6 +157,7 @@ private fun LoginAndSignUpContent(
                     onClick = onLoginClick,
                     modifier = Modifier
                         .fillMaxWidth(),
+                    shape = RoundedCornerShape(4.dp),
                 ) {
                     Text(
                         text = logInButtonText,
