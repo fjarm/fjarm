@@ -156,12 +156,13 @@ private fun LoginAndSignUpContent(
                 TextButton(
                     onClick = onLoginClick,
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .height(56.dp),
                     shape = RoundedCornerShape(4.dp),
+                    colors = ButtonDefaults.textButtonColors(contentColor = Color.Black),
                 ) {
                     Text(
                         text = logInButtonText,
-                        color = Color.Black,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 16.sp,
                     )
