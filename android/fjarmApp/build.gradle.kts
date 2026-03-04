@@ -28,15 +28,15 @@ android {
 
 dependencies {
     implementation(project(":fjarmThemeLib"))
+    implementation(project(":loginAndSignUpFeat"))
+    implementation(project(":loginAndSignUpFeatLib"))
+    implementation(project(":navigationLib"))
 
     implementation(libs.androidx.activity.compose)
-
     implementation(libs.androidx.lifecycle.runtime.ktx)
-
     implementation(libs.androidx.material3)
-
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.navigation3.navigation3.runtime)
+    implementation(libs.androidx.navigation3.navigation3.ui)
 
     debugImplementation(libs.androidx.ui.test.manifest)
 }
