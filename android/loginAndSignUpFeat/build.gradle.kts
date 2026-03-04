@@ -18,8 +18,8 @@ android {
 
 dependencies {
     implementation(project(":fjarmThemeLib"))
-    implementation(project(":previewsLib"))
     implementation(project(":loginAndSignUpFeatLib"))
+    implementation(project(":previewsLib"))
 
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation3.navigation3.runtime)
