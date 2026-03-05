@@ -22,7 +22,7 @@ class NavigatorImpl(
         return backStack.add(startDestination)
     }
 
-    override fun getBackStack(): SnapshotStateList<NavKey> {
+    override fun getBackStack(): List<NavKey> {
         return backStack
     }
 

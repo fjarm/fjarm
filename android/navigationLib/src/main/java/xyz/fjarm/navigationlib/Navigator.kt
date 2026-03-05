@@ -1,6 +1,5 @@
 package xyz.fjarm.navigationlib
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.navigation3.runtime.NavKey
 
 interface Navigator {
@@ -24,7 +23,7 @@ interface Navigator {
      *
      * @return The current back stack.
      */
-    fun getBackStack(): SnapshotStateList<NavKey>
+    fun getBackStack(): List<NavKey>
 
     /**
      * Navigate to a specific destination.
