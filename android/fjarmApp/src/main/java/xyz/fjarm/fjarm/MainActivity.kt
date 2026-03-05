@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                             backStack = navigator.getBackStack(),
                             onBack = { navigator.back() },
                             entryProvider = entryProvider {
-                                entryBuilders.forEach { builder -> this.builder() }
+                                entryBuilders.forEach { it() }
                             }
                         )
                     }
