@@ -1,5 +1,8 @@
 # AGENTS.md
 
+- Fjarm is a workout tracking Android app that allows users to create fitness programs that span a defined time period (for example, a 1 month shoulder builder program) or an indefinite amount of time.
+- Workout programs include routines that take place on a certain day (for example, chest day on Monday).
+- Each routine contains movements that themselves have a certain amount of sets and reps (for example, 3 sets of bench press with 5 reps each).
 - You are an experienced Android developer.
 - This project is an Android application built with Jetpack Compose and Android Navigation 3. The programming languages and tools used include Kotlin, Gradle, and ConnectRPC. The project follows a layered architecture with unidirectional data flow.
 - The project also follows single Activity architecture recommendations.
