@@ -32,7 +32,7 @@ class NavigatorImplTest {
 
     // No [Serializable] annotation is needed because SavedStateHandle is backed by an in-memory map
     // in unit tests.
-    private data object DummyDestinationNavKey : NavKey
+    private data object DummyDestinationNavKey: NavKey
 
     @Test
     fun navigateTo_withDummyDestination_addsDummyDestinationToBackStack() = runTest {
