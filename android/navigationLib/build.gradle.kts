@@ -15,6 +15,6 @@ dependencies {
 
     implementation(libs.androidx.navigation3.navigation3.runtime)
 
-    testImplementation(libs.androidx.ui.test.junit4)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
 }
