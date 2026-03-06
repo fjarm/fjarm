@@ -18,6 +18,7 @@ lifecycle = "2.10.0"
 okHttp3 = "5.3.2"
 robolectric = "4.16.1"
 navigation3 = "1.0.1"
+parcelize = "2.3.10"
 
 # gRPC and ConnectRPC
 connectRpc = "0.7.4"
@@ -80,6 +81,8 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrainsKotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }
 
 # Dagger and Hilt related deps
 com-google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
