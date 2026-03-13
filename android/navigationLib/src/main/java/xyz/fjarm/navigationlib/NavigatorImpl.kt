@@ -1,17 +1,14 @@
 package xyz.fjarm.navigationlib
 
+import android.os.Parcelable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation3.runtime.NavKey
 import dagger.hilt.android.lifecycle.ActivityRetainedSavedState
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import xyz.fjarm.loginandsignupfeatlib.LoginAndSignUpNavKey
 import javax.inject.Inject
 
@@ -29,24 +26,18 @@ class NavigatorImpl @Inject constructor(
         ?.toMutableStateList()
         ?: mutableStateListOf(LoginAndSignUpNavKey)
 
-    init {
-        // Side effect that observes changes to _backStack and saves to SavedStateHandle.
-        snapshotFlow { _backStack.toList() }
-            .onEach {
-                savedStateHandle[KEY_BACKSTACK] = ArrayList(it)
-            }
-            .launchIn(viewModelScope)
-    }
-
     override fun back(): Boolean {
         val last = _backStack.removeLastOrNull()
+        if (last != null) persist()
         return last != null
     }
 
     override fun clear(): Boolean {
         _backStack.clear()
         // LoginAndSignUpNavKey is the default start destination.
-        return _backStack.add(LoginAndSignUpNavKey)
+        val success = _backStack.add(LoginAndSignUpNavKey)
+        if (success) persist()
+        return success
     }
 
     override fun getBackStack(): List<NavKey> {
@@ -54,6 +45,14 @@ class NavigatorImpl @Inject constructor(
     }
 
     override fun navigateTo(destination: NavKey) {
+        require(destination is Parcelable) {
+            "NavKey ${destination::class.simpleName} must implement Parcelable."
+        }
         _backStack.add(destination)
+        persist()
+    }
+
+    private fun persist() {
+        savedStateHandle[KEY_BACKSTACK] = ArrayList(_backStack)
     }
 }
