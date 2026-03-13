@@ -4,6 +4,8 @@ plugins {
 
     // Use the HiltConventionPlugin to apply Dagger Hilt configuration
     id("convention.hilt")
+
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
