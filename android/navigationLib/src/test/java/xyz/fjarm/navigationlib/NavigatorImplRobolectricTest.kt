@@ -95,7 +95,9 @@ class NavigatorImplAndroidTest {
         advanceUntilIdle()
 
         // When navigateTo is called with ValidSecondDestinationNavKey which does implement Parcelable
-        navigator.navigateTo(ValidSecondDestinationNavKey)
+        navigator.processSideEffect(NavigationSideEffect.NavigateToDestination(
+            ValidSecondDestinationNavKey,
+        ))
         advanceUntilIdle()
 
         // Simulate process death: save state to a Bundle, then force a full Parcel round-trip. This
@@ -138,7 +140,9 @@ class NavigatorImplAndroidTest {
         // Parcelable
         // Then an IllegalArgumentException is thrown
         assertThrows(IllegalArgumentException::class.java) {
-            navigator.navigateTo(InvalidSecondDestinationNavKey)
+            navigator.processSideEffect(NavigationSideEffect.NavigateToDestination(
+                InvalidSecondDestinationNavKey,
+            ))
         }
     }
 }

@@ -47,7 +47,9 @@ class NavigatorImplTest {
 
         // When navigateTo is called with InvalidSecondDestinationNavKey
         assertThrows(IllegalArgumentException::class.java) {
-            navigator.navigateTo(InvalidSecondDestinationNavKey)
+            navigator.processSideEffect(NavigationSideEffect.NavigateToDestination(
+                InvalidSecondDestinationNavKey,
+            ))
         }
         advanceUntilIdle()
 
