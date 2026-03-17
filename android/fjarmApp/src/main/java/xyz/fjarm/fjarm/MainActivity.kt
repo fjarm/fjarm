@@ -15,6 +15,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import dagger.hilt.android.AndroidEntryPoint
 import xyz.fjarm.fjarmthemelib.FjarmTheme
+import xyz.fjarm.navigationlib.NavigationSideEffect
 import xyz.fjarm.navigationlib.Navigator
 import javax.inject.Inject
 
@@ -41,7 +42,11 @@ class MainActivity : ComponentActivity() {
                     ) {
                         NavDisplay(
                             backStack = navigator.getBackStack(),
-                            onBack = { navigator.back() },
+                            onBack = {
+                                navigator.processSideEffect(
+                                    NavigationSideEffect.NavigateBack,
+                                )
+                            },
                             entryProvider = entryProvider {
                                 entryBuilders.forEach { it() }
                             }
