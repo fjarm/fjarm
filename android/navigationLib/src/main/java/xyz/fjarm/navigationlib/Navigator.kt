@@ -4,7 +4,7 @@ import androidx.navigation3.runtime.NavKey
 
 interface Navigator {
 
-    fun processSideEffect(sideEffect: NavigationSideEffect)
+    fun processSideEffect(sideEffect: NavigatorSideEffect)
 
     /**
      * Get the current back stack.

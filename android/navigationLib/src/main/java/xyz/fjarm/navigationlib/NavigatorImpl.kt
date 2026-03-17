@@ -30,19 +30,19 @@ class NavigatorImpl @Inject constructor(
         persist()
     }
 
-    override fun processSideEffect(sideEffect: NavigationSideEffect) {
+    override fun processSideEffect(sideEffect: NavigatorSideEffect) {
         when (sideEffect) {
-            is NavigationSideEffect.ClearBackStack -> {
+            is NavigatorSideEffect.ClearBackStack -> {
                 _backStack.clear()
                 // LoginAndSignUpNavKey is the default start destination.
                 val success = _backStack.add(startDestination)
                 if (success) persist()
             }
-            is NavigationSideEffect.NavigateBack -> {
+            is NavigatorSideEffect.NavigateBack -> {
                 val last = _backStack.removeLastOrNull()
                 if (last != null) persist()
             }
-            is NavigationSideEffect.NavigateToDestination -> {
+            is NavigatorSideEffect.NavigateToDestination -> {
                 require(sideEffect.destination is Parcelable) {
                     "NavKey ${sideEffect.destination::class.simpleName} must implement Parcelable."
                 }
