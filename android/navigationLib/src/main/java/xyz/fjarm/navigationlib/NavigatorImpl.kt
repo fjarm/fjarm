@@ -26,6 +26,10 @@ class NavigatorImpl @Inject constructor(
         ?.toMutableStateList()
         ?: mutableStateListOf(startDestination)
 
+    init {
+        persist()
+    }
+
     override fun back(): Boolean {
         val last = _backStack.removeLastOrNull()
         if (last != null) persist()
