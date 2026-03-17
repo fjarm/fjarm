@@ -22,7 +22,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import xyz.fjarm.loginandsignupfeatlib.LoginAndSignUpNavKey
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
@@ -41,16 +40,26 @@ class NavigatorImplAndroidTest {
         Dispatchers.resetMain()
     }
 
+    @Parcelize
+    private data object ValidStartDestinationNavKey: NavKey, Parcelable
+
+    @Parcelize
+    @Serializable
+    private data object ValidSecondDestinationNavKey: NavKey, Parcelable
+
+    @Serializable
+    private data object InvalidSecondDestinationNavKey: NavKey
+
     @Test
-    fun navigatorImpl_withLoginAndSignUpNavKey_backStackSurvivesProcessDeath() = runTest {
-        // Given a fresh NavigatorImpl whose back stack contains only LoginAndSignUpNavKey
+    fun navigatorImpl_withChangedStartDestination_backStackSurvivesProcessDeath() = runTest {
+        // Given a fresh NavigatorImpl whose back stack contains only ValidStartDestinationNavKey
         val savedStateHandle = SavedStateHandle()
-        val navigator = NavigatorImpl(savedStateHandle)
+        val navigator = NavigatorImpl(savedStateHandle, ValidStartDestinationNavKey)
         advanceUntilIdle()
 
         val backStack = navigator.getBackStack()
         assertEquals(1, backStack.size)
-        assertEquals(LoginAndSignUpNavKey, backStack[0])
+        assertEquals(ValidStartDestinationNavKey, backStack[0])
 
         // Simulate process death: save state to a Bundle, then force a full Parcel round-trip. This
         // is the operation that enforces @Parcelize — any NavKey not annotated will throw here,
@@ -64,13 +73,13 @@ class NavigatorImplAndroidTest {
 
             // Restore a new NavigatorImpl from the recovered Bundle
             val restoredHandle = SavedStateHandle.createHandle(restoredBundle, null)
-            val restoredNavigator = NavigatorImpl(restoredHandle)
+            val restoredNavigator = NavigatorImpl(restoredHandle, ValidSecondDestinationNavKey)
             advanceUntilIdle()
 
-            // Then the restored back stack contains LoginAndSignUpNavKey
+            // Then the restored back stack contains ValidStartDestinationNavKey
             val restoredBackStack = restoredNavigator.getBackStack()
             assertEquals(1, restoredBackStack.size)
-            assertEquals(LoginAndSignUpNavKey, restoredBackStack[0])
+            assertEquals(ValidStartDestinationNavKey, restoredBackStack[0])
         } catch (e: Exception) {
             throw AssertionError("Process death test failed: ${e.message}")
         } finally {
@@ -78,19 +87,15 @@ class NavigatorImplAndroidTest {
         }
     }
 
-    @Parcelize
-    @Serializable
-    private data object ValidDestinationNavKey: NavKey, Parcelable
-
     @Test
-    fun navigateTo_withValidDestinationNavKey_doesNotThrowIllegalArgumentException() = runTest {
-        // Given a fresh NavigatorImpl whose back stack contains only LoginAndSignUpNavKey
+    fun navigateTo_withValidSecondDestinationNavKey_doesNotThrowIllegalArgumentException() = runTest {
+        // Given a fresh NavigatorImpl whose back stack contains only ValidStartDestinationNavKey
         val savedStateHandle = SavedStateHandle()
-        val navigator = NavigatorImpl(savedStateHandle)
+        val navigator = NavigatorImpl(savedStateHandle, ValidStartDestinationNavKey)
         advanceUntilIdle()
 
-        // When navigateTo is called with ValidDestinationNavKey which does implement Parcelable
-        navigator.navigateTo(ValidDestinationNavKey)
+        // When navigateTo is called with ValidSecondDestinationNavKey which does implement Parcelable
+        navigator.navigateTo(ValidSecondDestinationNavKey)
         advanceUntilIdle()
 
         // Simulate process death: save state to a Bundle, then force a full Parcel round-trip. This
@@ -105,16 +110,16 @@ class NavigatorImplAndroidTest {
 
             // Restore a new NavigatorImpl from the recovered Bundle
             val restoredHandle = SavedStateHandle.createHandle(restoredBundle, null)
-            val restoredNavigator = NavigatorImpl(restoredHandle)
+            val restoredNavigator = NavigatorImpl(restoredHandle, ValidStartDestinationNavKey)
             advanceUntilIdle()
 
-            // Then the restored back stack contains LoginAndSignUpNavKey and ValidDestinationNavKey
+            // Then the restored back stack contains ValidStartDestinationNavKey and ValidDestinationNavKey
             val restoredBackStack = restoredNavigator.getBackStack()
             advanceUntilIdle()
 
             assertEquals(2, restoredBackStack.size)
-            assertEquals(LoginAndSignUpNavKey, restoredBackStack[0])
-            assertEquals(ValidDestinationNavKey, restoredBackStack[1])
+            assertEquals(ValidStartDestinationNavKey, restoredBackStack[0])
+            assertEquals(ValidSecondDestinationNavKey, restoredBackStack[1])
         } catch (e: Exception) {
             throw AssertionError("Process death test failed: ${e.message}")
         } finally {
@@ -122,22 +127,18 @@ class NavigatorImplAndroidTest {
         }
     }
 
-
-    @Serializable
-    private data object InvalidDestinationNavKey: NavKey
-
     @Test
-    fun navigateTo_withInvalidDestinationNavKey_throwsIllegalArgumentException() = runTest {
-        // Given a fresh NavigatorImpl whose back stack contains only LoginAndSignUpNavKey
+    fun navigateTo_withInvalidSecondDestinationNavKey_throwsIllegalArgumentException() = runTest {
+        // Given a fresh NavigatorImpl whose back stack contains only ValidStartDestinationNavKey
         val savedStateHandle = SavedStateHandle()
-        val navigator = NavigatorImpl(savedStateHandle)
+        val navigator = NavigatorImpl(savedStateHandle, ValidStartDestinationNavKey)
         advanceUntilIdle()
 
         // When navigateTo is called with InvalidDestinationNavKey which does not implement
         // Parcelable
         // Then an IllegalArgumentException is thrown
         assertThrows(IllegalArgumentException::class.java) {
-            navigator.navigateTo(InvalidDestinationNavKey)
+            navigator.navigateTo(InvalidSecondDestinationNavKey)
         }
     }
 }
