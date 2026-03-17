@@ -9,12 +9,12 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation3.runtime.NavKey
 import dagger.hilt.android.lifecycle.ActivityRetainedSavedState
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import xyz.fjarm.loginandsignupfeatlib.LoginAndSignUpNavKey
 import javax.inject.Inject
 
 @ActivityRetainedScoped
 class NavigatorImpl @Inject constructor(
     @ActivityRetainedSavedState private val savedStateHandle: SavedStateHandle,
+    @StartDestination private val startDestination: NavKey,
 ): ViewModel(), Navigator {
 
     companion object {
@@ -24,7 +24,7 @@ class NavigatorImpl @Inject constructor(
     private val _backStack: SnapshotStateList<NavKey> = savedStateHandle
         .get<ArrayList<NavKey>>(KEY_BACKSTACK)
         ?.toMutableStateList()
-        ?: mutableStateListOf(LoginAndSignUpNavKey)
+        ?: mutableStateListOf(startDestination)
 
     override fun back(): Boolean {
         val last = _backStack.removeLastOrNull()
@@ -35,7 +35,7 @@ class NavigatorImpl @Inject constructor(
     override fun clear(): Boolean {
         _backStack.clear()
         // LoginAndSignUpNavKey is the default start destination.
-        val success = _backStack.add(LoginAndSignUpNavKey)
+        val success = _backStack.add(startDestination)
         if (success) persist()
         return success
     }
