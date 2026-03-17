@@ -13,14 +13,14 @@ data class LoginAndSignUpState(
 
 sealed class LoginAndSignUpEvent {
 
-    data object SignUpButtonClicked : LoginAndSignUpEvent()
+    data object SignUpButtonClicked: LoginAndSignUpEvent()
 
-    data object LogInButtonClicked : LoginAndSignUpEvent()
+    data object LogInButtonClicked: LoginAndSignUpEvent()
 }
 
 sealed class LoginAndSignUpSideEffect {
 
-    data object NavigateToSignUp : LoginAndSignUpSideEffect()
+    data object NavigateToSignUp: LoginAndSignUpSideEffect()
 
-    data object NavigateToLogIn : LoginAndSignUpSideEffect()
+    data object NavigateToLogIn: LoginAndSignUpSideEffect()
 }
