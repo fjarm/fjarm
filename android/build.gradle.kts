@@ -8,5 +8,9 @@ plugins {
     // Dagger and Hilt related plugins
     alias(libs.plugins.com.google.dagger.hilt.android) apply false
     alias(libs.plugins.com.google.devtools.ksp) apply false
+
     alias(libs.plugins.android.library) apply false
+
+    // Parcelize plugin
+    alias(libs.plugins.kotlin.parcelize) apply false
 }

@@ -18,11 +18,13 @@ android {
 
 dependencies {
     implementation(project(":fjarmThemeLib"))
+    implementation(project(":loginAndSignUpFeatLib"))
     implementation(project(":previewsLib"))
 
-    debugImplementation(project(":testActivityLib"))
-
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation3.navigation3.runtime)
+
+    debugImplementation(project(":testActivityLib"))
 
     testImplementation(libs.androidx.ui.test.junit4)
     testImplementation(libs.kotlinx.coroutines.test)
