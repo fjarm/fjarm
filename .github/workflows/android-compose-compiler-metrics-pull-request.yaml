@@ -10,6 +10,9 @@ on:
       - 'android/gradle/**'
       - 'android/build.gradle.kts'
       - 'android/settings.gradle.kts'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} # Don't cancel workflow runs on main branch
 jobs:
   compose-compiler-metrics:
     if: github.event.pull_request.head.repo.full_name == github.repository
