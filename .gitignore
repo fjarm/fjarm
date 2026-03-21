@@ -20,3 +20,15 @@
 # Bazel generated output
 bazel-**
 genhtml
+
+# IDE - Android Studio
+*.iml
+.gradle
+/local.properties
+.idea/
+.kotlin/
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
