@@ -15,6 +15,9 @@ composeBom = "2026.01.00"
 hilt = "2.58"
 ksp = "2.3.4"
 
+## Parcelize
+parcelize = "2.3.10"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -63,3 +66,6 @@ com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" 
 
 ## Android Library
 android-library = { id = "com.android.library", version.ref = "agp" }
+
+## Parcelize
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }
