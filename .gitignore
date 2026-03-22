@@ -24,7 +24,6 @@ genhtml
 # IDE - Android Studio
 *.iml
 .gradle
-/local.properties
 .idea/
 .kotlin/
 /build
