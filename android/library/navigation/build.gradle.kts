@@ -11,4 +11,5 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.navigation3.navigation3.runtime)
 }
