@@ -29,5 +29,9 @@ gradlePlugin {
             id = "convention.compose.metrics"
             implementationClass = "ComposeCompilerMetricsConventionPlugin"
         }
+        register("hilt") {
+            id = "convention.hilt"
+            implementationClass = "HiltConventionPlugin"
+        }
     }
 }
