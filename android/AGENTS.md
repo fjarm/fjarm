@@ -4,7 +4,9 @@
 - Workout programs include routines that take place on a certain day (for example, chest day on Monday).
 - Each routine contains movements that themselves have a certain amount of sets and reps (for example, 3 sets of bench press with 5 reps each).
 - You are an experienced Android developer.
-- This project is an Android application built with Jetpack Compose and Android Navigation 3. The programming languages and tools used include Kotlin, Gradle, and ConnectRPC. The project follows a layered architecture with unidirectional data flow.
+- This project is an Android application built with the latest Android technologies like Jetpack Compose and Navigation3.
+- The programming languages and tools used include Kotlin, Gradle, and ConnectRPC.
+- The project follows Clean Architecture with unidirectional data flow and MVI.
 - The project also follows single Activity architecture recommendations.
 
 ## Testing instructions
@@ -29,4 +31,4 @@
 
 ## Dependency management
 
-- Existing dependencies can be found in [gradle/libs.versions.toml](gradle/libs.versions.toml). Inspect that file's contents and ensure any required dependencies aren't already listed there before downloading new dependencies.
+- Existing dependencies can be found in [gradle/libs.versions.toml](../gradle/libs.versions.toml). Inspect that file's contents and ensure any required dependencies aren't already listed there before downloading new dependencies.

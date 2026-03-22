@@ -7,13 +7,28 @@ on:
     branches:
       - main
     paths:
-      - "android/**"
+      - 'android/**.kt'
+      - 'android/**.kts'
+      - 'android/**'
+      - 'build-logic/**'
+      - 'gradle/**'
+      - 'build.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'settings.gradle.kts'
   pull_request:
     paths:
-      - "android/**"
-defaults:
-  run:
-    working-directory: ./android
+      - 'android/**.kt'
+      - 'android/**.kts'
+      - 'android/**'
+      - 'build-logic/**'
+      - 'gradle/**'
+      - 'build.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'settings.gradle.kts'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} # Don't cancel workflow runs on main branch
@@ -41,7 +56,7 @@ jobs:
           cache: 'gradle'
 
       - uses: gradle/actions/setup-gradle@v5
-        name: Set up Gradle
+        name: Set up Gradle cache
         
       - uses: actions/cache@v4
         name: AVD cache
@@ -49,7 +64,7 @@ jobs:
         with:
           path: |
             ~/.android/avd/*
-            ~/.android/adb*
+            ~/.android/adb/*
           key: avd-${{ matrix.api-level }}
 
       - uses: reactivecircus/android-emulator-runner@v2
@@ -62,7 +77,6 @@ jobs:
           disable-animations: true
           arch: x86_64
           target: default
-          working-directory: ./android
           script: echo "Generated AVD snapshot for caching."
 
       - uses: reactivecircus/android-emulator-runner@v2
@@ -74,5 +88,4 @@ jobs:
           disable-animations: true
           arch: x86_64
           target: default
-          working-directory: ./android
           script: ./gradlew connectedAndroidTest

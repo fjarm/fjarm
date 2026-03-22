@@ -7,10 +7,28 @@ on:
     branches:
       - main
     paths:
-      - "android/**"
+      - 'android/**.kt'
+      - 'android/**.kts'
+      - 'android/**'
+      - 'build-logic/**'
+      - 'gradle/**'
+      - 'build.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'settings.gradle.kts'
   pull_request:
     paths:
-      - "android/**"
+      - 'android/**.kt'
+      - 'android/**.kts'
+      - 'android/**'
+      - 'build-logic/**'
+      - 'gradle/**'
+      - 'build.gradle.kts'
+      - 'gradle.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'settings.gradle.kts'
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} # Don't cancel workflow runs on main branch
@@ -33,11 +51,9 @@ jobs:
         name: Set up Gradle
 
       - name: Build all tasks
-        working-directory: ./android
         run: |
           ./gradlew build
 
       - name: Run all unit tests
-        working-directory: ./android
         run: |
           ./gradlew testDebugUnitTest
