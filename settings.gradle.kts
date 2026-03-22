@@ -28,5 +28,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "fjarm"
-include(":app:fjarm")
-include(":library:previews")
+include(":android:app:fjarm")
+include(":android:library:previews")
