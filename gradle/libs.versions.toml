@@ -18,6 +18,9 @@ ksp = "2.3.4"
 ## Parcelize
 parcelize = "2.3.10"
 
+## Jetbrains Kotlin JVM
+jetbrainsKotlinJvm = "2.3.10"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -69,3 +72,6 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 
 ## Parcelize
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "parcelize" }
+
+## Jetbrains Kotlin JVM
+jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
