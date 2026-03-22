@@ -30,6 +30,9 @@ connectRpc = "0.7.4"
 ## OkHttp
 okHttp3 = "5.3.2"
 
+## Navigation3
+navigation3 = "1.0.1"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -74,6 +77,10 @@ com-connectrpc-connect-kotlin-okhttp = { group = "com.connectrpc", name = "conne
 
 ## OkHttp
 com-squareup-okhttp3-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okHttp3" }
+
+## Navigation3
+androidx-navigation3-navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3" }
+androidx-navigation3-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

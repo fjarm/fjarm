@@ -9,3 +9,7 @@ plugins {
 android {
     namespace = "xyz.fjarm.loginandsignupapi"
 }
+
+dependencies {
+    implementation(libs.androidx.navigation3.navigation3.runtime)
+}
