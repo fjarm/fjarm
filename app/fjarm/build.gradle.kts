@@ -7,6 +7,9 @@ plugins {
 
     // Use the ComposeCompilerMetricsConventionPlugin to enable Compose Compiler Metrics
     id("convention.compose.metrics")
+
+    // Use the HiltConventionPlugin to apply Dagger Hilt configuration
+    id("convention.hilt")
 }
 
 android {
