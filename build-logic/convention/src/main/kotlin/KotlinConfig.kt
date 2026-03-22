@@ -11,7 +11,7 @@ internal object KotlinConfig {
     fun Project.configureKotlin() {
         // Configure Kotlin extension
         extensions.configure<KotlinAndroidProjectExtension> {
-            jvmToolchain(21)
+            jvmToolchain(jDKVersion)
         }
 
         // Configure Kotlin compile tasks

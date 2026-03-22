@@ -16,10 +16,10 @@ internal object AndroidConfig {
         commonExtension: CommonExtension<*, *, *, *, *, *>
     ) {
         commonExtension.apply {
-            compileSdk = 36
+            compileSdk = targetSDK
 
             defaultConfig {
-                minSdk = 31
+                minSdk = minSDK
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
             }
 
