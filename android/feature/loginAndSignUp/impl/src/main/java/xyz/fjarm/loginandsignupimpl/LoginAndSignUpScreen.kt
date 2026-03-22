@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
@@ -96,8 +97,11 @@ private fun LoginAndSignUpContent(
         ) {
             Column(
                 modifier = Modifier
-                    .padding(32.dp)
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    // Use systemBarsPadding to ensure content stays within safe areas while the
+                    // [Surface] background bleeds edge-to-edge
+                    .systemBarsPadding()
+                    .padding(horizontal = 32.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 // SpacedBy ensures the header and buttons have distance if the screen is small
                 verticalArrangement = Arrangement.spacedBy(16.dp),
