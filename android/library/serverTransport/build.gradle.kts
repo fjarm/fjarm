@@ -2,6 +2,10 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     id("java-library")
+
+    // Use the HiltConventionPlugin to apply Dagger Hilt configuration
+    id("convention.hilt")
+
     alias(libs.plugins.jetbrains.kotlin.jvm)
 }
 
