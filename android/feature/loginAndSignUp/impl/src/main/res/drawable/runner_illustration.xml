@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Hair (Ponytail) -->
+    <path
+        android:fillColor="#2D3436"
+        android:pathData="M52,36 C55,35 60,38 60,40 C60,42 55,40 52,41 Z" />
+
+    <!-- Skin - Right Arm -->
+    <path
+        android:fillColor="#EBB39C"
+        android:pathData="M40,41 L42,46 L40,48 L39,43 Z" />
+
+    <!-- Skin - Face/Neck -->
+    <path
+        android:fillColor="#EBB39C"
+        android:pathData="M46,36 C45,36 45,40 46,42 L48,42 L49,36 Z" />
+
+    <!-- Hair (Main) -->
+    <path
+        android:fillColor="#2D3436"
+        android:pathData="M46,36 C47,34 51,35 52,38 C52,40 51,41 48,41 C47,41 46,39 46,36 Z" />
+
+    <!-- White Tank Top -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M44,42 L52,42 L54,49 L52,55 L44,55 L43,49 Z" />
+
+    <!-- Teal Shorts -->
+    <path
+        android:fillColor="#207B8A"
+        android:pathData="M44,55 L54,55 L54,58 L49,58 L44,58 Z" />
+
+    <!-- Skin - Legs -->
+    <!-- Right Leg (Running Forward) -->
+    <path
+        android:fillColor="#EBB39C"
+        android:pathData="M49,58 L54,58 L58,65 L66,66 L65,68 L56,67 L52,61 Z" />
+    <!-- Left Leg (Planting) -->
+    <path
+        android:fillColor="#EBB39C"
+        android:pathData="M44,58 L49,58 L47,65 L44,72 L42,72 L45,65 Z" />
+
+    <!-- Shoes -->
+    <!-- Right Shoe -->
+    <path
+        android:fillColor="#2D3436"
+        android:pathData="M65,68 L69,68 L70,71 L66,71 Z" />
+    <!-- Left Shoe -->
+    <path
+        android:fillColor="#2D3436"
+        android:pathData="M38,72 L43,72 L43,74 L37,74 Z" />
+
+    <!-- Skin - Left Arm -->
+    <path
+        android:fillColor="#EBB39C"
+        android:pathData="M52,44 L56,48 L54,52 L51,48 Z" />
+
+</vector>
