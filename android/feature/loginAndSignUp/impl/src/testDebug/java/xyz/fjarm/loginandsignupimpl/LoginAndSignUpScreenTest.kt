@@ -10,7 +10,6 @@ import dagger.hilt.android.testing.HiltTestApplication
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert
 import org.junit.Before
@@ -60,7 +59,9 @@ class LoginAndSignUpScreenTest {
 
         // When the log in button is clicked
         composeTestRule.onNodeWithText(logInText).performClick()
-        advanceUntilIdle()
+        // We wait for the side effect to be processed.
+        // Robolectric's main looper will execute the LaunchedEffect and emission.
+        composeTestRule.waitForIdle()
 
         // Then a NavigateToLogIn side effect is received
         val sideEffect = collectedSideEffects.firstOrNull()
@@ -93,7 +94,9 @@ class LoginAndSignUpScreenTest {
 
         // When the sign up button is clicked
         composeTestRule.onNodeWithText(signUpText).performClick()
-        advanceUntilIdle()
+        // We wait for the side effect to be processed.
+        // Robolectric's main looper will execute the LaunchedEffect and emission.
+        composeTestRule.waitForIdle()
 
         // Then a NavigateToSignUp side effect is received
         val sideEffect = collectedSideEffects.firstOrNull()
