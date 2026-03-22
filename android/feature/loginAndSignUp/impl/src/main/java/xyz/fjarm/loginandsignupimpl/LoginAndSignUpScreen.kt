@@ -41,7 +41,7 @@ import xyz.fjarm.previews.PreviewPhoneSizes
 @Composable
 fun LoginAndSignUpScreen(
     modifier: Modifier = Modifier,
-    viewModel: LoginAndSignUpScreenViewModel = hiltViewModel(),
+    viewModel: LoginAndSignUpViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 

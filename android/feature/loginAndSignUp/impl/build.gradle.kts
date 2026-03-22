@@ -23,4 +23,6 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.hilt.hilt.navigation.compose)
     implementation(libs.androidx.navigation3.navigation3.runtime)
+
+    testImplementation(libs.kotlinx.coroutines.test)
 }
