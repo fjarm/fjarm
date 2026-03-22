@@ -24,5 +24,9 @@ dependencies {
     implementation(libs.androidx.hilt.hilt.navigation.compose)
     implementation(libs.androidx.navigation3.navigation3.runtime)
 
+    debugImplementation(project(":android:library:testActivity"))
+
+    testDebugImplementation(libs.androidx.compose.ui.test.junit4)
+    testDebugImplementation(libs.org.robolectric.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)
 }
