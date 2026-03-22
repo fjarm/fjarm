@@ -28,6 +28,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "fjarm"
-include(":app")
 include(":app:fjarm")
  
