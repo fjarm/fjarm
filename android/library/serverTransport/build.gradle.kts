@@ -19,3 +19,13 @@ kotlin {
         jvmTarget = JvmTarget.JVM_21
     }
 }
+
+dependencies {
+    implementation(libs.kotlinx.coroutines.core.jvm)
+
+    implementation(libs.com.connectrpc.connect.kotlin)
+    implementation(libs.com.connectrpc.connect.kotlin.okhttp)
+    implementation(libs.com.connectrpc.connect.kotlin.google.javalite.ext)
+
+    implementation(libs.com.squareup.okhttp3.okhttp)
+}
