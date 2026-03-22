@@ -11,16 +11,16 @@ data class LoginAndSignUpState(
     @StringRes val logInButtonText: Int,
 )
 
-sealed class LoginAndSignUpEvent {
+sealed interface LoginAndSignUpEvent {
 
-    data object SignUpButtonClicked: LoginAndSignUpEvent()
+    data object SignUpButtonClicked: LoginAndSignUpEvent
 
-    data object LogInButtonClicked: LoginAndSignUpEvent()
+    data object LogInButtonClicked: LoginAndSignUpEvent
 }
 
-sealed class LoginAndSignUpSideEffect {
+sealed interface LoginAndSignUpSideEffect {
 
-    data object NavigateToSignUp: LoginAndSignUpSideEffect()
+    data object NavigateToSignUp: LoginAndSignUpSideEffect
 
-    data object NavigateToLogIn: LoginAndSignUpSideEffect()
+    data object NavigateToLogIn: LoginAndSignUpSideEffect
 }
