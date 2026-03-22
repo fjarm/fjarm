@@ -10,3 +10,12 @@ dependencies {
     compileOnly(libs.kotlin.gradle.plugin)
     compileOnly(libs.compose.compiler.gradle.plugin)
 }
+
+gradlePlugin {
+    plugins {
+        register("androidApplication") {
+            id = "convention.android.application"
+            implementationClass = "AndroidApplicationConventionPlugin"
+        }
+    }
+}
