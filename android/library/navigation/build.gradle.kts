@@ -4,6 +4,8 @@ plugins {
 
     // Use the HiltConventionPlugin to apply Dagger Hilt configuration
     id("convention.hilt")
+
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -12,4 +14,6 @@ android {
 
 dependencies {
     implementation(libs.androidx.navigation3.navigation3.runtime)
+
+    testImplementation(libs.kotlinx.coroutines.test)
 }
