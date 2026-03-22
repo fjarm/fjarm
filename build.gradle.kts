@@ -17,4 +17,7 @@ plugins {
 
     // Parcelize plugin
     alias(libs.plugins.kotlin.parcelize) apply false
+
+    // Kotlin JVM plugin
+    alias(libs.plugins.jetbrains.kotlin.jvm) apply false
 }
