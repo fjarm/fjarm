@@ -1,4 +1,5 @@
 import ComposeConfig.configureComposeWithDependencies
+import Dependencies.addCommonComposeDependencies
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin
@@ -49,6 +50,7 @@ class ComposeConventionPlugin : Plugin<Project> {
             pluginManager.withPlugin("com.android.library") {
                 extensions.configure<LibraryExtension> {
                     configureComposeWithDependencies(this)
+                    addCommonComposeDependencies()
                 }
             }
 
@@ -56,6 +58,7 @@ class ComposeConventionPlugin : Plugin<Project> {
             pluginManager.withPlugin("com.android.application") {
                 extensions.configure<ApplicationExtension> {
                     configureComposeWithDependencies(this)
+                    addCommonComposeDependencies()
                 }
             }
         }
