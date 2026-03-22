@@ -30,6 +30,7 @@ dependencyResolutionManagement {
 rootProject.name = "fjarm"
 include(":android:app:fjarm")
 include(":android:feature:loginAndSignUp:api")
+include(":android:feature:loginAndSignUp:impl")
 include(":android:library:fjarmTheme")
 include(":android:library:previews")
 include(":android:library:serverTransport")
