@@ -31,4 +31,5 @@ rootProject.name = "fjarm"
 include(":android:app:fjarm")
 include(":android:library:fjarmTheme")
 include(":android:library:previews")
+include(":android:library:serverTransport")
 include(":android:library:testActivity")
