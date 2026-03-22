@@ -2,7 +2,11 @@ plugins {
     // Use the AndroidApplicationConventionPlugin to apply Android application configuration
     id("convention.android.application")
 
-    alias(libs.plugins.kotlin.compose)
+    // Use ComposeConventionPlugin to apply Jetpack Compose configuration
+    id("convention.compose")
+
+    // Use the ComposeCompilerMetricsConventionPlugin to enable Compose Compiler Metrics
+    id("convention.compose.metrics")
 }
 
 android {
