@@ -60,3 +60,6 @@ com-google-dagger-hilt-android = { id = "com.google.dagger.hilt.android", versio
 
 ## Dagger/Hilt
 com-google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+
+## Android Library
+android-library = { id = "com.android.library", version.ref = "agp" }
