@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -92,8 +91,6 @@ private fun LoginAndSignUpContent(
         Surface(
             modifier = modifier
                 .fillMaxSize(),
-            // TODO: Use a color from the theme instead of hardcoding
-            color = Color(0xFFF9F9F5),
         ) {
             Column(
                 modifier = Modifier
@@ -115,14 +112,12 @@ private fun LoginAndSignUpContent(
                         fontWeight = FontWeight.Bold,
                         fontSize = 32.sp,
                     ),
-                    color = Color.Black,
                 )
                 Text(
                     text = subtitleLine,
                     modifier = Modifier
                         .fillMaxWidth(),
                     style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Black,
                 )
 
                 // 2. Illustration (Takes up all available remaining space)
@@ -147,7 +142,6 @@ private fun LoginAndSignUpContent(
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
                     border = ButtonDefaults.outlinedButtonBorder(true).copy(width = 1.dp),
                 ) {
                     Text(
@@ -163,7 +157,6 @@ private fun LoginAndSignUpContent(
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.textButtonColors(contentColor = Color.Black),
                 ) {
                     Text(
                         text = logInButtonText,
