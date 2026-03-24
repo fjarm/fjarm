@@ -110,7 +110,6 @@ private fun LoginAndSignUpContent(
                         .fillMaxWidth(),
                     style = FjarmTypography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 32.sp,
                     ),
                 )
                 Text(
