@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,6 +33,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import xyz.fjarm.fjarmtheme.FjarmTheme
+import xyz.fjarm.fjarmtheme.FjarmTypography
 import xyz.fjarm.previews.PreviewFontScales
 import xyz.fjarm.previews.PreviewLightDarkTheme
 import xyz.fjarm.previews.PreviewPhoneSizes
@@ -108,7 +108,7 @@ private fun LoginAndSignUpContent(
                     text = titleLine,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    style = MaterialTheme.typography.headlineLarge.copy(
+                    style = FjarmTypography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold,
                         fontSize = 32.sp,
                     ),
@@ -117,7 +117,7 @@ private fun LoginAndSignUpContent(
                     text = subtitleLine,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = FjarmTypography.bodyLarge,
                 )
 
                 // 2. Illustration (Takes up all available remaining space)
