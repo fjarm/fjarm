@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -22,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +33,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import xyz.fjarm.fjarmtheme.FjarmTheme
+import xyz.fjarm.fjarmtheme.FjarmTypography
 import xyz.fjarm.previews.PreviewFontScales
 import xyz.fjarm.previews.PreviewLightDarkTheme
 import xyz.fjarm.previews.PreviewPhoneSizes
@@ -92,8 +91,6 @@ private fun LoginAndSignUpContent(
         Surface(
             modifier = modifier
                 .fillMaxSize(),
-            // TODO: Use a color from the theme instead of hardcoding
-            color = Color(0xFFF9F9F5),
         ) {
             Column(
                 modifier = Modifier
@@ -111,18 +108,15 @@ private fun LoginAndSignUpContent(
                     text = titleLine,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    style = MaterialTheme.typography.headlineLarge.copy(
+                    style = FjarmTypography.headlineLarge.copy(
                         fontWeight = FontWeight.Bold,
-                        fontSize = 32.sp,
                     ),
-                    color = Color.Black,
                 )
                 Text(
                     text = subtitleLine,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Black,
+                    style = FjarmTypography.bodyLarge,
                 )
 
                 // 2. Illustration (Takes up all available remaining space)
@@ -147,7 +141,6 @@ private fun LoginAndSignUpContent(
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black),
                     border = ButtonDefaults.outlinedButtonBorder(true).copy(width = 1.dp),
                 ) {
                     Text(
@@ -163,7 +156,6 @@ private fun LoginAndSignUpContent(
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.textButtonColors(contentColor = Color.Black),
                 ) {
                     Text(
                         text = logInButtonText,
