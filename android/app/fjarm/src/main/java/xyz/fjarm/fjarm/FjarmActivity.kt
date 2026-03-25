@@ -5,6 +5,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -56,7 +61,22 @@ class FjarmActivity : ComponentActivity() {
                                 }
                             }) {
                                 entryBuilders.forEach { it() }
-                            }
+                            },
+                            transitionSpec = {
+                                // Use togetherWith to create a ContentTransform
+                                (slideInHorizontally { fullWidth -> fullWidth } + fadeIn()) togetherWith
+                                        fadeOut()
+                            },
+                            popTransitionSpec = {
+                                // For popping, we slide out the exiting screen
+                                fadeIn() togetherWith
+                                        (slideOutHorizontally { fullWidth -> fullWidth } + fadeOut())
+                            },
+                            predictivePopTransitionSpec = {
+                                // For popping, we slide out the exiting screen
+                                fadeIn() togetherWith
+                                        (slideOutHorizontally { fullWidth -> fullWidth } + fadeOut())
+                            },
                         )
                     }
                 }
