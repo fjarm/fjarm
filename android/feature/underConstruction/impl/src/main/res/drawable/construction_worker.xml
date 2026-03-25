@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Skin - Left Arm (Reaching back for swing) -->
+    <path
+        android:fillColor="#EBB39C"
+        android:pathData="M38,44 L34,48 L36,52 L40,48 Z" />
+
+    <!-- Yellow Safety Vest -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M44,42 L56,42 L58,49 L56,58 L44,58 L42,49 Z" />
+
+    <!-- Vest Reflective Stripes -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M46,42 L48,42 L48,58 L46,58 Z M52,42 L54,42 L54,58 L52,58 Z" />
+
+    <!-- Skin - Face/Neck -->
+    <path
+        android:fillColor="#EBB39C"
+        android:pathData="M47,36 C46,36 46,40 47,42 L53,42 L53,36 Z" />
+
+    <!-- Hard Hat (Yellow) -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M45,36 C45,32 55,32 55,36 L58,37 L42,37 Z" />
+
+    <!-- Work Pants (Dark Grey/Teal) -->
+    <path
+        android:fillColor="#2D3436"
+        android:pathData="M44,58 L56,58 L57,65 L55,75 L52,75 L50,65 L48,75 L45,75 L43,65 Z" />
+
+    <!-- Work Boots -->
+    <path
+        android:fillColor="#5D4037"
+        android:pathData="M42,75 L47,75 L47,78 L41,78 Z M53,75 L58,75 L59,78 L53,78 Z" />
+
+    <!-- Skin - Right Arm (Holding Mallet) -->
+    <path
+        android:fillColor="#EBB39C"
+        android:pathData="M56,44 L64,44 L66,48 L64,52 L56,48 Z" />
+
+    <!-- Mallet Handle -->
+    <path
+        android:fillColor="#5D4037"
+        android:pathData="M64,40 L66,40 L66,60 L64,60 Z" />
+
+    <!-- Mallet Head -->
+    <path
+        android:fillColor="#2D3436"
+        android:pathData="M60,35 L70,35 L71,38 L71,42 L70,45 L60,45 L59,42 L59,38 Z" />
+
+</vector>

@@ -13,24 +13,12 @@ plugins {
 }
 
 android {
-    namespace = "xyz.fjarm.loginandsignupimpl"
+    namespace = "xyz.fjarm.underconstructionimpl"
 }
 
 dependencies {
-    implementation(project(":android:feature:login:api"))
-    implementation(project(":android:feature:loginAndSignUp:api"))
-
     implementation(project(":android:library:fjarmTheme"))
-    implementation(project(":android:library:navigation"))
     implementation(project(":android:library:previews"))
 
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.hilt.hilt.navigation.compose)
-    implementation(libs.androidx.navigation3.navigation3.runtime)
-
-    debugImplementation(project(":android:library:testActivity"))
-
-    testDebugImplementation(libs.androidx.compose.ui.test.junit4)
-    testDebugImplementation(libs.org.robolectric.robolectric)
-    testImplementation(libs.kotlinx.coroutines.test)
 }

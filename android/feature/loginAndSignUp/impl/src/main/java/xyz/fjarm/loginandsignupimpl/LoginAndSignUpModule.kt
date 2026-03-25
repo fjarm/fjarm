@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.multibindings.IntoSet
+import xyz.fjarm.navigation.Navigation
 
 @Module
 @InstallIn(ActivityRetainedComponent::class)
@@ -14,7 +15,9 @@ object LoginAndSignUpModule {
 
     @Provides
     @IntoSet
-    fun provideLoginAndSignUpEntryBuilder(): EntryProviderScope<NavKey>.() -> Unit = {
-        loginAndSignUpEntryBuilder()
+    fun provideLoginAndSignUpEntryBuilder(
+        navigation: Navigation,
+    ): EntryProviderScope<NavKey>.() -> Unit = {
+        loginAndSignUpEntryBuilder(navigation)
     }
 }

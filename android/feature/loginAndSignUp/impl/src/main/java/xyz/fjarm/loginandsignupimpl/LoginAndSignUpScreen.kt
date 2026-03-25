@@ -42,6 +42,8 @@ import xyz.fjarm.previews.PreviewPhoneSizes
 fun LoginAndSignUpScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginAndSignUpViewModel = hiltViewModel(),
+    navigateToSignUp: () -> Unit = {},
+    navigateToLogIn: () -> Unit = {},
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -51,10 +53,10 @@ fun LoginAndSignUpScreen(
             sideEffects.collect { sideEffect ->
                 when (sideEffect) {
                     is LoginAndSignUpSideEffect.NavigateToSignUp -> {
-                        // TODO: Navigate to sign up screen
+                        navigateToSignUp()
                     }
                     is LoginAndSignUpSideEffect.NavigateToLogIn -> {
-                        // TODO: Navigate to log in screen
+                        navigateToLogIn()
                     }
                 }
             }
