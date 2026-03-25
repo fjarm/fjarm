@@ -52,7 +52,7 @@ fun UnderConstructionScreen() {
                 // 2. Illustration (Takes up all available remaining space)
                 Box(
                     modifier = Modifier
-                        .size(280.dp)
+                        .fillMaxWidth()
                         .weight(1f),
                     contentAlignment = Alignment.Center,
                 ) {
@@ -60,7 +60,7 @@ fun UnderConstructionScreen() {
                     Image(
                         painter = painterResource(id = R.drawable.construction_worker),
                         contentDescription = null,
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.size(280.dp),
                     )
                 }
             }
