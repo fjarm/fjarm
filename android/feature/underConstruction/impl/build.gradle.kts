@@ -17,4 +17,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":android:library:fjarmTheme"))
+    implementation(project(":android:library:previews"))
+
+    implementation(libs.androidx.compose.material3)
 }
