@@ -91,7 +91,8 @@ jobs:
           IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
           for module in "${MODULES[@]}"; do
             echo "Building $module with metrics..."
-            ./gradlew :$module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build $module"
+            # $module already contains the leading colon from our script above
+            ./gradlew $module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build $module"
           done
           
       - name: Save PR metrics
