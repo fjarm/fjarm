@@ -31,6 +31,7 @@ rootProject.name = "fjarm"
 include(":android:app:fjarm")
 include(":android:feature:loginAndSignUp:api")
 include(":android:feature:loginAndSignUp:impl")
+include(":android:feature:underconstruction:impl")
 include(":android:library:fjarmTheme")
 include(":android:library:navigation")
 include(":android:library:previews")
