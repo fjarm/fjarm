@@ -127,7 +127,8 @@ jobs:
           IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
           for module in "${MODULES[@]}"; do
             echo "Building base $module with metrics..."
-            ./gradlew :$module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build base $module"
+            # REMOVED the extra ':' before $module
+            ./gradlew clean $module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build base $module"
           done
           
       - name: Compare metrics per module
@@ -171,7 +172,8 @@ jobs:
           # Function to analyze a single module
           analyze_module() {
             local module=$1
-            # Use the same safe name mapping as abovelocal safe_name=$(echo "$module" | sed 's|:|__|g')
+            # Use the same safe name mapping as above
+            local safe_name=$(echo "$module" | sed 's|:|__|g')
             local pr_dir="/tmp/pr-metrics/$safe_name"
 
             # Convert Gradle path back to file path for the base_dir
