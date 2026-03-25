@@ -44,38 +44,43 @@ jobs:
         run: |
           # Get list of changed files
           CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
-          
-          echo "Changed files:"
-          echo "$CHANGED_FILES"
-          
-          # Filter to only files in android/ directory and extract module paths
-          # Pattern: android/moduleName/src/... -> moduleName
-          MODULES=$(echo "$CHANGED_FILES" | grep -E '^android/[^/]+/src/' | sed 's|^android/||' | cut -d'/' -f1 | sort -u)
-          
-          echo "Detected modules in android/:"
-          echo "$MODULES"
-          
-          # Filter to only modules with Compose (have build.gradle.kts with compose plugin)
-          COMPOSE_MODULES=""
-          for module in $MODULES; do
-            if [ -f "android/$module/build.gradle.kts" ]; then
-              if grep -q "compose" "android/$module/build.gradle.kts"; then
-                COMPOSE_MODULES="$COMPOSE_MODULES $module"
-              fi
+
+          echo "Changed files detected."          
+          COMPOSE_MODULES_SET=""
+      
+          for file in $CHANGED_FILES; do
+            # Only look at files inside the android/ directory
+            if [[ "$file" == android/* ]]; then
+              # Find the directory containing the file
+              DIR=$(dirname "$file")
+              
+              # Traverse up until we find a build.gradle.kts or reach the 'android' root
+              while [[ "$DIR" != "android" && "$DIR" != "." ]]; do
+                if [ -f "$DIR/build.gradle.kts" ]; then
+                  # Check if this module uses Compose
+                  if grep -q "compose" "$DIR/build.gradle.kts"; then
+                    # Convert file path (android/feature/auth/impl) to Gradle path (:android:feature:auth:impl)
+                    GRADLE_PATH=$(echo "$DIR" | sed 's|/|:|g' | sed 's|^|:|')
+                    COMPOSE_MODULES_SET="$COMPOSE_MODULES_SET $GRADLE_PATH"
+                  fi
+                  break # Found the module, move to next file
+                fi
+                DIR=$(dirname "$DIR")
+              done
             fi
           done
           
-          # Remove leading/trailing whitespace
-          COMPOSE_MODULES=$(echo "$COMPOSE_MODULES" | xargs)
+          # Unique and clean the module list
+          FINAL_MODULES=$(echo "$COMPOSE_MODULES_SET" | tr ' ' '\n' | sort -u | xargs)
           
-          if [ -z "$COMPOSE_MODULES" ]; then
+          if [ -z "$FINAL_MODULES" ]; then
             echo "No Compose modules changed"
             echo "modules=" >> $GITHUB_OUTPUT
             echo "has_modules=false" >> $GITHUB_OUTPUT
           else
-            echo "Compose modules changed: $COMPOSE_MODULES"
-            # Convert space-separated to comma-separated for easier parsing
-            MODULES_CSV=$(echo "$COMPOSE_MODULES" | tr ' ' ',')
+            echo "Compose modules detected: $FINAL_MODULES"
+            # Convert space-separated to comma-separated for later steps
+            MODULES_CSV=$(echo "$FINAL_MODULES" | tr ' ' ',')
             echo "modules=$MODULES_CSV" >> $GITHUB_OUTPUT
             echo "has_modules=true" >> $GITHUB_OUTPUT
           fi
