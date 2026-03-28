@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -30,6 +28,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import xyz.fjarm.buttons.FjarmButton
 import xyz.fjarm.buttons.FjarmOutlinedButton
 import xyz.fjarm.fjarmtheme.FjarmTheme
 import xyz.fjarm.fjarmtheme.FjarmTypography
@@ -149,12 +148,11 @@ private fun LoginAndSignUpContent(
                     )
                 }
 
-                TextButton(
+                FjarmButton(
                     onClick = onLoginClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    shape = RoundedCornerShape(4.dp),
                 ) {
                     Text(
                         text = logInButtonText,
