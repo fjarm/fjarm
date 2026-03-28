@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -32,6 +30,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import xyz.fjarm.buttons.FjarmOutlinedButton
 import xyz.fjarm.fjarmtheme.FjarmTheme
 import xyz.fjarm.fjarmtheme.FjarmTypography
 import xyz.fjarm.previews.PreviewFontScales
@@ -137,13 +136,11 @@ private fun LoginAndSignUpContent(
                 }
 
                 // 3. Buttons
-                OutlinedButton(
+                FjarmOutlinedButton(
                     onClick = onJoinClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    shape = RoundedCornerShape(4.dp),
-                    border = ButtonDefaults.outlinedButtonBorder(true).copy(width = 1.dp),
                 ) {
                     Text(
                         text = signUpButtonText,

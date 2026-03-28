@@ -20,6 +20,7 @@ dependencies {
     implementation(project(":android:feature:login:api"))
     implementation(project(":android:feature:loginAndSignUp:api"))
 
+    implementation(project(":android:library:buttons"))
     implementation(project(":android:library:fjarmTheme"))
     implementation(project(":android:library:navigation"))
     implementation(project(":android:library:previews"))
