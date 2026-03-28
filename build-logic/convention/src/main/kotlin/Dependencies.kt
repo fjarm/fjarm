@@ -56,7 +56,7 @@ internal object Dependencies {
     // Roborazzi dependencies
     fun Project.addCommonRoborazziDependencies() {
         dependencies {
-            add("implementation", catalog.findLibrary("io.github.takahirom.roborazzi").get())
+            add("testImplementation", catalog.findLibrary("io.github.takahirom.roborazzi.roborazzi").get())
         }
     }
 }
