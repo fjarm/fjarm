@@ -11,7 +11,8 @@ plugins {
     // Use the ComposeCompilerMetricsConventionPlugin to enable Compose Compiler Metrics
     id("convention.compose.metrics")
 
-    alias(libs.plugins.io.github.takahirom.roborazzi)
+    // Use the RoborazziConventionPlugin to enable Roborazzi tests
+    id("convention.roborazzi")
 }
 
 android {
@@ -36,5 +37,4 @@ dependencies {
     testDebugImplementation(libs.androidx.compose.ui.test.junit4)
     testDebugImplementation(libs.org.robolectric.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.io.github.takahirom.roborazzi.roborazzi)
 }
