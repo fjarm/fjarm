@@ -8,7 +8,7 @@ internal object KotlinConfig {
     /**
      * Configures Kotlin for Android projects.
      */
-    fun Project.configureKotlin() {
+    fun Project.configureKotlinCompilerArgsAndJVMToolchain() {
         // Configure Kotlin extension
         extensions.configure<KotlinAndroidProjectExtension> {
             jvmToolchain(jDKVersion)

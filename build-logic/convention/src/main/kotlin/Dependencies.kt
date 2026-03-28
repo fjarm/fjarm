@@ -52,4 +52,11 @@ internal object Dependencies {
             add("testImplementation", catalog.findLibrary("com.google.dagger.hilt.android.testing").get())
         }
     }
+
+    // Roborazzi dependencies
+    fun Project.addCommonRoborazziDependencies() {
+        dependencies {
+            add("implementation", catalog.findLibrary("io.github.takahirom.roborazzi").get())
+        }
+    }
 }

@@ -17,7 +17,7 @@ import org.gradle.api.Project
  *       id("convention.hilt")
  *   }
  */
-class HiltConventionPlugin : Plugin<Project> {
+class HiltConventionPlugin: Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             // Always apply KSP plugin

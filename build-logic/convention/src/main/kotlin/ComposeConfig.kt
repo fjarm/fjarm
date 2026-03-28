@@ -6,7 +6,7 @@ internal object ComposeConfig {
     /**
      * Configures Jetpack Compose for Android modules.
      */
-    fun Project.configureComposeWithDependencies(
+    fun Project.configureComposeBuildFeaturesEnabled(
         commonExtension: CommonExtension<*, *, *, *, *, *>
     ) {
         commonExtension.apply {
