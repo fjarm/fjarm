@@ -58,12 +58,11 @@ jobs:
               while [[ "$DIR" != "android" && "$DIR" != "." ]]; do
                 if [ -f "$DIR/build.gradle.kts" ]; then
                   # Check if this module uses Compose
-                  if grep -q "compose" "$DIR/build.gradle.kts"; then
-                    # Convert file path (android/feature/auth/impl) to Gradle path (:android:feature:auth:impl)
+                  if grep -E -q "compose|composable" "$DIR/build.gradle.kts"; then
                     GRADLE_PATH=$(echo "$DIR" | sed 's|/|:|g' | sed 's|^|:|')
                     COMPOSE_MODULES_SET="$COMPOSE_MODULES_SET $GRADLE_PATH"
+                    break # Found the module
                   fi
-                  break # Found the module, move to next file
                 fi
                 DIR=$(dirname "$DIR")
               done
@@ -127,7 +126,6 @@ jobs:
           IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
           for module in "${MODULES[@]}"; do
             echo "Building base $module with metrics..."
-            # REMOVED the extra ':' before $module
             ./gradlew clean $module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build base $module"
           done
           
