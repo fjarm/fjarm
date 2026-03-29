@@ -101,12 +101,22 @@ jobs:
           IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
           for module in "${MODULES[@]}"; do
             MODULE_PATH=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
-
-            ACTUAL_METRICS_DIR=$(find "$MODULE_PATH/build/compose_compiler" -name "*-composables.txt" -exec dirname {} + | head -n 1)
-            if [ -n "$ACTUAL_METRICS_DIR" ] && [ -d "$ACTUAL_METRICS_DIR" ]; then
-              SAFE_NAME=$(echo "$module" | sed 's|:|__|g')
+            SAFE_NAME=$(echo "$module" | sed 's|:|__|g')
+      
+            # Find any composables.txt file inside this module's build dir
+            ACTUAL_FILE=$(find "$MODULE_PATH/build" -name "*-composables.txt" | head -n 1)
+            if [ -f "$ACTUAL_FILE" ]; then
+              METRICS_DIR=$(dirname "$ACTUAL_FILE")
               mkdir -p "/tmp/pr-metrics/$SAFE_NAME"
-              cp -r "$ACTUAL_METRICS_DIR"/* "/tmp/pr-metrics/$SAFE_NAME/"
+              cp -r "$METRICS_DIR"/* "/tmp/pr-metrics/$SAFE_NAME/"
+              # Rename the files to match the SAFE_NAME to prevent 'impl' collisions
+              # This ensures 'android__feature__login__impl-composables.txt'
+              cd "/tmp/pr-metrics/$SAFE_NAME/"
+              OLD_PREFIX=$(ls *-composables.txt | sed 's/-composables.txt//')
+              for f in $OLD_PREFIX*; do
+                mv "$f" "${f/$OLD_PREFIX/$SAFE_NAME}"
+              done
+              cd -
             fi
           done
           
@@ -168,56 +178,60 @@ jobs:
           # Function to analyze a single module
           analyze_module() {
             local module=$1
-            # Use the same safe name mapping as above
             local safe_name=$(echo "$module" | sed 's|:|__|g')
             local pr_dir="/tmp/pr-metrics/$safe_name"
-
-            # Convert Gradle path back to file path for the base_dir
             local module_path=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
-            # FIND the base directory dynamically
-            local base_dir=$(find "$module_path/build/compose_compiler" -name "*-composables.txt" -exec dirname {} + | head -n 1)
 
-            # Check if base_dir exists, if not, base metrics stay 0
-            if [ -z "$base_dir" ]; then
-              echo "\n⚠️ Base metrics not found for $module\n"
+            # Find base metrics anywhere in the module's build directory
+            # This handles both build/compose_compiler and build/compose_compiler/release
+            local base_file=$(find "$module_path/build" -name "*-composables.txt" | head -n 1)
+
+            if [ -z "$base_file" ]; then
+              echo -e "\n⚠️ Base metrics not found for $module (searched $module_path/build)\n"
+              # Don't return yet, we can still show PR metrics
+              local base_dir=""
+              local base_prefix=""
+            else
+              local base_dir=$(dirname "$base_file")
+              local base_prefix=$(basename "$base_file" "-composables.txt")
             fi
 
-            # Find the metrics file prefix
-            local prefix=$(ls "$pr_dir" 2>/dev/null | grep -o '^[^-]*' | head -1)
+            # The PR prefix is now our SAFE_NAME because we renamed it above
+            local pr_prefix="$safe_name"
 
-            if [ -z "$prefix" ]; then
-              echo "\n⚠️ No metrics found for $module\n"
+            if [ ! -d "$pr_dir" ]; then
+              echo -e "\n⚠️ No PR metrics found for $module\n"
               return
             fi
-            
-            # PR Metrics
-            local pr_composables="$pr_dir/${prefix}-composables.txt"
-            local pr_classes="$pr_dir/${prefix}-classes.txt"
-            
-            # Base Metrics
-            local base_composables="$base_dir/${prefix}-composables.txt"
-            local base_classes="$base_dir/${prefix}-classes.txt"
-            
+
+            # PR Metrics paths
+            local pr_composables="$pr_dir/${pr_prefix}-composables.txt"
+            local pr_classes="$pr_dir/${pr_prefix}-classes.txt"
+
+            # Base Metrics paths (using the detected base_prefix)
+            local base_composables="$base_dir/${base_prefix}-composables.txt"
+            local base_classes="$base_dir/${base_prefix}-classes.txt"
+
             # Count metrics
             PR_RESTARTABLE=$(count_pattern "$pr_composables" "restartable")
             PR_SKIPPABLE=$(count_pattern "$pr_composables" "skippable")
             PR_TOTAL=$(count_pattern "$pr_composables" "fun ")
             PR_STABLE=$(count_pattern "$pr_classes" "stable class")
             PR_UNSTABLE=$(count_pattern "$pr_classes" "unstable class")
-            
+
             BASE_RESTARTABLE=$(count_pattern "$base_composables" "restartable")
             BASE_SKIPPABLE=$(count_pattern "$base_composables" "skippable")
             BASE_TOTAL=$(count_pattern "$base_composables" "fun ")
             BASE_STABLE=$(count_pattern "$base_classes" "stable class")
             BASE_UNSTABLE=$(count_pattern "$base_classes" "unstable class")
-            
+
             # Calculate differences
             DIFF_TOTAL=$(calc_diff $PR_TOTAL $BASE_TOTAL)
             DIFF_RESTARTABLE=$(calc_diff $PR_RESTARTABLE $BASE_RESTARTABLE)
             DIFF_SKIPPABLE=$(calc_diff $PR_SKIPPABLE $BASE_SKIPPABLE)
             DIFF_STABLE=$(calc_diff $PR_STABLE $BASE_STABLE)
             DIFF_UNSTABLE=$(calc_diff $PR_UNSTABLE $BASE_UNSTABLE)
-            
+
             # Create module section
             echo ""
             echo "### 📦 \`$module\`"
@@ -229,7 +243,7 @@ jobs:
             echo "| Skippable | $BASE_SKIPPABLE | $PR_SKIPPABLE | $(format_diff $DIFF_SKIPPABLE) |"
             echo "| **Stable Classes** | $BASE_STABLE | $PR_STABLE | $(format_diff $DIFF_STABLE) |"
             echo "| **Unstable Classes** | $BASE_UNSTABLE | $PR_UNSTABLE | $(format_diff $DIFF_UNSTABLE) |"
-            
+
             # Check for concerning changes
             if [ $DIFF_UNSTABLE -gt 0 ] || [ $DIFF_SKIPPABLE -lt 0 ]; then
               echo ""
@@ -241,7 +255,7 @@ jobs:
               fi
             fi
           }
-          
+
           # Process all modules
           REPORT=""
           IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
@@ -250,7 +264,7 @@ jobs:
             REPORT+="$MODULE_REPORT"
             REPORT+=$'\n'
           done
-          
+
           # Save report
           echo "report<<EOF" >> $GITHUB_OUTPUT
           echo "$REPORT" >> $GITHUB_OUTPUT
