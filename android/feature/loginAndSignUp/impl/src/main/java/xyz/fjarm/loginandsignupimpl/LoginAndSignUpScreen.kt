@@ -31,10 +31,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import xyz.fjarm.buttons.FjarmButton
 import xyz.fjarm.buttons.FjarmOutlinedButton
 import xyz.fjarm.fjarmtheme.FjarmTheme
-import xyz.fjarm.fjarmtheme.FjarmTypography
 import xyz.fjarm.previews.PreviewFontScales
 import xyz.fjarm.previews.PreviewLightDarkTheme
 import xyz.fjarm.previews.PreviewPhoneSizes
+import xyz.fjarm.text.FjarmHeaderText
+import xyz.fjarm.text.FjarmSubtitleText
 
 @Composable
 fun LoginAndSignUpScreen(
@@ -104,19 +105,15 @@ private fun LoginAndSignUpContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // 1. Header
-                Text(
+                FjarmHeaderText(
                     text = titleLine,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    style = FjarmTypography.headlineLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                    ),
                 )
-                Text(
+                FjarmSubtitleText(
                     text = subtitleLine,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    style = FjarmTypography.bodyLarge,
                 )
 
                 // 2. Illustration (Takes up all available remaining space)

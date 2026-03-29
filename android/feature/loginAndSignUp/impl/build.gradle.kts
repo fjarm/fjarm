@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":android:library:fjarmTheme"))
     implementation(project(":android:library:navigation"))
     implementation(project(":android:library:previews"))
+    implementation(project(":android:library:text"))
 
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.hilt.hilt.navigation.compose)
