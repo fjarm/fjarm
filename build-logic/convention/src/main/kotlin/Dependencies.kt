@@ -27,9 +27,10 @@ internal object Dependencies {
             add("implementation", catalog.findLibrary("androidx.compose.runtime").get())
             add("implementation", catalog.findLibrary("androidx.compose.ui.tooling.preview").get())
 
-            // Debug/Testing
+            // Needed for Previews to work correctly
             add("debugImplementation", catalog.findLibrary("androidx.compose.ui.tooling").get())
-            add("androidTestImplementation", catalog.findLibrary("androidx.compose.ui.test.junit4").get())
+            // Needed to provide createAndroidComposeRule
+            add("testDebugImplementation", catalog.findLibrary("androidx.compose.ui.test.junit4").get())
         }
     }
 

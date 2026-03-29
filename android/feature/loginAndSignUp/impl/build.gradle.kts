@@ -34,7 +34,6 @@ dependencies {
 
     debugImplementation(project(":android:library:testActivity"))
 
-    testDebugImplementation(libs.androidx.compose.ui.test.junit4)
     testDebugImplementation(libs.org.robolectric.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)
 }

@@ -10,6 +10,9 @@ plugins {
 
     // Use the ComposeCompilerMetricsConventionPlugin to enable Compose Compiler Metrics
     id("convention.compose.metrics")
+
+    // Use the RoborazziConventionPlugin to enable Roborazzi tests
+    id("convention.roborazzi")
 }
 
 android {
@@ -21,4 +24,9 @@ dependencies {
     implementation(project(":android:library:previews"))
 
     implementation(libs.androidx.compose.material3)
+
+    debugImplementation(project(":android:library:testActivity"))
+
+    testDebugImplementation(libs.org.robolectric.robolectric)
+    testDebugImplementation(libs.kotlinx.coroutines.test)
 }
