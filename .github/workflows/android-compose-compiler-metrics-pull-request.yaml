@@ -100,15 +100,13 @@ jobs:
           mkdir -p /tmp/pr-metrics
           IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
           for module in "${MODULES[@]}"; do
-            # Convert Gradle path (:android:feature:auth:impl) to file path (android/feature/auth/impl)
             MODULE_PATH=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
-            
-            METRICS_DIR="$MODULE_PATH/build/compose_compiler"
-            if [ -d "$METRICS_DIR" ]; then
-              # Use a safe folder name for /tmp (replace colons with underscores)
+
+            ACTUAL_METRICS_DIR=$(find "$MODULE_PATH/build/compose_compiler" -name "*-composables.txt" -exec dirname {} + | head -n 1)
+            if [ -n "$ACTUAL_METRICS_DIR" ] && [ -d "$ACTUAL_METRICS_DIR" ]; then
               SAFE_NAME=$(echo "$module" | sed 's|:|__|g')
               mkdir -p "/tmp/pr-metrics/$SAFE_NAME"
-              cp -r "$METRICS_DIR"/* "/tmp/pr-metrics/$SAFE_NAME/"
+              cp -r "$ACTUAL_METRICS_DIR"/* "/tmp/pr-metrics/$SAFE_NAME/"
             fi
           done
           
@@ -176,7 +174,13 @@ jobs:
 
             # Convert Gradle path back to file path for the base_dir
             local module_path=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
-            local base_dir="$module_path/build/compose_compiler"
+            # FIND the base directory dynamically
+            local base_dir=$(find "$module_path/build/compose_compiler" -name "*-composables.txt" -exec dirname {} + | head -n 1)
+
+            # Check if base_dir exists, if not, base metrics stay 0
+            if [ -z "$base_dir" ]; then
+              echo "⚠️ Base metrics not found for $module"
+            fi
 
             # Find the metrics file prefix
             local prefix=$(ls "$pr_dir" 2>/dev/null | grep -o '^[^-]*' | head -1)
