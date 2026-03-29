@@ -17,7 +17,6 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import xyz.fjarm.testactivity.TestActivity
-import kotlin.intArrayOf
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltAndroidTest
