@@ -179,14 +179,14 @@ jobs:
 
             # Check if base_dir exists, if not, base metrics stay 0
             if [ -z "$base_dir" ]; then
-              echo "⚠️ Base metrics not found for $module"
+              echo "\n⚠️ Base metrics not found for $module\n"
             fi
 
             # Find the metrics file prefix
             local prefix=$(ls "$pr_dir" 2>/dev/null | grep -o '^[^-]*' | head -1)
 
             if [ -z "$prefix" ]; then
-              echo "⚠️ No metrics found for $module"
+              echo "\n⚠️ No metrics found for $module\n"
               return
             fi
             
