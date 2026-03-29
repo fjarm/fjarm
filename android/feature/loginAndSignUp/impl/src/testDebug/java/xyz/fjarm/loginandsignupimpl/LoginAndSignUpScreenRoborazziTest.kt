@@ -2,7 +2,6 @@ package xyz.fjarm.loginandsignupimpl
 
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.github.takahirom.roborazzi.captureRoboImage
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -40,10 +39,7 @@ class LoginAndSignUpScreenRoborazziTest {
     fun roborazziTest() = runTest {
 
         composeTestRule.setContent {
-            val viewModel = hiltViewModel<LoginAndSignUpViewModel>()
-            LoginAndSignUpScreen(
-                viewModel = viewModel
-            )
+            LoginAndSignUpScreen()
         }
 
         composeTestRule.waitForIdle()
