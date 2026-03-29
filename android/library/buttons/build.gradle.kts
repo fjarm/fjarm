@@ -20,8 +20,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":android:library:fjarmTheme"))
-
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)
 
