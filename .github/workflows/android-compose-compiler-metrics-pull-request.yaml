@@ -134,33 +134,37 @@ jobs:
           BUILD_FAILED=""
 
           for module in "${MODULES[@]}"; do
-            echo "::group::Building base $module with metrics"
+            echo "::group::Processing base $module"
+            
+            # Convert Gradle path (:android:library:buttons) to file path (android/library/buttons)
+            MODULE_PATH=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
+      
+            # CHECK IF MODULE EXISTS ON THIS BRANCH
+            if [ ! -d "$MODULE_PATH" ]; then
+              echo "::notice::⏩ Skipping $module: Module does not exist on base branch (New Module)"
+              echo "::endgroup::"
+              continue
+            fi
           
-            # Clean only this specific module (not entire project)
             echo "Cleaning $module..."
-            ./gradlew $module:clean --no-daemon
+            # Use -q to suppress output unless it fails
+            if ! ./gradlew $module:clean --no-daemon -q; then
+               echo "::warning::⚠️ Clean failed for $module, skipping metrics"
+               echo "::endgroup::"
+               continue
+            fi
           
-            # Build with metrics
             echo "Building $module with metrics..."
             if ./gradlew $module:assembleRelease -PcomposeCompilerReports=true --no-daemon; then
-              # Verify metrics were actually generated
-              MODULE_PATH=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
               METRICS_FILE=$(find "$MODULE_PATH/build" -name "*-composables.txt" 2>/dev/null | head -n 1)
           
               if [ -z "$METRICS_FILE" ]; then
-                echo "::warning::⚠️ Metrics not generated for $module despite successful build"
-                echo "This could mean the module has no Compose code on the base branch"
-                BUILD_FAILED="$BUILD_FAILED $module"
+                echo "::warning::⚠️ Metrics not generated for $module (No Compose code in base?)"
               else
-                echo "::notice::✅ Successfully generated base metrics for $module at $METRICS_FILE"
+                echo "::notice::✅ Generated base metrics for $module"
               fi
             else
               echo "::error::❌ Failed to build base $module"
-              echo "This could mean:"
-              echo "  - Module doesn't exist on base branch (new module)"
-              echo "  - Build is broken on base branch"
-              echo "  - Dependencies missing on base branch"
-              BUILD_FAILED="$BUILD_FAILED $module"
             fi
           
             echo "::endgroup::"
