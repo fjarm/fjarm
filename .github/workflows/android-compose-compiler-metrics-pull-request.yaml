@@ -28,17 +28,17 @@ jobs:
         name: Checkout repo
         with:
           fetch-depth: 0  # Need full history to detect changes
-        
+
       - uses: actions/setup-java@v5
         name: Set up JDK 21
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
-          
+
       - uses: gradle/actions/setup-gradle@v5
         name: Set up Gradle
-      
+
       - name: Detect changed modules
         id: detect-modules
         run: |
@@ -47,13 +47,13 @@ jobs:
 
           echo "Changed files detected."          
           COMPOSE_MODULES_SET=""
-      
+          
           for file in $CHANGED_FILES; do
             # Only look at files inside the android/ directory
             if [[ "$file" == android/* ]]; then
               # Find the directory containing the file
               DIR=$(dirname "$file")
-              
+          
               # Traverse up until we find a build.gradle.kts or reach the 'android' root
               while [[ "$DIR" != "android" && "$DIR" != "." ]]; do
                 if [ -f "$DIR/build.gradle.kts" ]; then
@@ -83,7 +83,7 @@ jobs:
             echo "modules=$MODULES_CSV" >> $GITHUB_OUTPUT
             echo "has_modules=true" >> $GITHUB_OUTPUT
           fi
-          
+
       - name: Generate PR metrics for changed modules
         if: steps.detect-modules.outputs.has_modules == 'true'
         run: |
@@ -93,7 +93,7 @@ jobs:
             # $module already contains the leading colon from our script above
             ./gradlew $module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build $module"
           done
-          
+
       - name: Save PR metrics
         if: steps.detect-modules.outputs.has_modules == 'true'
         run: |
@@ -102,7 +102,7 @@ jobs:
           for module in "${MODULES[@]}"; do
             MODULE_PATH=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
             SAFE_NAME=$(echo "$module" | sed 's|:|__|g')
-      
+          
             # Find any composables.txt file inside this module's build dir
             ACTUAL_FILE=$(find "$MODULE_PATH/build" -name "*-composables.txt" | head -n 1)
             if [ -f "$ACTUAL_FILE" ]; then
@@ -119,24 +119,62 @@ jobs:
               cd -
             fi
           done
-          
+
       - uses: actions/checkout@v4
         name: Checkout base branch
         if: steps.detect-modules.outputs.has_modules == 'true'
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           clean: true
-          
+
       - name: Generate base metrics for changed modules
         if: steps.detect-modules.outputs.has_modules == 'true'
-        continue-on-error: true
         run: |
           IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
+          BUILD_FAILED=""
+
           for module in "${MODULES[@]}"; do
-            echo "Building base $module with metrics..."
-            ./gradlew clean $module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build base $module"
+            echo "::group::Building base $module with metrics"
+          
+            # Clean only this specific module (not entire project)
+            echo "Cleaning $module..."
+            ./gradlew $module:clean --no-daemon
+          
+            # Build with metrics
+            echo "Building $module with metrics..."
+            if ./gradlew $module:assembleRelease -PcomposeCompilerReports=true --no-daemon; then
+              # Verify metrics were actually generated
+              MODULE_PATH=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
+              METRICS_FILE=$(find "$MODULE_PATH/build" -name "*-composables.txt" 2>/dev/null | head -n 1)
+          
+              if [ -z "$METRICS_FILE" ]; then
+                echo "::warning::⚠️ Metrics not generated for $module despite successful build"
+                echo "This could mean the module has no Compose code on the base branch"
+                BUILD_FAILED="$BUILD_FAILED $module"
+              else
+                echo "::notice::✅ Successfully generated base metrics for $module at $METRICS_FILE"
+              fi
+            else
+              echo "::error::❌ Failed to build base $module"
+              echo "This could mean:"
+              echo "  - Module doesn't exist on base branch (new module)"
+              echo "  - Build is broken on base branch"
+              echo "  - Dependencies missing on base branch"
+              BUILD_FAILED="$BUILD_FAILED $module"
+            fi
+          
+            echo "::endgroup::"
           done
           
+          # Log summary of failures
+          if [ -n "$BUILD_FAILED" ]; then
+            echo "::warning::📊 Base metrics generation incomplete"
+            echo "::warning::Modules with missing base metrics:$BUILD_FAILED"
+            echo "::warning::These modules will show 0 in the Base column of the comparison"
+          else
+            echo "::notice::✅ Base metrics generated successfully for all modules"
+          fi
+
       - name: Compare metrics per module
         if: steps.detect-modules.outputs.has_modules == 'true'
         id: compare
@@ -269,7 +307,7 @@ jobs:
           echo "report<<EOF" >> $GITHUB_OUTPUT
           echo "$REPORT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-          
+
       - uses: actions/github-script@v8
         name: Comment PR with report
         if: steps.detect-modules.outputs.has_modules == 'true'
@@ -332,7 +370,7 @@ jobs:
                 body: summary
               });
             }
-            
+
       - name: No Compose Modules Changed
         if: steps.detect-modules.outputs.has_modules == 'false'
         run: |
