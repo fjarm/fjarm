@@ -1,6 +1,6 @@
 import AndroidConfig.configureAndroid
 import Dependencies.addCommonAndroidDependencies
-import KotlinConfig.configureKotlin
+import KotlinConfig.configureKotlinCompilerArgsAndJVMToolchain
 import com.android.build.api.dsl.LibraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -54,7 +54,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             }
 
             // Configure Kotlin
-            configureKotlin()
+            configureKotlinCompilerArgsAndJVMToolchain()
 
             // Add common dependencies
             addCommonAndroidDependencies()

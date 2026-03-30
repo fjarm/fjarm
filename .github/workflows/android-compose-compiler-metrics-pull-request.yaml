@@ -28,17 +28,17 @@ jobs:
         name: Checkout repo
         with:
           fetch-depth: 0  # Need full history to detect changes
-        
+
       - uses: actions/setup-java@v5
         name: Set up JDK 21
         with:
           java-version: '21'
           distribution: 'temurin'
           cache: 'gradle'
-          
+
       - uses: gradle/actions/setup-gradle@v5
         name: Set up Gradle
-      
+
       - name: Detect changed modules
         id: detect-modules
         run: |
@@ -47,23 +47,22 @@ jobs:
 
           echo "Changed files detected."          
           COMPOSE_MODULES_SET=""
-      
+
           for file in $CHANGED_FILES; do
             # Only look at files inside the android/ directory
             if [[ "$file" == android/* ]]; then
               # Find the directory containing the file
               DIR=$(dirname "$file")
-              
+          
               # Traverse up until we find a build.gradle.kts or reach the 'android' root
               while [[ "$DIR" != "android" && "$DIR" != "." ]]; do
                 if [ -f "$DIR/build.gradle.kts" ]; then
                   # Check if this module uses Compose
-                  if grep -q "compose" "$DIR/build.gradle.kts"; then
-                    # Convert file path (android/feature/auth/impl) to Gradle path (:android:feature:auth:impl)
+                  if grep -E -q "compose|composable" "$DIR/build.gradle.kts"; then
                     GRADLE_PATH=$(echo "$DIR" | sed 's|/|:|g' | sed 's|^|:|')
                     COMPOSE_MODULES_SET="$COMPOSE_MODULES_SET $GRADLE_PATH"
+                    break # Found the module
                   fi
-                  break # Found the module, move to next file
                 fi
                 DIR=$(dirname "$DIR")
               done
@@ -84,7 +83,7 @@ jobs:
             echo "modules=$MODULES_CSV" >> $GITHUB_OUTPUT
             echo "has_modules=true" >> $GITHUB_OUTPUT
           fi
-          
+
       - name: Generate PR metrics for changed modules
         if: steps.detect-modules.outputs.has_modules == 'true'
         run: |
@@ -94,43 +93,92 @@ jobs:
             # $module already contains the leading colon from our script above
             ./gradlew $module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build $module"
           done
-          
+
       - name: Save PR metrics
         if: steps.detect-modules.outputs.has_modules == 'true'
         run: |
           mkdir -p /tmp/pr-metrics
           IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
           for module in "${MODULES[@]}"; do
-            # Convert Gradle path (:android:feature:auth:impl) to file path (android/feature/auth/impl)
             MODULE_PATH=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
-            
-            METRICS_DIR="$MODULE_PATH/build/compose_compiler"
-            if [ -d "$METRICS_DIR" ]; then
-              # Use a safe folder name for /tmp (replace colons with underscores)
-              SAFE_NAME=$(echo "$module" | sed 's|:|__|g')
+            SAFE_NAME=$(echo "$module" | sed 's|:|__|g')
+          
+            # Find any composables.txt file inside this module's build dir
+            ACTUAL_FILE=$(find "$MODULE_PATH/build" -name "*-composables.txt" | head -n 1)
+            if [ -f "$ACTUAL_FILE" ]; then
+              METRICS_DIR=$(dirname "$ACTUAL_FILE")
               mkdir -p "/tmp/pr-metrics/$SAFE_NAME"
               cp -r "$METRICS_DIR"/* "/tmp/pr-metrics/$SAFE_NAME/"
+              # Rename the files to match the SAFE_NAME to prevent 'impl' collisions
+              # This ensures 'android__feature__login__impl-composables.txt'
+              cd "/tmp/pr-metrics/$SAFE_NAME/"
+              OLD_PREFIX=$(ls *-composables.txt | sed 's/-composables.txt//')
+              for f in $OLD_PREFIX*; do
+                mv "$f" "${f/$OLD_PREFIX/$SAFE_NAME}"
+              done
+              cd -
             fi
           done
-          
+
       - uses: actions/checkout@v4
         name: Checkout base branch
         if: steps.detect-modules.outputs.has_modules == 'true'
         with:
           ref: ${{ github.event.pull_request.base.sha }}
           clean: true
-          
+
       - name: Generate base metrics for changed modules
         if: steps.detect-modules.outputs.has_modules == 'true'
-        continue-on-error: true
         run: |
           IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
+          BUILD_FAILED=""
+
           for module in "${MODULES[@]}"; do
-            echo "Building base $module with metrics..."
-            # REMOVED the extra ':' before $module
-            ./gradlew clean $module:assembleRelease -PcomposeCompilerReports=true --no-daemon || echo "Failed to build base $module"
+            echo "::group::Processing base $module"
+            
+            # Convert Gradle path (:android:library:buttons) to file path (android/library/buttons)
+            MODULE_PATH=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
+      
+            # CHECK IF MODULE EXISTS ON THIS BRANCH
+            if [ ! -d "$MODULE_PATH" ]; then
+              echo "::notice::⏩ Skipping $module: Module does not exist on base branch (New Module)"
+              echo "::endgroup::"
+              continue
+            fi
+          
+            echo "Cleaning $module..."
+            # Use -q to suppress output unless it fails
+            if ! ./gradlew $module:clean --no-daemon -q; then
+               echo "::warning::⚠️ Clean failed for $module, skipping metrics"
+               echo "::endgroup::"
+               continue
+            fi
+          
+            echo "Building $module with metrics..."
+            if ./gradlew $module:assembleRelease -PcomposeCompilerReports=true --no-daemon; then
+              METRICS_FILE=$(find "$MODULE_PATH/build" -name "*-composables.txt" 2>/dev/null | head -n 1)
+          
+              if [ -z "$METRICS_FILE" ]; then
+                echo "::warning::⚠️ Metrics not generated for $module (No Compose code in base?)"
+              else
+                echo "::notice::✅ Generated base metrics for $module"
+              fi
+            else
+              echo "::error::❌ Failed to build base $module"
+            fi
+          
+            echo "::endgroup::"
           done
           
+          # Log summary of failures
+          if [ -n "$BUILD_FAILED" ]; then
+            echo "::warning::📊 Base metrics generation incomplete"
+            echo "::warning::Modules with missing base metrics:$BUILD_FAILED"
+            echo "::warning::These modules will show 0 in the Base column of the comparison"
+          else
+            echo "::notice::✅ Base metrics generated successfully for all modules"
+          fi
+
       - name: Compare metrics per module
         if: steps.detect-modules.outputs.has_modules == 'true'
         id: compare
@@ -172,50 +220,60 @@ jobs:
           # Function to analyze a single module
           analyze_module() {
             local module=$1
-            # Use the same safe name mapping as above
             local safe_name=$(echo "$module" | sed 's|:|__|g')
             local pr_dir="/tmp/pr-metrics/$safe_name"
-
-            # Convert Gradle path back to file path for the base_dir
             local module_path=$(echo "$module" | sed 's|^:||' | sed 's|:|/|g')
-            local base_dir="$module_path/build/compose_compiler"
 
-            # Find the metrics file prefix
-            local prefix=$(ls "$pr_dir" 2>/dev/null | grep -o '^[^-]*' | head -1)
+            # Find base metrics anywhere in the module's build directory
+            # This handles both build/compose_compiler and build/compose_compiler/release
+            local base_file=$(find "$module_path/build" -name "*-composables.txt" | head -n 1)
 
-            if [ -z "$prefix" ]; then
-              echo "⚠️ No metrics found for $module"
+            if [ -z "$base_file" ]; then
+              echo -e "\n⚠️ Base metrics not found for $module (searched $module_path/build)\n"
+              # Don't return yet, we can still show PR metrics
+              local base_dir=""
+              local base_prefix=""
+            else
+              local base_dir=$(dirname "$base_file")
+              local base_prefix=$(basename "$base_file" "-composables.txt")
+            fi
+
+            # The PR prefix is now our SAFE_NAME because we renamed it above
+            local pr_prefix="$safe_name"
+
+            if [ ! -d "$pr_dir" ]; then
+              echo -e "\n⚠️ No PR metrics found for $module\n"
               return
             fi
-            
-            # PR Metrics
-            local pr_composables="$pr_dir/${prefix}-composables.txt"
-            local pr_classes="$pr_dir/${prefix}-classes.txt"
-            
-            # Base Metrics
-            local base_composables="$base_dir/${prefix}-composables.txt"
-            local base_classes="$base_dir/${prefix}-classes.txt"
-            
+
+            # PR Metrics paths
+            local pr_composables="$pr_dir/${pr_prefix}-composables.txt"
+            local pr_classes="$pr_dir/${pr_prefix}-classes.txt"
+
+            # Base Metrics paths (using the detected base_prefix)
+            local base_composables="$base_dir/${base_prefix}-composables.txt"
+            local base_classes="$base_dir/${base_prefix}-classes.txt"
+
             # Count metrics
             PR_RESTARTABLE=$(count_pattern "$pr_composables" "restartable")
             PR_SKIPPABLE=$(count_pattern "$pr_composables" "skippable")
             PR_TOTAL=$(count_pattern "$pr_composables" "fun ")
             PR_STABLE=$(count_pattern "$pr_classes" "stable class")
             PR_UNSTABLE=$(count_pattern "$pr_classes" "unstable class")
-            
+
             BASE_RESTARTABLE=$(count_pattern "$base_composables" "restartable")
             BASE_SKIPPABLE=$(count_pattern "$base_composables" "skippable")
             BASE_TOTAL=$(count_pattern "$base_composables" "fun ")
             BASE_STABLE=$(count_pattern "$base_classes" "stable class")
             BASE_UNSTABLE=$(count_pattern "$base_classes" "unstable class")
-            
+
             # Calculate differences
             DIFF_TOTAL=$(calc_diff $PR_TOTAL $BASE_TOTAL)
             DIFF_RESTARTABLE=$(calc_diff $PR_RESTARTABLE $BASE_RESTARTABLE)
             DIFF_SKIPPABLE=$(calc_diff $PR_SKIPPABLE $BASE_SKIPPABLE)
             DIFF_STABLE=$(calc_diff $PR_STABLE $BASE_STABLE)
             DIFF_UNSTABLE=$(calc_diff $PR_UNSTABLE $BASE_UNSTABLE)
-            
+
             # Create module section
             echo ""
             echo "### 📦 \`$module\`"
@@ -227,7 +285,7 @@ jobs:
             echo "| Skippable | $BASE_SKIPPABLE | $PR_SKIPPABLE | $(format_diff $DIFF_SKIPPABLE) |"
             echo "| **Stable Classes** | $BASE_STABLE | $PR_STABLE | $(format_diff $DIFF_STABLE) |"
             echo "| **Unstable Classes** | $BASE_UNSTABLE | $PR_UNSTABLE | $(format_diff $DIFF_UNSTABLE) |"
-            
+
             # Check for concerning changes
             if [ $DIFF_UNSTABLE -gt 0 ] || [ $DIFF_SKIPPABLE -lt 0 ]; then
               echo ""
@@ -239,7 +297,7 @@ jobs:
               fi
             fi
           }
-          
+
           # Process all modules
           REPORT=""
           IFS=',' read -ra MODULES <<< "${{ steps.detect-modules.outputs.modules }}"
@@ -248,12 +306,12 @@ jobs:
             REPORT+="$MODULE_REPORT"
             REPORT+=$'\n'
           done
-          
+
           # Save report
           echo "report<<EOF" >> $GITHUB_OUTPUT
           echo "$REPORT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-          
+
       - uses: actions/github-script@v8
         name: Comment PR with report
         if: steps.detect-modules.outputs.has_modules == 'true'
@@ -316,7 +374,7 @@ jobs:
                 body: summary
               });
             }
-            
+
       - name: No Compose Modules Changed
         if: steps.detect-modules.outputs.has_modules == 'false'
         run: |

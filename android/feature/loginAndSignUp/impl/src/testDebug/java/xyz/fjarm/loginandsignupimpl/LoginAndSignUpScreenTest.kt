@@ -48,7 +48,7 @@ class LoginAndSignUpScreenTest {
         composeTestRule.setContent {
             viewModel = hiltViewModel<LoginAndSignUpViewModel>()
             LoginAndSignUpScreen(
-                viewModel = viewModel
+                viewModel = viewModel,
             )
         }
 

@@ -14,22 +14,22 @@ import org.jetbrains.kotlin.compose.compiler.gradle.ComposeCompilerGradlePluginE
  * To generate metrics, run Gradle with the flag:
  *   ./gradlew assembleRelease -PcomposeCompilerReports=true
  */
-class ComposeCompilerMetricsConventionPlugin : Plugin<Project> {
+class ComposeCompilerMetricsConventionPlugin: Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             // Ensure the Android library plugin is applied
             pluginManager.withPlugin("com.android.library") {
-                configureComposeMetrics()
+                configureComposeMetricsOutputDir()
             }
 
             // Also support Android application modules
             pluginManager.withPlugin("com.android.application") {
-                configureComposeMetrics()
+                configureComposeMetricsOutputDir()
             }
         }
     }
 
-    private fun Project.configureComposeMetrics() {
+    private fun Project.configureComposeMetricsOutputDir() {
         // Check if Compose Compiler plugin is applied
         pluginManager.withPlugin("org.jetbrains.kotlin.plugin.compose") {
 

@@ -27,9 +27,10 @@ internal object Dependencies {
             add("implementation", catalog.findLibrary("androidx.compose.runtime").get())
             add("implementation", catalog.findLibrary("androidx.compose.ui.tooling.preview").get())
 
-            // Debug/Testing
+            // Needed for Previews to work correctly
             add("debugImplementation", catalog.findLibrary("androidx.compose.ui.tooling").get())
-            add("androidTestImplementation", catalog.findLibrary("androidx.compose.ui.test.junit4").get())
+            // Needed to provide createAndroidComposeRule
+            add("testDebugImplementation", catalog.findLibrary("androidx.compose.ui.test.junit4").get())
         }
     }
 
@@ -50,6 +51,13 @@ internal object Dependencies {
 
             add("kspTest", catalog.findLibrary("com.google.dagger.hilt.android.compiler").get())
             add("testImplementation", catalog.findLibrary("com.google.dagger.hilt.android.testing").get())
+        }
+    }
+
+    // Roborazzi dependencies
+    fun Project.addCommonRoborazziDependencies() {
+        dependencies {
+            add("testImplementation", catalog.findLibrary("io.github.takahirom.roborazzi.roborazzi").get())
         }
     }
 }

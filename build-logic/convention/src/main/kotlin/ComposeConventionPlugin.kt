@@ -1,4 +1,4 @@
-import ComposeConfig.configureComposeWithDependencies
+import ComposeConfig.configureComposeBuildFeaturesEnabled
 import Dependencies.addCommonComposeDependencies
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
@@ -40,7 +40,7 @@ import org.gradle.kotlin.dsl.configure
  *       implementation(libs.androidx.lifecycle.viewmodel.compose)
  *   }
  */
-class ComposeConventionPlugin : Plugin<Project> {
+class ComposeConventionPlugin: Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             // Apply Compose Compiler plugin
@@ -49,7 +49,7 @@ class ComposeConventionPlugin : Plugin<Project> {
             // Configure for library modules
             pluginManager.withPlugin("com.android.library") {
                 extensions.configure<LibraryExtension> {
-                    configureComposeWithDependencies(this)
+                    configureComposeBuildFeaturesEnabled(this)
                     addCommonComposeDependencies()
                 }
             }
@@ -57,7 +57,7 @@ class ComposeConventionPlugin : Plugin<Project> {
             // Configure for application modules
             pluginManager.withPlugin("com.android.application") {
                 extensions.configure<ApplicationExtension> {
-                    configureComposeWithDependencies(this)
+                    configureComposeBuildFeaturesEnabled(this)
                     addCommonComposeDependencies()
                 }
             }

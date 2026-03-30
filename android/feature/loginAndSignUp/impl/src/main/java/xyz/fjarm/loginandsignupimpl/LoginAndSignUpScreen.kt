@@ -10,12 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,11 +28,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import xyz.fjarm.buttons.FjarmButton
+import xyz.fjarm.buttons.FjarmOutlinedButton
 import xyz.fjarm.fjarmtheme.FjarmTheme
-import xyz.fjarm.fjarmtheme.FjarmTypography
 import xyz.fjarm.previews.PreviewFontScales
 import xyz.fjarm.previews.PreviewLightDarkTheme
 import xyz.fjarm.previews.PreviewPhoneSizes
+import xyz.fjarm.text.FjarmHeaderText
+import xyz.fjarm.text.FjarmSubtitleText
 
 @Composable
 fun LoginAndSignUpScreen(
@@ -106,19 +105,15 @@ private fun LoginAndSignUpContent(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // 1. Header
-                Text(
+                FjarmHeaderText(
                     text = titleLine,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    style = FjarmTypography.headlineLarge.copy(
-                        fontWeight = FontWeight.Bold,
-                    ),
                 )
-                Text(
+                FjarmSubtitleText(
                     text = subtitleLine,
                     modifier = Modifier
                         .fillMaxWidth(),
-                    style = FjarmTypography.bodyLarge,
                 )
 
                 // 2. Illustration (Takes up all available remaining space)
@@ -137,13 +132,11 @@ private fun LoginAndSignUpContent(
                 }
 
                 // 3. Buttons
-                OutlinedButton(
+                FjarmOutlinedButton(
                     onClick = onJoinClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    shape = RoundedCornerShape(4.dp),
-                    border = ButtonDefaults.outlinedButtonBorder(true).copy(width = 1.dp),
                 ) {
                     Text(
                         text = signUpButtonText,
@@ -152,12 +145,11 @@ private fun LoginAndSignUpContent(
                     )
                 }
 
-                TextButton(
+                FjarmButton(
                     onClick = onLoginClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(56.dp),
-                    shape = RoundedCornerShape(4.dp),
                 ) {
                     Text(
                         text = logInButtonText,

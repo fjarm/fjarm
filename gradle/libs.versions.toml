@@ -39,6 +39,9 @@ navigation3 = "1.0.1"
 ## Robolectric
 robolectric = "4.16.1"
 
+## Roborazzi
+roborazzi = "1.59.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -94,6 +97,10 @@ androidx-navigation3-navigation3-ui = { group = "androidx.navigation3", name = "
 ## Robolectric
 org-robolectric-robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 
+## Roborazzi
+io-github-takahirom-roborazzi-roborazzi = { group = "io.github.takahirom.roborazzi", name = "roborazzi", version.ref = "roborazzi" }
+io-github-takahirom-roborazzi-roborazzi-gradle-plugin = { group = "io.github.takahirom.roborazzi", name = "roborazzi-gradle-plugin", version.ref = "roborazzi" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -115,3 +122,6 @@ kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref =
 
 ## Jetbrains Kotlin JVM
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+
+## Roborazzi
+io-github-takahirom-roborazzi = { id = "io.github.takahirom.roborazzi", version.ref = "roborazzi" }

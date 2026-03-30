@@ -20,4 +20,7 @@ plugins {
 
     // Kotlin JVM plugin
     alias(libs.plugins.jetbrains.kotlin.jvm) apply false
+
+    // Roborazzi plugin
+    alias(libs.plugins.io.github.takahirom.roborazzi) apply false
 }
