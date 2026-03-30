@@ -47,7 +47,7 @@ jobs:
 
           echo "Changed files detected."          
           COMPOSE_MODULES_SET=""
-          
+
           for file in $CHANGED_FILES; do
             # Only look at files inside the android/ directory
             if [[ "$file" == android/* ]]; then
