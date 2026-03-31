@@ -1,6 +1,6 @@
 module github.com/fjarm/fjarm
 
-go 1.25.0
+go 1.26.0
 
 require (
 	buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.19.1-20260119201229-18b1fd639031.2
@@ -18,7 +18,6 @@ require (
 	cel.dev/expr v0.25.1 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/google/cel-go v0.27.0 // indirect
-	github.com/stoewer/go-strcase v1.3.1 // indirect
 	golang.org/x/exp v0.0.0-20260312153236-7ab1446f8b90 // indirect
 	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/text v0.35.0 // indirect
