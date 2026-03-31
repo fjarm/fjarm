@@ -8,9 +8,23 @@ on:
       - main
     paths:
       - "api/**"
+      - ".bazeliskrc"
+      - ".bazelrc"
+      - ".bazelversion"
+      - "BUILD.bazel"
+      - "go.mod"
+      - "go.sum"
+      - "MODULE.bazel"
   pull_request:
     paths:
       - "api/**"
+      - ".bazeliskrc"
+      - ".bazelrc"
+      - ".bazelversion"
+      - "BUILD.bazel"
+      - "go.mod"
+      - "go.sum"
+      - "MODULE.bazel"
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }} # Don't cancel workflow runs on main branch
