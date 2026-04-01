@@ -1,6 +1,6 @@
 load("@aspect_bazel_lib//lib:expand_template.bzl", "expand_template")
-load("@tar.bzl", "mtree_spec", "tar")
 load("@rules_oci//oci:defs.bzl", "oci_image", "oci_image_index", "oci_load", "oci_push")
+load("@tar.bzl", "mtree_spec", "tar")
 
 # Specify a Manual Tree so host-specific metadata like local User ID (UID) isn't captured - ensuring determinism.
 mtree_spec(
