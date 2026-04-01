@@ -2,7 +2,7 @@
 
 Multi-module Android app built following MVI and Clean Architecture.
 
-# Project structure
+## Project structure
 
 The project contains the following top-level Gradle modules:
 
@@ -14,3 +14,19 @@ The project contains the following top-level Gradle modules:
 * `:android:library` - contains Android Library and pure Kotlin Gradle modules that host globally shared code such as `:android:library:navigation` or `:android:library:serverTransport`
 
 `:build-logic` is a special top-level Gradle module that contains convention plugins.
+
+## AGP and Gradle version compatibility
+
+The required AGP version for each Gradle version can be found [at this link](https://developer.android.com/build/releases/about-agp#updating-gradle).
+
+Upgrade Gradle in the CLI like so:
+
+```bash
+./gradlew --gradle-version 9.3.1
+```
+
+The command may need to be run twice.
+
+## Android Studio and AGP version compatibility
+
+The required Android Studio version for each AGP version can be found [at this link](https://developer.android.com/build/releases/about-agp#android_gradle_plugin_and_android_studio_compatibility).
