@@ -7,12 +7,16 @@ on:
     branches:
       - main
     paths:
+      - ".github/workflows/buf-pull-request.yaml"
+      - ".github/workflows/buf-schema-registry-push.yaml"
       - "proto/**"
       - "buf.lock"
       - "buf.yaml"
   pull_request:
     types: [ opened, synchronize, reopened, labeled, unlabeled ]
     paths:
+      - ".github/workflows/buf-pull-request.yaml"
+      - ".github/workflows/buf-schema-registry-push.yaml"
       - "proto/**"
       - "buf.lock"
       - "buf.yaml"
