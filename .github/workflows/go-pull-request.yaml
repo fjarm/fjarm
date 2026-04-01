@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Run `git checkout`
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         name: Checkout repo
       - uses: bazel-contrib/setup-bazel@0.18.0
         name: Install Bazel CLI
