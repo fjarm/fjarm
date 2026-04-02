@@ -10,7 +10,6 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.getSystemService
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -248,8 +247,9 @@ fun FjarmTheme(
     content: @Composable () -> Unit,
 ) {
     val context = LocalContext.current
+    val accessibilityManager = context.getSystemService(AccessibilityManager::class.java)
     val isHighContrastEnabled = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-        context.getSystemService<AccessibilityManager>()?.isHighContrastTextEnabled ?: false
+        accessibilityManager.isHighContrastTextEnabled
     } else {
         false
     }
