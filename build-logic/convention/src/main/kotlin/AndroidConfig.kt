@@ -1,5 +1,7 @@
-//import com.android.build.api.dsl.CommonExtension
-//import org.gradle.api.JavaVersion
+import com.android.build.api.dsl.CommonExtension
+import org.gradle.api.JavaVersion
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
 
 /**
  * Shared Android configuration for both library and application modules.
@@ -12,31 +14,28 @@ internal object AndroidConfig {
     /**
      * Configures common Android settings for both app and library modules.
      */
-//    fun configureAndroid(
-//        commonExtension: CommonExtension<*, *, *, *, *, *>
-//    ) {
-//        commonExtension.apply {
-//            compileSdk = targetSDK
-//
-//            defaultConfig {
-//                minSdk = minSDK
-//                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-//            }
-//
-//            compileOptions {
-//                sourceCompatibility = JavaVersion.VERSION_21
-//                targetCompatibility = JavaVersion.VERSION_21
-//            }
-//
-//            buildTypes {
-//                getByName("release") {
-//                    isMinifyEnabled = false
-//                    proguardFiles(
-//                        getDefaultProguardFile("proguard-android-optimize.txt"),
-//                        "proguard-rules.pro",
-//                    )
-//                }
-//            }
-//        }
-//    }
+    fun Project.configureCommonAndroid() {
+        extensions.configure<CommonExtension> {
+            compileSdk = targetSDK
+
+            defaultConfig.apply {
+                minSdk = minSDK
+                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+            }
+
+            compileOptions.apply {
+                sourceCompatibility = JavaVersion.VERSION_21
+                targetCompatibility = JavaVersion.VERSION_21
+            }
+
+            buildTypes.apply {
+                getByName("release") {
+                    proguardFiles(
+                        getDefaultProguardFile("proguard-android-optimize.txt"),
+                        "proguard-rules.pro",
+                    )
+                }
+            }
+        }
+    }
 }
