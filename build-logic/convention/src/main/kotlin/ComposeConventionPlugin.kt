@@ -1,3 +1,4 @@
+import ComposeConfig.configureComposeBuildFeaturesEnabled
 import Dependencies.addCommonComposeDependencies
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.dsl.LibraryExtension
@@ -48,9 +49,7 @@ class ComposeConventionPlugin: Plugin<Project> {
             // Configure for library modules
             pluginManager.withPlugin("com.android.library") {
                 extensions.configure<LibraryExtension> {
-                    buildFeatures {
-                        compose = true
-                    }
+                    configureComposeBuildFeaturesEnabled()
                     addCommonComposeDependencies()
                 }
             }
@@ -58,9 +57,7 @@ class ComposeConventionPlugin: Plugin<Project> {
             // Configure for application modules
             pluginManager.withPlugin("com.android.application") {
                 extensions.configure<ApplicationExtension> {
-                    buildFeatures {
-                        compose = true
-                    }
+                    configureComposeBuildFeaturesEnabled()
                     addCommonComposeDependencies()
                 }
             }
