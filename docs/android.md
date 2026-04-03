@@ -22,7 +22,7 @@ The required AGP version for each Gradle version can be found [at this link](htt
 Upgrade Gradle in the CLI like so:
 
 ```bash
-./gradlew --gradle-version 9.3.1
+./gradlew wrapper --gradle-version 9.3.1
 ```
 
 The command may need to be run twice.
