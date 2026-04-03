@@ -1,7 +1,7 @@
-import AndroidConfig.configureAndroid
 import Dependencies.addCommonAndroidDependencies
 import KotlinConfig.configureKotlinCompilerArgsAndJVMToolchain
 import com.android.build.api.dsl.ApplicationExtension
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -37,11 +37,18 @@ class AndroidApplicationConventionPlugin: Plugin<Project> {
 
             // Configure Android using shared configuration
             extensions.configure<ApplicationExtension> {
-                configureAndroid(this)
+                compileSdk = targetSDK
+
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_21
+                    targetCompatibility = JavaVersion.VERSION_21
+                }
 
                 // Application-specific configuration
                 defaultConfig {
+                    minSdk = minSDK
                     targetSdk = targetSDK
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                     vectorDrawables {
                         useSupportLibrary = true
                     }
@@ -51,6 +58,10 @@ class AndroidApplicationConventionPlugin: Plugin<Project> {
                     getByName("release") {
                         // Override library's setting - apps should minify
                         isMinifyEnabled = true
+                        proguardFiles(
+                            getDefaultProguardFile("proguard-android-optimize.txt"),
+                            "proguard-rules.pro",
+                        )
                     }
                 }
 

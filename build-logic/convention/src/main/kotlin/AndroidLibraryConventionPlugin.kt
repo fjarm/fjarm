@@ -1,7 +1,7 @@
-import AndroidConfig.configureAndroid
 import Dependencies.addCommonAndroidDependencies
 import KotlinConfig.configureKotlinCompilerArgsAndJVMToolchain
 import com.android.build.api.dsl.LibraryExtension
+import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -32,9 +32,26 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
 
             // Configure Android
             extensions.configure<LibraryExtension> {
-                configureAndroid(this)
+                compileSdk = targetSDK
+
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_21
+                    targetCompatibility = JavaVersion.VERSION_21
+                }
+
+                buildTypes {
+                    getByName("release") {
+                        isMinifyEnabled = false
+                        proguardFiles(
+                            getDefaultProguardFile("proguard-android-optimize.txt"),
+                            "proguard-rules.pro",
+                        )
+                    }
+                }
 
                 defaultConfig {
+                    minSdk = minSDK
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                     consumerProguardFiles("consumer-rules.pro")
                 }
 
