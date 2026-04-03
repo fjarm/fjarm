@@ -28,7 +28,6 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             // Apply plugins
             pluginManager.apply("com.android.library")
-            pluginManager.apply("org.jetbrains.kotlin.android")
 
             // Configure Android
             extensions.configure<LibraryExtension> {

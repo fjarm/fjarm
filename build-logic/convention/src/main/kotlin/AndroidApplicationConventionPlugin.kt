@@ -33,7 +33,6 @@ class AndroidApplicationConventionPlugin: Plugin<Project> {
         with(target) {
             // Apply plugins
             pluginManager.apply("com.android.application")
-            pluginManager.apply("org.jetbrains.kotlin.android")
 
             // Configure Android using shared configuration
             extensions.configure<ApplicationExtension> {
