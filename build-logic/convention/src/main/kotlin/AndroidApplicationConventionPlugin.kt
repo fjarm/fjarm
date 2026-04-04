@@ -1,4 +1,4 @@
-import AndroidConfig.configureAndroid
+import AndroidConfig.configureCommonAndroid
 import Dependencies.addCommonAndroidDependencies
 import KotlinConfig.configureKotlinCompilerArgsAndJVMToolchain
 import com.android.build.api.dsl.ApplicationExtension
@@ -33,12 +33,10 @@ class AndroidApplicationConventionPlugin: Plugin<Project> {
         with(target) {
             // Apply plugins
             pluginManager.apply("com.android.application")
-            pluginManager.apply("org.jetbrains.kotlin.android")
 
+            configureCommonAndroid()
             // Configure Android using shared configuration
             extensions.configure<ApplicationExtension> {
-                configureAndroid(this)
-
                 // Application-specific configuration
                 defaultConfig {
                     targetSdk = targetSDK

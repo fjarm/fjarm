@@ -6,6 +6,10 @@ plugins {
     id("convention.hilt")
 }
 
+tasks.withType<Test> {
+    failOnNoDiscoveredTests = false
+}
+
 android {
     namespace = "xyz.fjarm.testactivity"
 }

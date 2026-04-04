@@ -49,7 +49,7 @@ class ComposeConventionPlugin: Plugin<Project> {
             // Configure for library modules
             pluginManager.withPlugin("com.android.library") {
                 extensions.configure<LibraryExtension> {
-                    configureComposeBuildFeaturesEnabled(this)
+                    configureComposeBuildFeaturesEnabled()
                     addCommonComposeDependencies()
                 }
             }
@@ -57,7 +57,7 @@ class ComposeConventionPlugin: Plugin<Project> {
             // Configure for application modules
             pluginManager.withPlugin("com.android.application") {
                 extensions.configure<ApplicationExtension> {
-                    configureComposeBuildFeaturesEnabled(this)
+                    configureComposeBuildFeaturesEnabled()
                     addCommonComposeDependencies()
                 }
             }

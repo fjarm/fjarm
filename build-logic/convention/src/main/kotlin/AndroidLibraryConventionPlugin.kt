@@ -1,4 +1,4 @@
-import AndroidConfig.configureAndroid
+import AndroidConfig.configureCommonAndroid
 import Dependencies.addCommonAndroidDependencies
 import KotlinConfig.configureKotlinCompilerArgsAndJVMToolchain
 import com.android.build.api.dsl.LibraryExtension
@@ -28,11 +28,15 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             // Apply plugins
             pluginManager.apply("com.android.library")
-            pluginManager.apply("org.jetbrains.kotlin.android")
 
+            configureCommonAndroid()
             // Configure Android
             extensions.configure<LibraryExtension> {
-                configureAndroid(this)
+                buildTypes {
+                    getByName("release") {
+                        isMinifyEnabled = false // Default value for library modules
+                    }
+                }
 
                 defaultConfig {
                     consumerProguardFiles("consumer-rules.pro")

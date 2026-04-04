@@ -1,5 +1,7 @@
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
 
 /**
  * Shared Android configuration for both library and application modules.
@@ -12,25 +14,22 @@ internal object AndroidConfig {
     /**
      * Configures common Android settings for both app and library modules.
      */
-    fun configureAndroid(
-        commonExtension: CommonExtension<*, *, *, *, *, *>
-    ) {
-        commonExtension.apply {
+    fun Project.configureCommonAndroid() {
+        extensions.configure<CommonExtension> {
             compileSdk = targetSDK
 
-            defaultConfig {
+            defaultConfig.apply {
                 minSdk = minSDK
                 testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
             }
 
-            compileOptions {
+            compileOptions.apply {
                 sourceCompatibility = JavaVersion.VERSION_21
                 targetCompatibility = JavaVersion.VERSION_21
             }
 
-            buildTypes {
+            buildTypes.apply {
                 getByName("release") {
-                    isMinifyEnabled = false
                     proguardFiles(
                         getDefaultProguardFile("proguard-android-optimize.txt"),
                         "proguard-rules.pro",

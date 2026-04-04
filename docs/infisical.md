@@ -22,7 +22,7 @@ infisical run --path="/helloworld" -- podman compose --file api/internal/hellowo
 To bring down the compose services, use:
 
 ```bash
-PORT=8000 podman compose down -file api/internal/helloworld/v1/deployment/docker-compose.yml
+podman compose --file api/internal/helloworld/v1/deployment/docker-compose.yml down
 ```
 
 Running the [podman clean up script](../scripts/podman_cleanup.sh) removes the `helloworld:local` image from the local registry.

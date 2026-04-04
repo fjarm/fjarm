@@ -8,8 +8,6 @@ internal object Dependencies {
      */
     fun Project.addCommonAndroidDependencies() {
         dependencies {
-            add("implementation", catalog.findLibrary("androidx.core.ktx").get())
-
             add("testImplementation", catalog.findLibrary("junit").get())
             add("androidTestImplementation", catalog.findLibrary("androidx.junit").get())
             add("androidTestImplementation", catalog.findLibrary("androidx.espresso.core").get())

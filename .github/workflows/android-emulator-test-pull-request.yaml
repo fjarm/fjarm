@@ -7,6 +7,9 @@ on:
     branches:
       - main
     paths:
+      - ".github/workflows/android-compose-compiler-metrics-pull-request.yaml"
+      - ".github/workflows/android-emulator-test-pull-request.yaml"
+      - ".github/workflows/android-unit-test-pull-request.yaml"
       - 'android/**.kt'
       - 'android/**.kts'
       - 'android/**'
@@ -19,6 +22,9 @@ on:
       - 'settings.gradle.kts'
   pull_request:
     paths:
+      - ".github/workflows/android-compose-compiler-metrics-pull-request.yaml"
+      - ".github/workflows/android-emulator-test-pull-request.yaml"
+      - ".github/workflows/android-unit-test-pull-request.yaml"
       - 'android/**.kt'
       - 'android/**.kts'
       - 'android/**'
@@ -39,7 +45,7 @@ jobs:
       matrix:
         api-level: [31, 36]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         name: Checkout repo
 
       - name: Enable KVM

@@ -9,13 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Run `git checkout`
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         name: Checkout repo
       # Install the `buf` CLI, lint and format files, detect breaking changes, and push the latest schema
       - uses: bufbuild/buf-action@v1
         name: Run Buf validation and push latest schema
         with:
-          version: "1.63.0"
+          version: "1.66.1"
           token: ${{ secrets.BUF_TOKEN }}
           github_token: ${{ github.token }}
           lint: true
