@@ -42,7 +42,7 @@ No API requests need to be made by this screen or its `ViewModel`.
 
 ## Detailed architecture - client
 
-`LoginAndSignUpFeatContract.kt`:
+`LoginAndSignUpContract.kt`:
 
 ```kotlin
 data class LoginAndSignUpState(
