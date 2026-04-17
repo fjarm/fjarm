@@ -74,8 +74,9 @@ No API requests need to be made by this screen or its `ViewModel`.
 ## Testing - client
 
 - [x] Given an unauthenticated user, when they navigate to `LoginAndSignUpScreen`, then they see a title line, subtitle line, logo, sign up button, and log in button with correct text.
-- [ ] Given an unauthenticated user, when they click the sign up button, then they navigate to the `:signUpFeat` screen.
-- [ ] Given an unauthenticated user, when they click the log in button, then they navigate to the `:logInFeat` screen.
+- [ ] Given an unauthenticated user, when they click the sign up button, then they navigate to the Sign Up screen.
+- [ ] Given an unauthenticated user, when they click the log in button, then they navigate to the Log In screen.
+- [ ] Given an authenticated user, they are redirected to the Home screen.
 
 ## Monitoring - client
 
