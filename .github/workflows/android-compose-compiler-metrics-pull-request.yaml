@@ -315,7 +315,7 @@ jobs:
           echo "$REPORT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         name: Comment PR with report
         if: steps.detect-modules.outputs.has_modules == 'true'
         env:
