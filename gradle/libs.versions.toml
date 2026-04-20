@@ -21,7 +21,7 @@ androidXHilt = "1.3.0"
 parcelize = "2.3.10"
 
 ## Jetbrains Kotlin JVM
-jetbrainsKotlinJvm = "2.3.10"
+jetbrainsKotlinJvm = "2.3.20"
 
 ## Coroutines
 coroutinesCoreJvm = "1.10.2"
