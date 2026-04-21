@@ -149,6 +149,7 @@ service AuthenticationService {
 - [ ] Given an unauthenticated user, when they type a valid email address, then they see a visual indicator that the email address is valid.
 - [ ] Given an unauthenticated user, when they click the log in button, then they see a visual indicator that the submission is being processed.
 - [ ] Given an unauthenticated user, when they enter valid credentials, then they are navigated to the Home screen.
+- [ ] Given an unauthenticated user, when they enter valid credentials, then the access token and refresh token are stored in the Android Keystore.
 - [ ] Given an unauthenticated user, when they enter invalid credentials, then they see an error message.
 
 ## Monitoring - client
