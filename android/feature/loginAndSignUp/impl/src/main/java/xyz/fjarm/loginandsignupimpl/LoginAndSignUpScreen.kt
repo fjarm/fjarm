@@ -20,6 +20,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.PreviewFontScale
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
@@ -31,9 +34,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import xyz.fjarm.buttons.FjarmButton
 import xyz.fjarm.buttons.FjarmOutlinedButton
 import xyz.fjarm.fjarmtheme.FjarmTheme
-import xyz.fjarm.previews.PreviewFontScales
-import xyz.fjarm.previews.PreviewLightDarkTheme
-import xyz.fjarm.previews.PreviewPhoneSizes
 import xyz.fjarm.text.FjarmHeaderText
 import xyz.fjarm.text.FjarmSubtitleText
 
@@ -162,9 +162,9 @@ private fun LoginAndSignUpContent(
     }
 }
 
-@PreviewPhoneSizes
-@PreviewFontScales
-@PreviewLightDarkTheme
+@PreviewFontScale
+@PreviewLightDark
+@PreviewScreenSizes
 @Composable
 fun LoginAndSignUpScreenPreview() {
     LoginAndSignUpContent()
