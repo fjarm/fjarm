@@ -17,7 +17,7 @@ fun FjarmSubtitleText(
     Text(
         text = text,
         modifier = modifier,
-        style = FjarmTypography.bodyLarge,
+        style = FjarmTypography.headlineLarge,
     )
 }
 
