@@ -37,31 +37,8 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/**
- * MVI State for the Login Email Screen
- */
-data class LoginEmailUiState(
-    val email: String = "",
-    val isLoading: Boolean = false,
-    val error: String? = null
-)
-
-/**
- * MVI Intent for the Login Email Screen
- */
-sealed class LoginEmailIntent {
-    data class EmailChanged(val email: String) : LoginEmailIntent()
-    object ContinueClicked : LoginEmailIntent()
-    object GoogleLoginClicked : LoginEmailIntent()
-    object AppleLoginClicked : LoginEmailIntent()
-    object CreateAccountClicked : LoginEmailIntent()
-}
-
-//@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginEmailScreen(
-    state: LoginEmailUiState,
-    onIntent: (LoginEmailIntent) -> Unit,
+fun LoginScreenContent(
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -73,7 +50,7 @@ fun LoginEmailScreen(
     ) {
         // Brand Logo
         Text(
-            text = "MONOLITH",
+            text = "Fjarm",
             fontSize = 24.sp,
             fontWeight = FontWeight.Black,
             letterSpacing = (-1).sp,
@@ -85,11 +62,11 @@ fun LoginEmailScreen(
         // Large Header
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "LOGIN",
+                text = "Login",
                 fontSize = 80.sp,
                 fontWeight = FontWeight.Black,
                 lineHeight = 72.sp,
-                letterSpacing = (-4).sp
+                letterSpacing = (-2).sp
             )
             Box(
                 modifier = Modifier
@@ -105,7 +82,7 @@ fun LoginEmailScreen(
         // Input Field Section
         Column(modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "EMAIL ADDRESS",
+                text = "Email address",
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
@@ -113,14 +90,14 @@ fun LoginEmailScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             OutlinedTextField(
-                value = state.email,
-                onValueChange = { onIntent(LoginEmailIntent.EmailChanged(it)) },
+                value = "",
+                onValueChange = { },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(64.dp),
                 placeholder = {
                     Text(
-                        text = "NAME@DOMAIN.COM",
+                        text = "name@domain.com",
                         color = Color.LightGray,
                         fontWeight = FontWeight.Bold
                     )
@@ -143,7 +120,7 @@ fun LoginEmailScreen(
 
         // Primary Action Button
         Button(
-            onClick = { onIntent(LoginEmailIntent.ContinueClicked) },
+            onClick = { },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(72.dp),
@@ -151,7 +128,7 @@ fun LoginEmailScreen(
             shape = RoundedCornerShape(0.dp)
         ) {
             Text(
-                text = "CONTINUE",
+                text = "Continue",
                 color = Color.White,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Black,
@@ -168,7 +145,7 @@ fun LoginEmailScreen(
         ) {
             HorizontalDivider(modifier = Modifier.weight(1f), color = Color.LightGray)
             Text(
-                text = "OR",
+                text = "Or",
                 modifier = Modifier.padding(horizontal = 16.dp),
                 fontSize = 10.sp,
                 color = Color.Gray,
@@ -185,13 +162,8 @@ fun LoginEmailScreen(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             SocialButton(
-                text = "GOOGLE",
-                onClick = { onIntent(LoginEmailIntent.GoogleLoginClicked) },
-                modifier = Modifier.weight(1f)
-            )
-            SocialButton(
-                text = "APPLE",
-                onClick = { onIntent(LoginEmailIntent.AppleLoginClicked) },
+                text = "Google",
+                onClick = { },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -201,15 +173,15 @@ fun LoginEmailScreen(
         // Footer Links
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Text(
-                text = "NEW TO THE ARCHITECTURAL MONOLITH?",
+                text = "New to Fjarm?",
                 fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 letterSpacing = 1.sp,
                 color = Color.Gray
             )
-            TextButton(onClick = { onIntent(LoginEmailIntent.CreateAccountClicked) }) {
+            TextButton(onClick = { }) {
                 Text(
-                    text = "CREATE AN ACCOUNT",
+                    text = "Sign up",
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Black,
                     color = Color.Black,
@@ -223,11 +195,10 @@ fun LoginEmailScreen(
         // Legal Links
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
-            LegalLink("PRIVACY POLICY")
-            LegalLink("TERMS OF SERVICE")
-            LegalLink("LEGAL NOTICE")
+            LegalLink("Privacy policy")
+            LegalLink("Terms of service")
         }
     }
 }
@@ -270,9 +241,6 @@ fun LegalLink(text: String) {
 @PreviewLightDark
 @PreviewScreenSizes
 @Composable
-fun LoginEmailScreenPreview() {
-    LoginEmailScreen(
-        state = LoginEmailUiState(email = ""),
-        onIntent = {}
-    )
+fun LoginScreenContentPreview() {
+    LoginScreenContent()
 }
