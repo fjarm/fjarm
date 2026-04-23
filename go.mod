@@ -6,7 +6,7 @@ require (
 	buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.19.1-20260119201229-18b1fd639031.2
 	buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.11-20260119201229-18b1fd639031.1
 	buf.build/go/protovalidate v1.1.3
-	connectrpc.com/connect v1.19.1
+	connectrpc.com/connect v1.19.2
 	github.com/google/uuid v1.6.0
 	github.com/redis/rueidis v1.0.74
 	golang.org/x/crypto v0.50.0
