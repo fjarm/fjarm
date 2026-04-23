@@ -22,6 +22,7 @@ android {
 dependencies {
     implementation(project(":android:library:buttons"))
     implementation(project(":android:library:fjarmTheme"))
+    implementation(project(":android:library:text"))
 
     implementation(libs.androidx.compose.material3)
 }

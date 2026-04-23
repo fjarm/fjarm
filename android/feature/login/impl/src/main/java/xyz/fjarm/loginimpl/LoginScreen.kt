@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import xyz.fjarm.buttons.FjarmButton
 import xyz.fjarm.buttons.FjarmFilledButton
 import xyz.fjarm.fjarmtheme.FjarmTheme
+import xyz.fjarm.text.FjarmExtraLargeHeaderText
 
 @Composable
 fun LoginScreenContent(
@@ -53,24 +54,13 @@ fun LoginScreenContent(
                     .padding(horizontal = 32.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // Brand Logo
-                Text(
-                    text = "Fjarm",
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Black,
-                    modifier = Modifier.align(Alignment.Start),
-                )
 
                 Spacer(modifier = Modifier.height(80.dp))
 
                 // Large Header
                 Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
+                    FjarmExtraLargeHeaderText(
                         text = "Login",
-                        fontSize = 80.sp,
-                        fontWeight = FontWeight.Black,
-                        lineHeight = 72.sp,
-                        letterSpacing = (-2).sp,
                     )
                     Box(
                         modifier = Modifier
@@ -88,7 +78,6 @@ fun LoginScreenContent(
                         text = "Email address",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
@@ -125,7 +114,6 @@ fun LoginScreenContent(
                         text = "Continue",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Black,
-                        letterSpacing = 2.sp
                     )
                 }
 
@@ -158,7 +146,6 @@ fun LoginScreenContent(
                         text = "New to Fjarm?",
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
                     )
                     FjarmButton(
                         modifier = Modifier
@@ -167,8 +154,8 @@ fun LoginScreenContent(
                     ) {
                         Text(
                             text = "Sign up",
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Black,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.Bold,
                             textDecoration = TextDecoration.Underline,
                         )
                     }
@@ -194,9 +181,7 @@ fun LoginScreenContent(
 fun LegalLink(text: String) {
     Text(
         text = text,
-        fontSize = 10.sp,
-        fontWeight = FontWeight.Bold,
-        letterSpacing = 0.5.sp,
+        fontSize = 8.sp,
         textAlign = TextAlign.Center,
     )
 }
