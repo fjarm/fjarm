@@ -25,6 +25,8 @@ android {
 dependencies {
     implementation(project(":android:feature:loginAndSignUp:api"))
     implementation(project(":android:feature:loginAndSignUp:impl"))
+    implementation(project(":android:feature:login:api"))
+    implementation(project(":android:feature:login:impl"))
     implementation(project(":android:feature:underConstruction:impl"))
 
     implementation(project(":android:library:fjarmTheme"))

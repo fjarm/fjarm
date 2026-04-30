@@ -39,7 +39,7 @@ import xyz.fjarm.text.FjarmNormalSizeText
 import xyz.fjarm.text.FjarmSmallSizeText
 
 @Composable
-fun LoginScreenContent(
+private fun LoginScreenContent(
     modifier: Modifier = Modifier
 ) {
     FjarmTheme {
