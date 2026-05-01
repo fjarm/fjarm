@@ -8,7 +8,6 @@ import xyz.fjarm.navigation.Navigation
 
 fun EntryProviderScope<NavKey>.loginEntryBuilder(navigation: Navigation) {
     entry<LoginNavKey> {
-        LoginScreenContent(
-        )
+        LoginScreen()
     }
 }
