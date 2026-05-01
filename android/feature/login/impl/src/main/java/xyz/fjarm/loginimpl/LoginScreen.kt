@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -39,9 +41,20 @@ import xyz.fjarm.text.FjarmNormalSizeText
 import xyz.fjarm.text.FjarmSmallSizeText
 
 @Composable
-private fun LoginScreenContent(
-    modifier: Modifier = Modifier
+fun LoginScreen(
+    modifier: Modifier = Modifier,
 ) {
+    LoginScreenContent(
+        modifier = modifier,
+    )
+}
+
+@Composable
+private fun LoginScreenContent(
+    modifier: Modifier = Modifier,
+) {
+    val scrollState = rememberScrollState()
+
     FjarmTheme {
         Surface(
             modifier = modifier
@@ -51,6 +64,7 @@ private fun LoginScreenContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .systemBarsPadding()
+                    .verticalScroll(scrollState)
                     .padding(horizontal = 32.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
