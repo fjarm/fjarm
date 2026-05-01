@@ -43,6 +43,7 @@ import xyz.fjarm.text.FjarmSmallSizeText
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
+    navigateToHome: () -> Unit = {},
 ) {
     LoginScreenContent(
         modifier = modifier,

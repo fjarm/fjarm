@@ -8,6 +8,10 @@ import xyz.fjarm.navigation.Navigation
 
 fun EntryProviderScope<NavKey>.loginEntryBuilder(navigation: Navigation) {
     entry<LoginNavKey> {
-        LoginScreen()
+        LoginScreen(
+            navigateToHome = {
+                // TODO(2026-04-30): Navigate to home screen
+            },
+        )
     }
 }
