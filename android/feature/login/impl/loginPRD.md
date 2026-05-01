@@ -32,16 +32,16 @@ If the submitted credentials are incorrect, I want to see an error message.
 State:
 
 * Title line
-* Subtitle line
-* Email address input hint text
+* Email address input label text
 * Email address input validity color
-* Password input hint text
+* Password input label text
 * Log in button text
 * Log in button enabled/disabled
 * Loading indicator visible/gone
 
 Events:
 * Type email address
+* Type password
 * Click log in button
 
 Side effects:
