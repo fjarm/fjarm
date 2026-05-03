@@ -1,7 +1,7 @@
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260209202127-80ab13bee0bf.1 h1:PMmTMyvHScV9Mn8wc6ASge9uRcHy0jtqPd+fM35LmsQ=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260209202127-80ab13bee0bf.1/go.mod h1:tvtbpgaVXZX4g6Pn+AnzFycuRK3MOz5HJfEGeEllXYM=
-buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.19.1-20260119201229-18b1fd639031.2 h1:WMn/lDyTPnzbmPjGF60sEa6y5tP0UE0LVcdBCR9l1Nw=
-buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.19.1-20260119201229-18b1fd639031.2/go.mod h1:n0YpEnWyOyPnQxsBatRkC9fKk6fzk7N9si70zHLaQmU=
+buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.19.2-20260119201229-18b1fd639031.1 h1:E1CcakqB92zjFyTt8U/Uy1CVGONyeZObBJRk/Gk7+CA=
+buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.19.2-20260119201229-18b1fd639031.1/go.mod h1:sz3pi4I5vtSMTU9iZngTqKkIcCgRUujy0pOlKvLFEsw=
 buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.11-20260119201229-18b1fd639031.1 h1:smroKDiiWvZh9dsOpyKZcMMU7ZJAt0EvVl/QtrySo2o=
 buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.11-20260119201229-18b1fd639031.1/go.mod h1:A7wFw20Tr7925YtqerVLZSp7Ge6JKJNBtqLrdVp4NU8=
 buf.build/go/protovalidate v1.1.3 h1:m2GVEgQWd7rk+vIoAZ+f0ygGjvQTuqPQapBBdcpWVPE=
