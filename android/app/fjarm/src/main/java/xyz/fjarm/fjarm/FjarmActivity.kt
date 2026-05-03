@@ -16,10 +16,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import dagger.hilt.android.AndroidEntryPoint
 import xyz.fjarm.fjarmtheme.FjarmTheme
@@ -54,6 +56,13 @@ class FjarmActivity : ComponentActivity() {
                             .fillMaxSize(),
                     ) {
                         NavDisplay(
+                            entryDecorators = listOf(
+                                // Add the default decorators for managing scenes and saving state
+                                rememberSaveableStateHolderNavEntryDecorator(),
+                                // Then add the view model store decorator (clears ViewModels on
+                                // pop)
+                                rememberViewModelStoreNavEntryDecorator()
+                            ),
                             backStack = navigator.getBackStack(),
                             onBack = {
                                 navigator.processSideEffect(
