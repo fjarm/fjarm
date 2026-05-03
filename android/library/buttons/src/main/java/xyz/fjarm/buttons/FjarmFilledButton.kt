@@ -18,11 +18,13 @@ import androidx.compose.ui.unit.dp
 fun FjarmFilledButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit,
 ) {
     Button(
         onClick = onClick,
         modifier = modifier,
+        enabled = enabled,
         shape = RoundedCornerShape(4.dp),
     ) {
         content()

@@ -18,11 +18,13 @@ import androidx.compose.ui.unit.dp
 fun FjarmButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit,
 ) {
     TextButton(
         onClick = onClick,
         modifier = modifier,
+        enabled = enabled,
         shape = RoundedCornerShape(4.dp),
     ) {
         content()
