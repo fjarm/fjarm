@@ -9,13 +9,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,16 +65,20 @@ fun LoginAndSignUpScreen(
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    LoginAndSignUpContent(
-        modifier = modifier,
-        titleLine = getString(context, state.titleLineText),
-        subtitleLine = getString(context, state.subtitleLineText),
-        logo = state.logo,
-        signUpButtonText = getString(context, state.signUpButtonText),
-        logInButtonText = getString(context, state.logInButtonText),
-        onJoinClick = { viewModel.processEvent(LoginAndSignUpEvent.SignUpButtonClicked) },
-        onLoginClick = { viewModel.processEvent(LoginAndSignUpEvent.LogInButtonClicked) }
-    )
+    Scaffold(
+        containerColor = Color.Transparent,
+    ) { contentPadding ->
+        LoginAndSignUpContent(
+            modifier = modifier.padding(contentPadding),
+            titleLine = getString(context, state.titleLineText),
+            subtitleLine = getString(context, state.subtitleLineText),
+            logo = state.logo,
+            signUpButtonText = getString(context, state.signUpButtonText),
+            logInButtonText = getString(context, state.logInButtonText),
+            onJoinClick = { viewModel.processEvent(LoginAndSignUpEvent.SignUpButtonClicked) },
+            onLoginClick = { viewModel.processEvent(LoginAndSignUpEvent.LogInButtonClicked) }
+        )
+    }
 }
 
 @Composable
@@ -96,8 +101,9 @@ private fun LoginAndSignUpContent(
                 modifier = Modifier
                     .fillMaxSize()
                     // Use systemBarsPadding to ensure content stays within safe areas while the
-                    // [Surface] background bleeds edge-to-edge
-                    .systemBarsPadding()
+                    // [Surface] background bleeds edge-to-edge.
+                    // But, with content padding from wrapping Scaffold applied, there is no further
+                    // need to call systemBarsPadding.
                     .padding(horizontal = 16.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 // SpacedBy ensures the header and buttons have distance if the screen is small

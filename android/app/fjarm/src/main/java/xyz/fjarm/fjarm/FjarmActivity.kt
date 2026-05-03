@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
@@ -43,6 +44,9 @@ class FjarmActivity : ComponentActivity() {
         setContent {
             FjarmTheme {
                 Scaffold(
+                    // Prevent drawing an extra background layer
+                    // SEE: https://www.reddit.com/r/androiddev/comments/1sum04a/scaffold_can_add_an_extra_background_layer_on/
+                    containerColor = Color.Transparent,
                     modifier = Modifier.fillMaxSize(),
                 ) { _: PaddingValues ->
                     Surface(
