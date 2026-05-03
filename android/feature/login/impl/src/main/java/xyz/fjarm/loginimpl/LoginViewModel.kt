@@ -17,10 +17,10 @@ class LoginViewModel @Inject constructor(): ViewModel() {
             header = LoginState.Header(headerText = R.string.header_text),
             userInput = LoginState.UserInput(
                 emailInputLabelText = R.string.email_input_label_text,
-                emailInput = "",
+                emailInputText = "",
                 emailInputIsValid = true,
                 passwordInputLabelText = R.string.password_input_label_text,
-                passwordInput = "",
+                passwordInputText = "",
             ),
             loginButton = LoginState.LoginButton(
                 loginButtonText = R.string.login_button_text,
@@ -47,7 +47,7 @@ class LoginViewModel @Inject constructor(): ViewModel() {
                 _state.update {
                     it.copy(
                         userInput = it.userInput.copy(
-                            emailInput = event.emailAddress,
+                            emailInputText = event.emailAddress,
                         )
                     )
                 }
@@ -59,7 +59,7 @@ class LoginViewModel @Inject constructor(): ViewModel() {
                 _state.update {
                     it.copy(
                         userInput = it.userInput.copy(
-                            passwordInput = event.password,
+                            passwordInputText = event.password,
                         )
                     )
                 }
