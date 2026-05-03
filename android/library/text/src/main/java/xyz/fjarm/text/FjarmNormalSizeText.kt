@@ -21,7 +21,7 @@ fun FjarmNormalSizeText(
     Text(
         text = text,
         modifier = modifier,
-        fontSize = 12.sp,
+        fontSize = 16.sp,
         fontWeight = fontWeight,
         textDecoration = textDecoration,
     )

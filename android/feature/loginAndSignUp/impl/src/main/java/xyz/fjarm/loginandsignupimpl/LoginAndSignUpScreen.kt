@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -24,7 +23,6 @@ import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat.getString
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -35,6 +33,7 @@ import xyz.fjarm.buttons.FjarmButton
 import xyz.fjarm.buttons.FjarmOutlinedButton
 import xyz.fjarm.fjarmtheme.FjarmTheme
 import xyz.fjarm.text.FjarmHeaderText
+import xyz.fjarm.text.FjarmNormalSizeText
 import xyz.fjarm.text.FjarmSubtitleText
 
 @Composable
@@ -138,10 +137,9 @@ private fun LoginAndSignUpContent(
                         .fillMaxWidth()
                         .height(56.dp),
                 ) {
-                    Text(
+                    FjarmNormalSizeText(
                         text = signUpButtonText,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
                     )
                 }
 
@@ -151,10 +149,9 @@ private fun LoginAndSignUpContent(
                         .fillMaxWidth()
                         .height(56.dp),
                 ) {
-                    Text(
+                    FjarmNormalSizeText(
                         text = logInButtonText,
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 16.sp,
                     )
                 }
             }
