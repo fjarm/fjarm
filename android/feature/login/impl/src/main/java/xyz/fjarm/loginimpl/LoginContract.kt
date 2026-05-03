@@ -1,6 +1,5 @@
 package xyz.fjarm.loginimpl
 
-import androidx.annotation.ColorRes
 import androidx.annotation.StringRes
 
 data class LoginState(
@@ -17,10 +16,10 @@ data class LoginState(
 
     data class UserInput(
         @StringRes val emailInputLabelText: Int,
-        var emailInput: String,
+        var emailInputText: String,
         val emailInputIsValid: Boolean,
         @StringRes val passwordInputLabelText: Int,
-        var passwordInput: String,
+        var passwordInputText: String,
     )
 
     data class LoginButton(
