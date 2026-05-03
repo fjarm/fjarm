@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="header_text">Login</string>
+    <string name="email_input_label_text">Email address</string>
+    <string name="password_input_label_text">Password</string>
+    <string name="login_button_text">Continue</string>
+    <string name="alternative_options_section_header_text">Or</string>
+    <string name="new_to_fjarm_prompt_text">New to Fjarm?</string>
+    <string name="navigate_to_sign_up_button_text">Sign up</string>
+    <string name="navigate_to_privacy_policy_text">Privacy policy</string>
+    <string name="navigate_to_terms_of_service_text">Terms of service</string>
+</resources>
