@@ -17,8 +17,10 @@ data class LoginState(
 
     data class UserInput(
         @StringRes val emailInputLabelText: Int,
-        @ColorRes val emailInputValidityColor: Int,
+        var emailInput: String,
+        val emailInputIsValid: Boolean,
         @StringRes val passwordInputLabelText: Int,
+        var passwordInput: String,
     )
 
     data class LoginButton(
