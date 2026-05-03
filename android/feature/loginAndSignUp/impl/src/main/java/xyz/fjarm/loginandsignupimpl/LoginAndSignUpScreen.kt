@@ -99,7 +99,7 @@ private fun LoginAndSignUpContent(
                     // Use systemBarsPadding to ensure content stays within safe areas while the
                     // [Surface] background bleeds edge-to-edge
                     .systemBarsPadding()
-                    .padding(horizontal = 32.dp, vertical = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 // SpacedBy ensures the header and buttons have distance if the screen is small
                 verticalArrangement = Arrangement.spacedBy(16.dp),
