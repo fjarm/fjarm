@@ -1,5 +1,6 @@
 package xyz.fjarm.fjarm
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,8 +10,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
@@ -35,6 +36,7 @@ class FjarmActivity : ComponentActivity() {
     @Inject
     lateinit var entryBuilders: Set<@JvmSuppressWildcards EntryProviderScope<NavKey>.() -> Unit>
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
@@ -42,10 +44,9 @@ class FjarmActivity : ComponentActivity() {
             FjarmTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                ) { innerPadding ->
+                ) { _: PaddingValues ->
                     Surface(
                         modifier = Modifier
-                            .padding(innerPadding)
                             .fillMaxSize(),
                     ) {
                         NavDisplay(
