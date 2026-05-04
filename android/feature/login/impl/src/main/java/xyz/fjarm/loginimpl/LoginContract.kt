@@ -53,6 +53,22 @@ sealed interface LoginEvent {
     data object LoginButtonClicked: LoginEvent
 }
 
+sealed interface LoginMutation {
+    data class EmailAddressModified(
+        val emailAddress: String,
+    ): LoginMutation
+
+    data class PasswordModified(
+        val password: String,
+    ): LoginMutation
+
+    data object LoginButtonClicked: LoginMutation
+
+    data object LoginFailed: LoginMutation
+
+    data object LoginSucceeded: LoginMutation
+}
+
 sealed interface LoginSideEffect {
 
     data object NavigateToHome: LoginSideEffect
