@@ -39,7 +39,7 @@ navigation3 = "1.1.1"
 robolectric = "4.16.1"
 
 ## Roborazzi
-roborazzi = "1.59.0"
+roborazzi = "1.60.0"
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
