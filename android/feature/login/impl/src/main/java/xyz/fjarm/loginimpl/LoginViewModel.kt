@@ -18,13 +18,13 @@ class LoginViewModel @Inject constructor(): ViewModel() {
             userInput = LoginState.UserInput(
                 emailInputLabelText = R.string.email_input_label_text,
                 emailInputText = "",
-                emailInputIsInvalid = false,
+                emailInputIsValid = true,
                 passwordInputLabelText = R.string.password_input_label_text,
                 passwordInputText = "",
             ),
             loginButton = LoginState.LoginButton(
                 loginButtonText = R.string.login_button_text,
-                loginButtonEnabled = false,
+                loginButtonEnabled = true,
             ),
             loadingIndicator = LoginState.LoadingIndicator(loadingIndicatorVisible = false),
             footer = LoginState.Footer(
@@ -44,90 +44,25 @@ class LoginViewModel @Inject constructor(): ViewModel() {
     fun processEvent(event: LoginEvent) {
         when (event) {
             is LoginEvent.EmailAddressModified -> {
-                val newState = reduce(
-                    LoginMutation.EmailAddressModified(event.emailAddress),
-                    _state.value,
-                )
-                _state.update { newState }
+                _state.update {
+                    it.copy(
+                        userInput = it.userInput.copy(
+                            emailInputText = event.emailAddress,
+                        )
+                    )
+                }
             }
             is LoginEvent.LoginButtonClicked -> {
-                val newState = reduce(
-                    LoginMutation.LoginButtonClicked,
-                    _state.value,
-                )
-                _state.update { newState }
+                // TODO
             }
             is LoginEvent.PasswordModified -> {
-                val newState = reduce(
-                    LoginMutation.PasswordModified(event.password),
-                    _state.value,
-                )
-                _state.update { newState }
-            }
-        }
-    }
-
-    private fun reduce(mutation: LoginMutation, oldState: LoginState): LoginState {
-        when (mutation) {
-            is LoginMutation.EmailAddressModified -> {
-                val email = mutation.emailAddress
-                val emailIsValid = android.util.Patterns.EMAIL_ADDRESS
-                    .matcher(email)
-                    .matches()
-                val password = oldState.userInput.passwordInputText
-
-                return oldState.copy(
-                    userInput = oldState.userInput.copy(
-                        emailInputText = email,
-                        emailInputIsInvalid = email.isNotEmpty() && !emailIsValid,
-                    ),
-                    loginButton = oldState.loginButton.copy(
-                        loginButtonEnabled = password.isNotEmpty() && emailIsValid,
-                    ),
-                )
-            }
-            is LoginMutation.PasswordModified -> {
-                val email = oldState.userInput.emailInputText
-                val emailIsValid = android.util.Patterns.EMAIL_ADDRESS
-                    .matcher(email)
-                    .matches()
-                val password = mutation.password
-
-                return oldState.copy(
-                    userInput = oldState.userInput.copy(
-                        passwordInputText = password,
-                    ),
-                    loginButton = oldState.loginButton.copy(
-                        loginButtonEnabled = password.isNotEmpty() && emailIsValid,
-                    ),
-                )
-            }
-            is LoginMutation.LoginButtonClicked -> {
-                return oldState.copy(
-                    loginButton = oldState.loginButton.copy(
-                        loginButtonEnabled = false,
-                    ),
-                    loadingIndicator = oldState.loadingIndicator.copy(
-                        loadingIndicatorVisible = true,
-                    ),
-                )
-            }
-            is LoginMutation.LoginFailed -> {
-                return oldState.copy(
-                    loginButton = oldState.loginButton.copy(
-                        loginButtonEnabled = true,
-                    ),
-                    loadingIndicator = oldState.loadingIndicator.copy(
-                        loadingIndicatorVisible = false,
-                    ),
-                )
-            }
-            is LoginMutation.LoginSucceeded -> {
-                return oldState.copy(
-                    loadingIndicator = oldState.loadingIndicator.copy(
-                        loadingIndicatorVisible = false,
-                    ),
-                )
+                _state.update {
+                    it.copy(
+                        userInput = it.userInput.copy(
+                            passwordInputText = event.password,
+                        )
+                    )
+                }
             }
         }
     }

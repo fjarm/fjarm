@@ -95,9 +95,7 @@ fun LoginScreen(
             onEmailInputTextModified = {
                 viewModel.processEvent(LoginEvent.EmailAddressModified(it))
             },
-            emailInputIsValid = state.userInput.emailInputIsInvalid,
             passwordInputText = state.userInput.passwordInputText,
-            loginButtonEnabled = state.loginButton.loginButtonEnabled,
             onPasswordInputTextModified = {
                 viewModel.processEvent(LoginEvent.PasswordModified(it))
             },
@@ -111,7 +109,6 @@ private fun LoginScreenContent(
     headerText: String = "Login",
     emailInputText: String = "",
     emailInputLabelText: String = "Email address",
-    emailInputIsValid: Boolean = true,
     passwordInputText: String = "",
     passwordInputLabelText: String = "Password",
     loginButtonText: String = "Continue",
@@ -170,7 +167,6 @@ private fun LoginScreenContent(
                             fontWeight = FontWeight.Bold,
                         )
                     },
-                    isError = emailInputIsValid,
                     shape = RoundedCornerShape(4.dp),
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Email,
