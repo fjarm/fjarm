@@ -24,7 +24,7 @@ parcelize = "2.3.21"
 jetbrainsKotlinJvm = "2.3.21"
 
 ## Coroutines
-coroutinesCoreJvm = "1.10.2"
+coroutinesCoreJvm = "1.11.0"
 
 ## ConnectRPC
 connectRpc = "0.8.0"
