@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import xyz.fjarm.loginlibrary.AttemptLoginUseCase
-import xyz.fjarm.loginlibrary.LoginAction
 import javax.inject.Inject
 
 @HiltViewModel
@@ -61,12 +60,7 @@ class LoginViewModel @Inject constructor(
                 val password = _state.value.userInput.passwordInputText
 
                 viewModelScope.launch {
-                    attemptLoginUseCase(
-                        action = LoginAction.AttemptLoginWithCredentials(
-                            emailAddress = email,
-                            password = password,
-                        ),
-                    )
+                    attemptLoginUseCase(email = email, password = password)
                 }
             }
             is LoginEvent.PasswordModified -> {
