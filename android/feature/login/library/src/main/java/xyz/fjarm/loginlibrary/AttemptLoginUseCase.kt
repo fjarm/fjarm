@@ -6,7 +6,7 @@ import dagger.hilt.components.SingletonComponent
 
 interface AttemptLoginUseCase {
 
-    suspend operator fun invoke(action: LoginAction.AttemptLoginWithCredentials)
+    suspend operator fun invoke(action: LoginAction.AttemptLoginWithCredentials): Result<Unit>
 
     @Module
     @InstallIn(SingletonComponent::class)
