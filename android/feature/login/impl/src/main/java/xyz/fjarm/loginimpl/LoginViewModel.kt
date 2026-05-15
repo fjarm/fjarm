@@ -18,30 +18,7 @@ class LoginViewModel @Inject constructor(
     private val attemptLoginUseCase: AttemptLoginUseCase,
 ): ViewModel() {
 
-    private val _state = MutableStateFlow<LoginState>(
-        LoginState(
-            header = LoginState.Header(headerText = R.string.header_text),
-            userInput = LoginState.UserInput(
-                emailInputLabelText = R.string.email_input_label_text,
-                emailInputText = "",
-                emailInputIsInvalid = false,
-                passwordInputLabelText = R.string.password_input_label_text,
-                passwordInputText = "",
-            ),
-            loginButton = LoginState.LoginButton(
-                loginButtonText = R.string.login_button_text,
-                loginButtonEnabled = false,
-            ),
-            loadingIndicator = LoginState.LoadingIndicator(loadingIndicatorVisible = false),
-            footer = LoginState.Footer(
-                alternativeOptionsText = R.string.alternative_options_section_header_text,
-                newToFjarmPromptText = R.string.new_to_fjarm_prompt_text,
-                navigateToSignUpButtonText = R.string.navigate_to_sign_up_button_text,
-                privacyPolicyText = R.string.navigate_to_privacy_policy_text,
-                termsOfServiceText = R.string.navigate_to_terms_of_service_text,
-            ),
-        )
-    )
+    private val _state = MutableStateFlow<LoginState>(value = LoginState())
     val state = _state.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<LoginSideEffect>()

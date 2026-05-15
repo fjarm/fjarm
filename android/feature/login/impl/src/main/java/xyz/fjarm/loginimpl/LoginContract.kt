@@ -3,11 +3,26 @@ package xyz.fjarm.loginimpl
 import androidx.annotation.StringRes
 
 data class LoginState(
-    val header: Header,
-    val userInput: UserInput,
-    val loginButton: LoginButton,
-    val loadingIndicator: LoadingIndicator,
-    val footer: Footer,
+    val header: Header = Header(headerText = R.string.header_text),
+    val userInput: UserInput = UserInput(
+        emailInputLabelText = R.string.email_input_label_text,
+        emailInputText = "",
+        emailInputIsInvalid = false,
+        passwordInputLabelText = R.string.password_input_label_text,
+        passwordInputText = "",
+    ),
+    val loginButton: LoginButton = LoginButton(
+        loginButtonText = R.string.login_button_text,
+        loginButtonEnabled = false,
+    ),
+    val loadingIndicator: LoadingIndicator = LoadingIndicator(loadingIndicatorVisible = false),
+    val footer: Footer = Footer(
+        alternativeOptionsText = R.string.alternative_options_section_header_text,
+        newToFjarmPromptText = R.string.new_to_fjarm_prompt_text,
+        navigateToSignUpButtonText = R.string.navigate_to_sign_up_button_text,
+        privacyPolicyText = R.string.navigate_to_privacy_policy_text,
+        termsOfServiceText = R.string.navigate_to_terms_of_service_text,
+    ),
 ) {
 
     data class Header(
