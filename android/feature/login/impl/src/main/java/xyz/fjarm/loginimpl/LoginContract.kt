@@ -53,7 +53,7 @@ data class LoginState(
 
 sealed interface LoginAction {
 
-    data class UpdateEmail(val email: String): LoginAction
+    data class UpdateEmailAddress(val email: String): LoginAction
     data class UpdatePassword(val password: String): LoginAction
     data class ExecuteLogin(
         val email: String,
@@ -74,7 +74,7 @@ sealed interface LoginMutation {
     data class PasswordUpdated(val password: String): LoginMutation
     data object Loading: LoginMutation
     data object Success: LoginMutation
-    data class Error(val message: String): LoginMutation
+    data object Error: LoginMutation
 }
 
 sealed interface LoginSideEffect {
