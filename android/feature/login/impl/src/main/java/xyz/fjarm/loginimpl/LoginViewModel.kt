@@ -24,64 +24,8 @@ class LoginViewModel @Inject constructor(
     val sideEffect = _sideEffect.asSharedFlow()
 
     fun processEvent(event: LoginEvent) {
-        when (event) {
-            is LoginEvent.EmailAddressModified -> {
-                val email = event.emailAddress
-                val emailIsValid = android.util.Patterns.EMAIL_ADDRESS
-                    .matcher(email)
-                    .matches()
-                val password = _state.value.userInput.passwordInputText
-
-                _state.update {
-                    it.copy(
-                        userInput = it.userInput.copy(
-                            emailInputText = email,
-                            emailInputIsInvalid = email.isNotEmpty() && !emailIsValid,
-                        ),
-                        loginButton = it.loginButton.copy(
-                            loginButtonEnabled = password.isNotEmpty() && emailIsValid,
-                        ),
-                    )
-                }
-            }
-            is LoginEvent.LoginButtonClicked -> {
-                _state.update {
-                    it.copy(
-                        loginButton = it.loginButton.copy(
-                            loginButtonEnabled = false,
-                        ),
-                        loadingIndicator = it.loadingIndicator.copy(
-                            loadingIndicatorVisible = true,
-                        ),
-                    )
-                }
-
-                val email = _state.value.userInput.emailInputText
-                val password = _state.value.userInput.passwordInputText
-
-                viewModelScope.launch {
-                    attemptLoginUseCase(email = email, password = password)
-                }
-            }
-            is LoginEvent.PasswordModified -> {
-                val email = _state.value.userInput.emailInputText
-                val emailIsValid = android.util.Patterns.EMAIL_ADDRESS
-                    .matcher(email)
-                    .matches()
-                val password = event.password
-
-                _state.update {
-                    it.copy(
-                        userInput = it.userInput.copy(
-                            passwordInputText = password,
-                        ),
-                        loginButton = it.loginButton.copy(
-                            loginButtonEnabled = password.isNotEmpty() && emailIsValid,
-                        ),
-                    )
-                }
-            }
-        }
+        val action = mapEventToAction(event)
+        handleAction(action)
     }
 
     private fun mapEventToAction(event: LoginEvent): LoginAction {
