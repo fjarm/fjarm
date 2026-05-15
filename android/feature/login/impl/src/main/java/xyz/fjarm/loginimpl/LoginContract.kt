@@ -25,9 +25,7 @@ data class LoginState(
     ),
 ) {
 
-    data class Header(
-        @StringRes val headerText: Int,
-    )
+    data class Header(@StringRes val headerText: Int)
 
     data class UserInput(
         @StringRes val emailInputLabelText: Int,
@@ -42,9 +40,7 @@ data class LoginState(
         val loginButtonEnabled: Boolean,
     )
 
-    data class LoadingIndicator(
-        val loadingIndicatorVisible: Boolean,
-    )
+    data class LoadingIndicator(val loadingIndicatorVisible: Boolean)
 
     data class Footer(
         @StringRes val alternativeOptionsText: Int,
@@ -56,6 +52,7 @@ data class LoginState(
 }
 
 sealed interface LoginAction {
+
     data class UpdateEmail(val email: String): LoginAction
     data class UpdatePassword(val password: String): LoginAction
     data class ExecuteLogin(
@@ -66,18 +63,13 @@ sealed interface LoginAction {
 
 sealed interface LoginEvent {
 
-    data class EmailAddressModified(
-        val emailAddress: String,
-    ): LoginEvent
-
-    data class PasswordModified(
-        val password: String,
-    ): LoginEvent
-
+    data class EmailAddressModified(val emailAddress: String): LoginEvent
+    data class PasswordModified(val password: String): LoginEvent
     data object LoginButtonClicked: LoginEvent
 }
 
 sealed interface LoginMutation {
+
     data class EmailUpdated(val email: String): LoginMutation
     data class PasswordUpdated(val password: String): LoginMutation
     data object Loading: LoginMutation
@@ -88,8 +80,5 @@ sealed interface LoginMutation {
 sealed interface LoginSideEffect {
 
     data object NavigateToHome: LoginSideEffect
-
-    data class ShowSnackbar(
-        val message: String,
-    ): LoginSideEffect
+    data class ShowSnackbar(val message: String): LoginSideEffect
 }
