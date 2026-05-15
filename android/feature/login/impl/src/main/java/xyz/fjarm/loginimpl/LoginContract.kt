@@ -55,6 +55,15 @@ data class LoginState(
     )
 }
 
+sealed interface LoginAction {
+    data class UpdateEmail(val email: String): LoginAction
+    data class UpdatePassword(val password: String): LoginAction
+    data class ExecuteLogin(
+        val email: String,
+        val password: String,
+    ): LoginAction
+}
+
 sealed interface LoginEvent {
 
     data class EmailAddressModified(
@@ -66,6 +75,14 @@ sealed interface LoginEvent {
     ): LoginEvent
 
     data object LoginButtonClicked: LoginEvent
+}
+
+sealed interface LoginMutation {
+    data class EmailUpdated(val email: String): LoginMutation
+    data class PasswordUpdated(val password: String): LoginMutation
+    data object Loading: LoginMutation
+    data object Success: LoginMutation
+    data class Error(val message: String): LoginMutation
 }
 
 sealed interface LoginSideEffect {
