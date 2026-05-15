@@ -1,16 +1,22 @@
 package xyz.fjarm.loginimpl
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import xyz.fjarm.loginlibrary.AttemptLoginUseCase
+import xyz.fjarm.loginlibrary.LoginAction
 import javax.inject.Inject
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(): ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val attemptLoginUseCase: AttemptLoginUseCase,
+): ViewModel() {
 
     private val _state = MutableStateFlow<LoginState>(
         LoginState(
@@ -70,6 +76,18 @@ class LoginViewModel @Inject constructor(): ViewModel() {
                         ),
                         loadingIndicator = it.loadingIndicator.copy(
                             loadingIndicatorVisible = true,
+                        ),
+                    )
+                }
+
+                val email = _state.value.userInput.emailInputText
+                val password = _state.value.userInput.passwordInputText
+
+                viewModelScope.launch {
+                    attemptLoginUseCase(
+                        action = LoginAction.AttemptLoginWithCredentials(
+                            emailAddress = email,
+                            password = password,
                         ),
                     )
                 }

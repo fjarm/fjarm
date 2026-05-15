@@ -21,6 +21,7 @@ android {
 
 dependencies {
     implementation(project(":android:feature:login:api"))
+    implementation(project(":android:feature:login:library"))
 
     implementation(project(":android:library:buttons"))
     implementation(project(":android:library:fjarmTheme"))
