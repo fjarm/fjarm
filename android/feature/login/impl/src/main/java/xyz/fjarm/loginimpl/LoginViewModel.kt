@@ -83,4 +83,113 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    private fun mapEventToAction(event: LoginEvent): LoginAction {
+        return when (event) {
+            is LoginEvent.EmailAddressModified -> LoginAction.UpdateEmailAddress(
+                email = event.emailAddress
+            )
+            is LoginEvent.PasswordModified -> LoginAction.UpdatePassword(password = event.password)
+            is LoginEvent.LoginButtonClicked -> LoginAction.ExecuteLogin(
+                email = _state.value.userInput.emailInputText,
+                password = _state.value.userInput.passwordInputText,
+            )
+        }
+    }
+
+    private fun handleAction(action: LoginAction) {
+        when (action) {
+            is LoginAction.UpdateEmailAddress -> {
+                reduce(mutation = LoginMutation.EmailUpdated(email = action.email))
+            }
+            is LoginAction.UpdatePassword -> {
+                reduce(mutation = LoginMutation.PasswordUpdated(password = action.password))
+            }
+            is LoginAction.ExecuteLogin -> {
+                viewModelScope.launch {
+                    reduce(LoginMutation.Loading)
+                    val result = attemptLoginUseCase(
+                        email = action.email,
+                        password = action.password,
+                    )
+                    result.fold(
+                        onSuccess = {
+                            reduce(LoginMutation.Success)
+                            _sideEffect.emit(LoginSideEffect.NavigateToHome)
+                        },
+                        onFailure = { e ->
+                            reduce(LoginMutation.Error)
+                            _sideEffect.emit(
+                                LoginSideEffect.ShowSnackbar(e.message ?: "Uh-oh. Try again.")
+                            )
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    private fun reduce(mutation: LoginMutation) {
+        _state.update { currentState ->
+            when (mutation) {
+                is LoginMutation.EmailUpdated -> {
+                    val email = mutation.email
+                    val emailIsValid = android.util.Patterns.EMAIL_ADDRESS
+                        .matcher(email)
+                        .matches()
+                    val password = currentState.userInput.passwordInputText
+
+                    currentState.copy(
+                        userInput = currentState.userInput.copy(
+                            emailInputText = email,
+                            emailInputIsInvalid = email.isNotEmpty() && !emailIsValid,
+                        ),
+                        loginButton = currentState.loginButton.copy(
+                            loginButtonEnabled = password.isNotEmpty() && emailIsValid,
+                        ),
+                    )
+                }
+                is LoginMutation.PasswordUpdated -> {
+                    val email = currentState.userInput.emailInputText
+                    val emailIsValid = android.util.Patterns.EMAIL_ADDRESS
+                        .matcher(email)
+                        .matches()
+                    val password = mutation.password
+
+                    currentState.copy(
+                        userInput = currentState.userInput.copy(
+                            emailInputText = email,
+                            emailInputIsInvalid = email.isNotEmpty() && !emailIsValid,
+                        ),
+                        loginButton = currentState.loginButton.copy(
+                            loginButtonEnabled = password.isNotEmpty() && emailIsValid,
+                        ),
+                    )
+                }
+                is LoginMutation.Loading -> {
+                    currentState.copy(
+                        loadingIndicator = currentState.loadingIndicator.copy(
+                            loadingIndicatorVisible = true,
+                        ),
+                        loginButton = currentState.loginButton.copy(loginButtonEnabled = false),
+                    )
+                }
+                is LoginMutation.Success -> {
+                    currentState.copy(
+                        loadingIndicator = currentState.loadingIndicator.copy(
+                            loadingIndicatorVisible = false,
+                        ),
+                    )
+                }
+                is LoginMutation.Error -> {
+                    currentState.copy(
+                        loadingIndicator = currentState.loadingIndicator.copy(
+                            loadingIndicatorVisible = false,
+                        ),
+                        loginButton = currentState.loginButton.copy(loginButtonEnabled = true),
+                    )
+                }
+            }
+        }
+    }
 }
