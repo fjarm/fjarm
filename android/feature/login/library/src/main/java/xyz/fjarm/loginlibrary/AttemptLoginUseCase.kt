@@ -1,5 +1,6 @@
 package xyz.fjarm.loginlibrary
 
+import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
@@ -12,6 +13,7 @@ interface AttemptLoginUseCase {
     @InstallIn(SingletonComponent::class)
     interface AttemptLoginUseCaseModule {
 
+        @Binds
         fun bindAttemptLoginUseCase(impl: AttemptLoginUseCaseImpl): AttemptLoginUseCase
     }
 }
