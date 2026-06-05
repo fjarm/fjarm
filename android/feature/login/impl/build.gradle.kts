@@ -26,10 +26,12 @@ dependencies {
     implementation(project(":android:library:buttons"))
     implementation(project(":android:library:fjarmTheme"))
     implementation(project(":android:library:navigation"))
-    implementation(project(":android:library:testActivity"))
     implementation(project(":android:library:text"))
 
+    debugImplementation(project(":android:library:testActivity"))
+
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.core)
     implementation(libs.androidx.hilt.hilt.navigation.compose)
     implementation(libs.androidx.navigation3.navigation3.runtime)
 
