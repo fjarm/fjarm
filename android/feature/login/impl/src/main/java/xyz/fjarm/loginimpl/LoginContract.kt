@@ -51,6 +51,7 @@ data class LoginState(
     )
 }
 
+// What the system must execute (like background work)
 sealed interface LoginAction {
 
     data class UpdateEmailAddress(val email: String): LoginAction
@@ -61,6 +62,7 @@ sealed interface LoginAction {
     ): LoginAction
 }
 
+// What the user did (click a button, type some text, etc.)
 sealed interface LoginEvent {
 
     data class EmailAddressModified(val emailAddress: String): LoginEvent
@@ -68,6 +70,7 @@ sealed interface LoginEvent {
     data object LoginButtonClicked: LoginEvent
 }
 
+// How the state must change (outcome of an action)
 sealed interface LoginMutation {
 
     data class EmailUpdated(val email: String): LoginMutation
