@@ -29,10 +29,10 @@ data class LoginState(
 
     data class UserInput(
         @StringRes val emailInputLabelText: Int,
-        var emailInputText: String,
+        val emailInputText: String,
         val emailInputIsInvalid: Boolean,
         @StringRes val passwordInputLabelText: Int,
-        var passwordInputText: String,
+        val passwordInputText: String,
     )
 
     data class LoginButton(
