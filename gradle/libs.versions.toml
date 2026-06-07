@@ -33,7 +33,7 @@ connectRpc = "0.8.2"
 okHttp3 = "5.3.2"
 
 ## Navigation3
-navigation3 = "1.1.1"
+navigation3 = "1.1.2"
 
 ## Robolectric
 robolectric = "4.16.1"
