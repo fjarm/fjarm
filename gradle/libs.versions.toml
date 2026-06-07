@@ -96,7 +96,7 @@ androidx-navigation3-navigation3-runtime = { group = "androidx.navigation3", nam
 androidx-navigation3-navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3" }
 
 ## ViewModel + Navigation3
-androidx-lifecycle-lifcycle-viewmodel-navigation3 = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewModelNavigation3" }
+androidx-lifecycle-lifecycle-viewmodel-navigation3 = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewModelNavigation3" }
 
 ## Robolectric
 org-robolectric-robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
