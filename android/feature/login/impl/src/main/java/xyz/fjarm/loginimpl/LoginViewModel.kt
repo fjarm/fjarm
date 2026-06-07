@@ -10,7 +10,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import xyz.fjarm.loginlibrary.AttemptLoginUseCase
+import java.util.regex.Pattern
 import javax.inject.Inject
+
+private val emailPattern = Pattern.compile(
+    "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
+            "\\@" +
+            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,64}" +
+            "(" +
+            "\\." +
+            "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
+            ")+"
+)
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -78,7 +89,7 @@ class LoginViewModel @Inject constructor(
             when (mutation) {
                 is LoginMutation.EmailUpdated -> {
                     val email = mutation.email
-                    val emailIsValid = android.util.Patterns.EMAIL_ADDRESS
+                    val emailIsValid = emailPattern
                         .matcher(email)
                         .matches()
                     val password = currentState.userInput.passwordInputText
@@ -95,15 +106,14 @@ class LoginViewModel @Inject constructor(
                 }
                 is LoginMutation.PasswordUpdated -> {
                     val email = currentState.userInput.emailInputText
-                    val emailIsValid = android.util.Patterns.EMAIL_ADDRESS
+                    val emailIsValid = emailPattern
                         .matcher(email)
                         .matches()
                     val password = mutation.password
 
                     currentState.copy(
                         userInput = currentState.userInput.copy(
-                            emailInputText = email,
-                            emailInputIsInvalid = email.isNotEmpty() && !emailIsValid,
+                            passwordInputText = password,
                         ),
                         loginButton = currentState.loginButton.copy(
                             loginButtonEnabled = password.isNotEmpty() && emailIsValid,
