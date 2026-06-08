@@ -1,10 +1,14 @@
 .github
 .gradle/
 .idea/
+.kotlin/
 android/
+build/
 build-logic/
 docs/
+genhtml/
 gradle/
+proto/
 build.gradle.kts
 gradle.properties
 gradlew

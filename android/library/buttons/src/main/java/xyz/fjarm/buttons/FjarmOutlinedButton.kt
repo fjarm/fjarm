@@ -19,11 +19,13 @@ import androidx.compose.ui.unit.dp
 fun FjarmOutlinedButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit,
 ) {
     OutlinedButton(
         onClick = onClick,
         modifier = modifier,
+        enabled = enabled,
         shape = RoundedCornerShape(4.dp),
         border = ButtonDefaults.outlinedButtonBorder(true).copy(width = 1.dp),
     ) {

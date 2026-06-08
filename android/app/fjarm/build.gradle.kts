@@ -25,6 +25,8 @@ android {
 dependencies {
     implementation(project(":android:feature:loginAndSignUp:api"))
     implementation(project(":android:feature:loginAndSignUp:impl"))
+    implementation(project(":android:feature:login:api"))
+    implementation(project(":android:feature:login:impl"))
     implementation(project(":android:feature:underConstruction:impl"))
 
     implementation(project(":android:library:fjarmTheme"))
@@ -32,6 +34,7 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.lifecycle.lifecycle.viewmodel.navigation3)
     implementation(libs.androidx.navigation3.navigation3.runtime)
     implementation(libs.androidx.navigation3.navigation3.ui)
 }

@@ -30,3 +30,19 @@ The command may need to be run twice.
 ## Android Studio and AGP version compatibility
 
 The required Android Studio version for each AGP version can be found [at this link](https://developer.android.com/build/releases/about-agp#android_gradle_plugin_and_android_studio_compatibility).
+
+## Convention plugins
+
+The app uses the following Gradle convention plugins all defined in [build-logic](../build-logic/convention/src/main/kotlin):
+
+* `convention.android.application`
+* `convention.android.library`
+* `convention.compose`
+* `convention.compose.metrics`
+* `convention.hilt`
+* `convention.roborazzi`
+
+Each plugin implementation is described in the `implementationClass` field in the [build.gradle.kts](../build-logic/convention/build.gradle.kts)
+file.
+
+Common dependencies added by each plugin are defined in the [Dependencies.kt](../build-logic/convention/src/main/kotlin/Dependencies.kt) file.

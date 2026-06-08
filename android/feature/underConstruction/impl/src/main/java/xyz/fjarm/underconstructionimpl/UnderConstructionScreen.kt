@@ -16,12 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.PreviewFontScale
+import androidx.compose.ui.tooling.preview.PreviewLightDark
+import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
 import xyz.fjarm.fjarmtheme.FjarmTheme
 import xyz.fjarm.fjarmtheme.FjarmTypography
-import xyz.fjarm.previews.PreviewFontScales
-import xyz.fjarm.previews.PreviewLightDarkTheme
-import xyz.fjarm.previews.PreviewPhoneSizes
 
 @Composable
 fun UnderConstructionScreen() {
@@ -68,9 +68,9 @@ fun UnderConstructionScreen() {
     }
 }
 
-@PreviewPhoneSizes
-@PreviewFontScales
-@PreviewLightDarkTheme
+@PreviewFontScale
+@PreviewLightDark
+@PreviewScreenSizes
 @Composable
 fun UnderConstructionScreenPreview() {
     UnderConstructionScreen()

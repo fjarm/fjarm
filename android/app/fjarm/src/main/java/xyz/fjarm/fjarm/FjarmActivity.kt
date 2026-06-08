@@ -10,14 +10,18 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import dagger.hilt.android.AndroidEntryPoint
 import xyz.fjarm.fjarmtheme.FjarmTheme
@@ -42,13 +46,23 @@ class FjarmActivity : ComponentActivity() {
         setContent {
             FjarmTheme {
                 Scaffold(
+                    // Prevent drawing an extra background layer
+                    // SEE: https://www.reddit.com/r/androiddev/comments/1sum04a/scaffold_can_add_an_extra_background_layer_on/
+                    containerColor = Color.Transparent,
                     modifier = Modifier.fillMaxSize(),
-                ) { innerPadding ->
+                ) { _: PaddingValues ->
                     Surface(
                         modifier = Modifier
                             .fillMaxSize(),
                     ) {
                         NavDisplay(
+                            entryDecorators = listOf(
+                                // Add the default decorators for managing scenes and saving state
+                                rememberSaveableStateHolderNavEntryDecorator(),
+                                // Then add the view model store decorator (clears ViewModels on
+                                // pop)
+                                rememberViewModelStoreNavEntryDecorator()
+                            ),
                             backStack = navigator.getBackStack(),
                             onBack = {
                                 navigator.processSideEffect(

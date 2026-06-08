@@ -18,7 +18,7 @@ fun FjarmHeaderText(
     Text(
         text = text,
         modifier = modifier,
-        style = FjarmTypography.headlineLarge.copy(
+        style = FjarmTypography.displayLarge.copy(
             fontWeight = FontWeight.Bold,
         ),
     )
