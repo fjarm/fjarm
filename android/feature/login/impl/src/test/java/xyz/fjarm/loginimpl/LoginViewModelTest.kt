@@ -63,10 +63,10 @@ class LoginViewModelTest {
         viewModel.processEvent(LoginEvent.EmailAddressModified("j"))
         advanceUntilIdle()
 
-        // No side effects are emitted
+        // Then no side effects are emitted
         assertEquals(0, collectedSideEffects.size)
 
-        // The email state is updated
+        // And the email state is updated
         assertEquals("j", viewModel.state.value.userInput.emailInputText)
         assertEquals(true, viewModel.state.value.userInput.emailInputIsInvalid)
 
@@ -95,11 +95,49 @@ class LoginViewModelTest {
         viewModel.processEvent(LoginEvent.EmailAddressModified("ja@d.co"))
         advanceUntilIdle()
 
-        // The email state is updated
+        // Then the email state is updated
         assertEquals("ja@d.co", viewModel.state.value.userInput.emailInputText)
         assertEquals(false, viewModel.state.value.userInput.emailInputIsInvalid)
 
         // And the login button is not enabled
         assertEquals(false, viewModel.state.value.loginButton.loginButtonEnabled)
+    }
+
+    @Test
+    fun processEvent_PasswordModified_emitsNoSideEffects_andUpdatesPasswordState() = runTest {
+        val viewModel = LoginViewModel(noopAttemptLoginUseCase)
+
+        val collectedSideEffects = mutableListOf<LoginSideEffect>()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.sideEffect.collect { collectedSideEffects.add(it) }
+        }
+
+        // When a user modifies the password edit text
+        viewModel.processEvent(LoginEvent.PasswordModified("j"))
+        advanceUntilIdle()
+
+        // Then no side effects are emitted
+        assertEquals(0, collectedSideEffects.size)
+
+        // And the password state is updated
+        assertEquals("j", viewModel.state.value.userInput.passwordInputText)
+
+        // And the login button is not enabled
+        assertEquals(false, viewModel.state.value.loginButton.loginButtonEnabled)
+    }
+
+    @Test
+    fun processEvent_EmailAddressModified_PasswordModified_validNonEmptyValuesUpdatesLoginButtonState() = runTest {
+        // Given a LoginViewModel with a no-op AttemptLoginUseCase
+        val viewModel = LoginViewModel(noopAttemptLoginUseCase)
+
+        // When a user modifies the email and password edit texts with valid non-empty values
+        viewModel.processEvent(LoginEvent.EmailAddressModified("j@d.co"))
+        advanceUntilIdle()
+        viewModel.processEvent(LoginEvent.PasswordModified("bleepbloop"))
+        advanceUntilIdle()
+
+        // Then the login button is enabled
+        assertEquals(true, viewModel.state.value.loginButton.loginButtonEnabled)
     }
 }
