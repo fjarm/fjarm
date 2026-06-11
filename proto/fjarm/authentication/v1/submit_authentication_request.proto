@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import "buf/validate/validate.proto";
+import "fjarm/idempotency/v1/idempotency_key.proto";
+import "fjarm/users/v1/user_email_address.proto";
+import "fjarm/users/v1/user_password.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/authentication/v1";
+option java_multiple_files = true;
+option java_outer_classname = "SubmitAuthenticationRequestProto";
+option java_package = "xyz.fjarm.authentication.v1";
+
+// A conditional Create method. When the user submits valid authentication credentials, a new
+// session is created. If the user submits invalid authentication credentials, no new session is
+// created, and an error is returned.
+//
+// When using this message, the request metadata MUST include a request ID.
+message SubmitAuthenticationRequest {
+  // Uniquely identifies a request such that a client can retry the request if it failed for a retry-able
+  // error like `UNAVAILABLE`. The same request should always return the same response.
+  optional fjarm.idempotency.v1.IdempotencyKey idempotency_key = 1 [(buf.validate.field).required = true];
+
+  optional fjarm.users.v1.UserEmailAddress email_address = 2 [(buf.validate.field).required = true];
+  optional fjarm.users.v1.UserPassword password = 3 [(buf.validate.field).required = true];
+}
