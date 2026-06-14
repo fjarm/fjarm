@@ -85,6 +85,8 @@ The `LoginRepository` sends the following message type:
 // submit_authentication_request.proto
 syntax = "proto3";
 
+package fjarm.authentication.v1;
+
 import "buf/validate/validate.proto";
 import "fjarm/users/v1/user_email_address.proto";
 import "fjarm/users/v1/user_password.proto";
@@ -108,6 +110,8 @@ The response looks like:
 // submit_authentication_response.proto
 syntax = "proto3";
 
+package fjarm.authentication.v1;
+
 import "buf/validate/validate.proto";
 import "fjarm/authentication/v1/access_token.proto";
 import "fjarm/authentication/v1/refresh_token.proto";
@@ -128,6 +132,8 @@ And the service tying them together looks like:
 ```protobuf
 // authentication_service.proto
 syntax = "proto3";
+
+package fjarm.authentication.v1;
 
 import "buf/validate/validate.proto";
 import "fjarm/authentication/v1/submit_authentication_request.proto";
