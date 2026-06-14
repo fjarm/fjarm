@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+package fjarm.authentication.v1;
+
 import "buf/validate/validate.proto";
 import "fjarm/idempotency/v1/idempotency_key.proto";
 import "fjarm/users/v1/user_email_address.proto";
