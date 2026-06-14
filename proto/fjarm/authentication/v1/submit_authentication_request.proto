@@ -20,6 +20,8 @@ option java_package = "xyz.fjarm.authentication.v1";
 message SubmitAuthenticationRequest {
   // Uniquely identifies a request such that a client can retry the request if it failed for a retry-able
   // error like `UNAVAILABLE`. The same request should always return the same response.
+  //
+  // Such a request_id goes in the message body as specified by AIP-155.
   optional fjarm.idempotency.v1.IdempotencyKey idempotency_key = 1 [(buf.validate.field).required = true];
 
   optional fjarm.users.v1.UserEmailAddress email_address = 2 [(buf.validate.field).required = true];
