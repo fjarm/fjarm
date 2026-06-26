@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package fjarm.authentication.v1;
+
+import "buf/validate/validate.proto";
+import "fjarm/authentication/v1/access_token.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/authentication/v1";
+option java_multiple_files = true;
+option java_outer_classname = "SubmitAuthenticationResponseProto";
+option java_package = "xyz.fjarm.authentication.v1";
+
+message SubmitAuthenticationResponse {
+  optional fjarm.authentication.v1.AccessToken access_token = 1 [(buf.validate.field).required = true];
+}
