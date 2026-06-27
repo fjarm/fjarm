@@ -12,16 +12,16 @@ option java_multiple_files = true;
 option java_outer_classname = "SubmitAuthenticationRequestProto";
 option java_package = "xyz.fjarm.authentication.v1";
 
-// A conditional Create method. When the user submits valid authentication credentials, a new
+// A conditional Create request. When the user submits valid authentication credentials, a new
 // session is created. If the user submits invalid authentication credentials, no new session is
 // created, and an error is returned.
 //
 // When using this message, the request metadata MUST include a request ID.
-message SubmitAuthenticationRequest {
+message CreateSessionRequest {
   // Uniquely identifies a request such that a client can retry the request if it failed for a retry-able
   // error like `UNAVAILABLE`. The same request should always return the same response.
   //
-  // Such a request_id goes in the message body as specified by AIP-155.
+  // Such an idempotency_key/request_id goes in the message body as specified by AIP-155.
   optional fjarm.idempotency.v1.IdempotencyKey idempotency_key = 1 [(buf.validate.field).required = true];
 
   optional fjarm.users.v1.UserEmailAddress email_address = 2 [(buf.validate.field).required = true];

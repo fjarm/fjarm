@@ -3,7 +3,7 @@ syntax = "proto3";
 package fjarm.authentication.v1;
 
 import "buf/validate/validate.proto";
-import "fjarm/authentication/v1/submit_authentication_request.proto";
+import "fjarm/authentication/v1/create_session_request.proto";
 import "fjarm/authentication/v1/submit_authentication_response.proto";
 
 option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/authentication/v1";
@@ -13,5 +13,7 @@ option java_package = "xyz.fjarm.authentication.v1";
 
 // Authentication related operations like log in.
 service AuthenticationService {
-  rpc SubmitAuthentication(fjarm.authentication.v1.SubmitAuthenticationRequest) returns (fjarm.authentication.v1.SubmitAuthenticationResponse);
+  // SEE: https://google.aip.dev/133
+  // CreateSession creates a session with associated access and refresh tokens.
+  rpc CreateSession(fjarm.authentication.v1.CreateSessionRequest) returns (fjarm.authentication.v1.SubmitAuthenticationResponse);
 }
