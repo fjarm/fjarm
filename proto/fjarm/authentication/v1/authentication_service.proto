@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package fjarm.authentication.v1;
 
-import "buf/validate/validate.proto";
 import "fjarm/authentication/v1/create_session_request.proto";
 import "fjarm/authentication/v1/create_session_response.proto";
 
