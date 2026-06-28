@@ -3,7 +3,6 @@ syntax = "proto3";
 package fjarm.authentication.v1;
 
 import "fjarm/authentication/v1/session.proto";
-import "google/rpc/status.proto";
 
 option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/authentication/v1";
 option java_multiple_files = true;
@@ -12,9 +11,7 @@ option java_package = "xyz.fjarm.authentication.v1";
 
 // CreateSessionResponse describes the result of attempting an RPC to create an authentication and refresh token
 // pair.
+// A google.rpc.Status type will be included in the response header metadata.
 message CreateSessionResponse {
-  // The status of the RPC request to create an authentication and refresh token pair.
-  optional google.rpc.Status status = 1;
-
-  optional fjarm.authentication.v1.Session session = 2;
+  optional fjarm.authentication.v1.Session session = 1;
 }
