@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package fjarm.authentication.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/authentication/v1";
+option java_multiple_files = true;
+option java_outer_classname = "RefreshTokenProto";
+option java_package = "xyz.fjarm.authentication.v1";
+
+// RefreshToken represents a credential used by the client to request new access tokens from the server without needing
+// to re-authenticate.
+message RefreshToken {
+  // An opaque string, likely a JWT, to be sent when the access token expires.
+  optional string refresh_token = 1 [(buf.validate.field).required = true];
+}

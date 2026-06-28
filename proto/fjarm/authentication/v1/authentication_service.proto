@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package fjarm.authentication.v1;
+
+import "fjarm/authentication/v1/create_session_request.proto";
+import "fjarm/authentication/v1/create_session_response.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/authentication/v1";
+option java_multiple_files = true;
+option java_outer_classname = "AuthenticationServiceProto";
+option java_package = "xyz.fjarm.authentication.v1";
+
+// Authentication related operations like log in.
+service AuthenticationService {
+  // SEE: https://google.aip.dev/133
+  // CreateSession creates a session with associated access and refresh tokens.
+  rpc CreateSession(fjarm.authentication.v1.CreateSessionRequest) returns (fjarm.authentication.v1.CreateSessionResponse);
+}

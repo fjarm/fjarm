@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package fjarm.authentication.v1;
+
+import "buf/validate/validate.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/authentication/v1";
+option java_multiple_files = true;
+option java_outer_classname = "AccessTokenProto";
+option java_package = "xyz.fjarm.authentication.v1";
+
+// AccessToken represents a credential that proves the application is authorized to perform specific actions on behalf
+// of the user.
+message AccessToken {
+  // An opaque string, likely a JWT, to be sent on every protected RPC.
+  optional string access_token = 1 [(buf.validate.field).required = true];
+}

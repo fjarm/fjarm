@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package fjarm.authentication.v1;
+
+import "buf/validate/validate.proto";
+import "fjarm/authentication/v1/access_token.proto";
+import "fjarm/authentication/v1/refresh_token.proto";
+import "fjarm/authentication/v1/session_id.proto";
+
+option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/authentication/v1";
+option java_multiple_files = true;
+option java_outer_classname = "SessionProto";
+option java_package = "xyz.fjarm.authentication.v1";
+
+// Session uniquely identifies a session.
+message Session {
+  // The unique identifier for this session. Equivalent to the name field required in AIP-122.
+  optional fjarm.authentication.v1.SessionId session_id = 1 [(buf.validate.field).required = true];
+
+  // The short-lived access token.
+  optional fjarm.authentication.v1.AccessToken access_token = 2 [(buf.validate.field).required = true];
+
+  // The refresh token that can be used to obtain a new access token.
+  optional fjarm.authentication.v1.RefreshToken refresh_token = 3 [(buf.validate.field).required = true];
+}
