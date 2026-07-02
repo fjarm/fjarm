@@ -11,7 +11,7 @@ composeBom = "2026.05.01"
 # Our dependencies below
 
 ## Dagger/Hilt
-hilt = "2.59.2"
+hilt = "2.60"
 ksp = "2.3.8"
 
 ## Hilt + Compose (provides the hiltViewModel() @Composable function)
