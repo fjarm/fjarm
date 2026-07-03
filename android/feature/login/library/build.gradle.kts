@@ -14,3 +14,10 @@ kotlin {
         jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
     }
 }
+
+dependencies {
+    implementation(project(":android:library:serverTransport"))
+
+    implementation(libs.build.buf.gen.fjarm.connectrpc.kotlin.lite)
+    implementation(libs.build.buf.gen.fjarm.protocolbuffers.kotlin.lite)
+}
