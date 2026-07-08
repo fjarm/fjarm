@@ -2,6 +2,7 @@ package xyz.fjarm.loginlibrary
 
 import com.connectrpc.Code
 import com.connectrpc.ConnectException
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -12,12 +13,6 @@ class AttemptLoginUseCaseImpl @Inject constructor(
     private val loginRepository: LoginRepository,
 ): AttemptLoginUseCase {
 
-    companion object {
-        private const val ERROR_GREETING = "RUH-ROH!"
-        private const val HIDDEN_ERROR = "Something went wrong. Try again later."
-        private const val UNAVAILABLE_MESSAGE = "Something went wrong on our end. Try again later."
-    }
-
     override suspend fun invoke(email: String, password: String): Result<Unit> {
         // Use cases are responsible for being thread safe.
         // SEE: https://developer.android.com/kotlin/coroutines/coroutines-best-practices#main-safe
@@ -27,18 +22,18 @@ class AttemptLoginUseCaseImpl @Inject constructor(
                 loginRepository.createSession(email, password)
                 Result.success(Unit)
             } catch (e: ConnectException) {
-                val message = when (e.code) {
-                    Code.UNAVAILABLE -> UNAVAILABLE_MESSAGE
-                    else -> {
-                        // In a production app, consider logging this unexpected exception.
-                        HIDDEN_ERROR
-                    }
+                val failure = when (e.code) {
+                    Code.UNAUTHENTICATED -> AttemptLoginException.InvalidCredentials(e)
+                    Code.UNAVAILABLE -> AttemptLoginException.ServerUnavailable(e)
+                    else -> e
                 }
-                Result.failure(Throwable(message))
-            } catch (_: Exception) {
+                Result.failure(failure)
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
                 // Generic error handling is reserved for truly exceptional errors that happen
                 // outside ConnectRPC.
-                Result.failure(Throwable("$ERROR_GREETING $HIDDEN_ERROR"))
+                Result.failure(e)
             }
         }
     }
