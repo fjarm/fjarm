@@ -61,6 +61,7 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     navigateToHome: () -> Unit = {},
 ) {
+    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -74,7 +75,7 @@ fun LoginScreen(
                     }
                     is LoginSideEffect.ShowSnackbar -> {
                         snackbarHostState.showSnackbar(
-                            message = sideEffect.message,
+                            message = getString(context, sideEffect.message),
                             duration = SnackbarDuration.Indefinite,
                         )
                     }
@@ -83,7 +84,6 @@ fun LoginScreen(
         }
     }
 
-    val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Scaffold(

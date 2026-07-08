@@ -83,5 +83,5 @@ sealed interface LoginMutation {
 sealed interface LoginSideEffect {
 
     data object NavigateToHome: LoginSideEffect
-    data class ShowSnackbar(val message: String): LoginSideEffect
+    data class ShowSnackbar(@StringRes val message: Int): LoginSideEffect
 }
