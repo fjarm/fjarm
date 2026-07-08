@@ -32,7 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,7 +42,6 @@ import androidx.compose.ui.tooling.preview.PreviewFontScale
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.getString
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -61,7 +60,7 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
     navigateToHome: () -> Unit = {},
 ) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -75,7 +74,7 @@ fun LoginScreen(
                     }
                     is LoginSideEffect.ShowSnackbar -> {
                         snackbarHostState.showSnackbar(
-                            message = getString(context, sideEffect.message),
+                            message = resources.getString(sideEffect.message),
                             duration = SnackbarDuration.Indefinite,
                         )
                     }
@@ -94,31 +93,29 @@ fun LoginScreen(
     ) { contentPadding ->
         LoginScreenContent(
             modifier = modifier.padding(contentPadding),
-            headerText = getString(context, R.string.header_text),
+            headerText = resources.getString(R.string.header_text),
             emailInputText = state.userInput.emailInputText,
-            emailInputLabelText = getString(context, R.string.email_input_label_text),
+            emailInputLabelText = resources.getString(R.string.email_input_label_text),
             emailInputIsInvalid = state.userInput.emailInputIsInvalid,
             onEmailInputTextModified = {
                 viewModel.processEvent(LoginEvent.EmailAddressModified(it))
             },
             passwordInputText = state.userInput.passwordInputText,
-            passwordInputLabelText = getString(context, R.string.password_input_label_text),
+            passwordInputLabelText = resources.getString(R.string.password_input_label_text),
             onPasswordInputTextModified = {
                 viewModel.processEvent(LoginEvent.PasswordModified(it))
             },
-            loginButtonText = getString(context, R.string.login_button_text),
+            loginButtonText = resources.getString(R.string.login_button_text),
             loginButtonEnabled = state.loginButton.loginButtonEnabled,
-            alternativeOptionsText = getString(
-                context,
+            alternativeOptionsText = resources.getString(
                 R.string.alternative_options_section_header_text,
             ),
-            newToFjarmPromptText = getString(context, R.string.new_to_fjarm_prompt_text),
-            navigateToSignUpButtonText = getString(
-                context,
+            newToFjarmPromptText = resources.getString(R.string.new_to_fjarm_prompt_text),
+            navigateToSignUpButtonText = resources.getString(
                 R.string.navigate_to_sign_up_button_text,
             ),
-            privacyPolicyText = getString(context, R.string.navigate_to_privacy_policy_text),
-            termsOfServiceText = getString(context, R.string.navigate_to_terms_of_service_text),
+            privacyPolicyText = resources.getString(R.string.navigate_to_privacy_policy_text),
+            termsOfServiceText = resources.getString(R.string.navigate_to_terms_of_service_text),
         )
     }
 }
