@@ -28,3 +28,4 @@ updates:
     schedule:
       interval: "weekly"
       day: "thursday"
+    open-pull-requests-limit: 20
