@@ -15,7 +15,7 @@ go_sdk = use_extension("@rules_go//go:extensions.bzl", "go_sdk")
 go_sdk.download(version = "1.26.0")
 
 go_deps = use_extension("@gazelle//:extensions.bzl", "go_deps")
-go_deps.from_file(go_mod = "//:go.mod")
+go_deps.from_file(go_mod = "go.mod")
 use_repo(
     go_deps,
     "build_buf_gen_go_fjarm_fjarm_connectrpc_go",
