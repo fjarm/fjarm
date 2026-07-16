@@ -30,7 +30,7 @@ coroutinesCoreJvm = "1.11.0"
 connectRpc = "0.8.2"
 
 ## OkHttp
-okHttp3 = "5.3.2"
+okHttp3 = "5.4.0"
 
 ## Navigation3
 navigation3 = "1.1.3"
