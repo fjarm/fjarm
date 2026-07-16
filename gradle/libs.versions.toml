@@ -33,7 +33,7 @@ connectRpc = "0.9.0"
 okHttp3 = "5.4.0"
 
 ## Navigation3
-navigation3 = "1.1.3"
+navigation3 = "1.1.4"
 
 ## ViewModel + Navigation3
 lifecycleViewModelNavigation3 = "2.10.0"
