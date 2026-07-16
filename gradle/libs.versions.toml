@@ -42,7 +42,7 @@ lifecycleViewModelNavigation3 = "2.10.0"
 robolectric = "4.16.1"
 
 ## Roborazzi
-roborazzi = "1.63.0"
+roborazzi = "1.68.0"
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
