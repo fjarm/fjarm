@@ -1,18 +1,18 @@
 [versions]
-agp = "9.2.1"
+agp = "9.3.0"
 kotlin = "2.3.21"
 core = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 activityCompose = "1.13.0"
-composeBom = "2026.06.00"
+composeBom = "2026.06.01"
 
 # Our dependencies below
 
 ## Dagger/Hilt
-hilt = "2.59.2"
-ksp = "2.3.8"
+hilt = "2.60.1"
+ksp = "2.3.10"
 
 ## Hilt + Compose (provides the hiltViewModel() @Composable function)
 androidXHilt = "1.3.0"
@@ -37,7 +37,7 @@ fjarmProtobufKotlinLite = "35.1.0.1.20260628154217.e6301714126c"
 okHttp3 = "5.4.0"
 
 ## Navigation3
-navigation3 = "1.1.3"
+navigation3 = "1.1.4"
 
 ## ViewModel + Navigation3
 lifecycleViewModelNavigation3 = "2.10.0"
@@ -46,7 +46,7 @@ lifecycleViewModelNavigation3 = "2.10.0"
 robolectric = "4.16.1"
 
 ## Roborazzi
-roborazzi = "1.64.0"
+roborazzi = "1.68.0"
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
