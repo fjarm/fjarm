@@ -2,6 +2,9 @@
 <resources>
     <string name="header_text">Login</string>
     <string name="email_input_label_text">Email address</string>
+    <string name="error_generic">Something went wrong.</string>
+    <string name="error_invalid_credentials">Wrong email and/or password.</string>
+    <string name="error_server_unavailable">Uh-oh! Something went wrong on our end.</string>
     <string name="password_input_label_text">Password</string>
     <string name="login_button_text">Continue</string>
     <string name="alternative_options_section_header_text">Or</string>

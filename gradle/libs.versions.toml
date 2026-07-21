@@ -29,6 +29,10 @@ coroutinesCoreJvm = "1.11.0"
 ## ConnectRPC
 connectRpc = "0.9.0"
 
+## Fjarm ConnectRPC messages and services
+fjarmConnectRPCKotlinLite = "0.9.0.2.20260628154217.e6301714126c"
+fjarmProtobufKotlinLite = "35.1.0.1.20260628154217.e6301714126c"
+
 ## OkHttp
 okHttp3 = "5.4.0"
 
@@ -87,6 +91,10 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 com-connectrpc-connect-kotlin = { group = "com.connectrpc", name = "connect-kotlin", version.ref = "connectRpc" }
 com-connectrpc-connect-kotlin-google-javalite-ext = { group = "com.connectrpc", name = "connect-kotlin-google-javalite-ext", version.ref = "connectRpc" }
 com-connectrpc-connect-kotlin-okhttp = { group = "com.connectrpc", name = "connect-kotlin-okhttp", version.ref = "connectRpc" }
+
+## Fjarm ConnectRPC messages and services
+build-buf-gen-fjarm-connectrpc-kotlin-lite = { group = "build.buf.gen", name = "fjarm_fjarm_connectrpc_kotlin_lite", version.ref = "fjarmConnectRPCKotlinLite" }
+build-buf-gen-fjarm-protocolbuffers-kotlin-lite = { group = "build.buf.gen", name = "fjarm_fjarm_protocolbuffers_kotlin_lite", version.ref = "fjarmProtobufKotlinLite" }
 
 ## OkHttp
 com-squareup-okhttp3-okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okHttp3" }

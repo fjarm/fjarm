@@ -24,8 +24,8 @@ internal object AndroidConfig {
             }
 
             compileOptions.apply {
-                sourceCompatibility = JavaVersion.VERSION_21
-                targetCompatibility = JavaVersion.VERSION_21
+                sourceCompatibility = javaVersion
+                targetCompatibility = javaVersion
             }
 
             buildTypes.apply {

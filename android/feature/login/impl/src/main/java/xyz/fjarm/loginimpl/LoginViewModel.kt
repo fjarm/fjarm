@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import xyz.fjarm.loginlibrary.AttemptLoginException
 import xyz.fjarm.loginlibrary.AttemptLoginUseCase
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -74,9 +75,12 @@ class LoginViewModel @Inject constructor(
                         },
                         onFailure = { e ->
                             reduce(LoginMutation.Error)
-                            _sideEffect.emit(
-                                LoginSideEffect.ShowSnackbar(e.message ?: "Uh-oh. Try again.")
-                            )
+                            val errorRes = when (e) {
+                                is AttemptLoginException.InvalidCredentials -> R.string.error_invalid_credentials
+                                is AttemptLoginException.ServerUnavailable -> R.string.error_server_unavailable
+                                else -> R.string.error_generic
+                            }
+                            _sideEffect.emit(LoginSideEffect.ShowSnackbar(errorRes))
                         }
                     )
                 }

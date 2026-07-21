@@ -14,5 +14,9 @@ option java_package = "xyz.fjarm.authentication.v1";
 service AuthenticationService {
   // SEE: https://google.aip.dev/133
   // CreateSession creates a session with associated access and refresh tokens.
-  rpc CreateSession(fjarm.authentication.v1.CreateSessionRequest) returns (fjarm.authentication.v1.CreateSessionResponse);
+  rpc CreateSession(fjarm.authentication.v1.CreateSessionRequest) returns (fjarm.authentication.v1.CreateSessionResponse) {
+    // Mark as idempotent, but has side-effects in that a session may be created if the server succeeds even if the
+    // client misses the response. Retrying with the same idempotency key should return the same session.
+    option idempotency_level = IDEMPOTENT;
+  }
 }
