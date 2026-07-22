@@ -3,20 +3,22 @@ package xyz.fjarm.loginlibrary
 import com.connectrpc.Code
 import com.connectrpc.ConnectException
 import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
+import xyz.fjarm.coroutines.IoDispatcher
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AttemptLoginUseCaseImpl @Inject constructor(
     private val loginRepository: LoginRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ): AttemptLoginUseCase {
 
     override suspend fun invoke(email: String, password: String): Result<Unit> {
         // Use cases are responsible for being thread safe.
         // SEE: https://developer.android.com/kotlin/coroutines/coroutines-best-practices#main-safe
-        return withContext(Dispatchers.IO) {
+        return withContext(ioDispatcher) {
             try {
                 // TODO(2026-07-06): Implement saving the session tokens to an encrypted DataStore.
                 loginRepository.createSession(email, password)

@@ -16,6 +16,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(project(":android:library:coroutines"))
     implementation(project(":android:library:serverTransport"))
 
     implementation(libs.build.buf.gen.fjarm.connectrpc.kotlin.lite)
