@@ -20,4 +20,6 @@ kotlin {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.core.jvm)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.junit)
 }
