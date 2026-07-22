@@ -1,13 +1,21 @@
 plugins {
-    // Use the AndroidLibraryConventionPlugin to apply Android library configuration
-    id("convention.android.library")
+    id("java-library")
 
     // Use the HiltConventionPlugin to apply Dagger Hilt configuration
     id("convention.hilt")
+
+    alias(libs.plugins.jetbrains.kotlin.jvm)
 }
 
-android {
-    namespace = "xyz.fjarm.coroutines"
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+    }
 }
 
 dependencies {
