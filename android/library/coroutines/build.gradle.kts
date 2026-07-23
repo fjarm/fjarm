@@ -1,5 +1,6 @@
 plugins {
     id("java-library")
+    id("java-test-fixtures")
 
     // Use the HiltConventionPlugin to apply Dagger Hilt configuration
     id("convention.hilt")
@@ -22,4 +23,9 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core.jvm)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.junit)
+
+    testFixturesApi(libs.kotlinx.coroutines.test)
+    testFixturesApi(libs.com.google.dagger.hilt.core)
+    testFixturesApi(libs.junit)
+    kspTestFixtures(libs.com.google.dagger.hilt.compiler)
 }
