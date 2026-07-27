@@ -31,3 +31,6 @@ genhtml
 .externalNativeBuild
 .cxx
 local.properties
+
+# Gemini generated files
+.artifacts/
