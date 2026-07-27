@@ -8,10 +8,11 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertIs
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AttemptLoginUseCaseImplTest {
@@ -54,7 +55,7 @@ class AttemptLoginUseCaseImplTest {
 
         // Then
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is AttemptLoginException.InvalidCredentials)
+        assertIs<AttemptLoginException.InvalidCredentials>(result.exceptionOrNull())
     }
 
     @Test
@@ -75,7 +76,7 @@ class AttemptLoginUseCaseImplTest {
 
         // Then
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is AttemptLoginException.ServerUnavailable)
+        assertIs<AttemptLoginException.ServerUnavailable>(result.exceptionOrNull())
     }
 
     @Test
@@ -97,8 +98,8 @@ class AttemptLoginUseCaseImplTest {
         // Then
         assertTrue(result.isFailure)
         val exception = result.exceptionOrNull()
-        assertTrue(exception is ConnectException)
-        assertEquals(Code.INTERNAL_ERROR, (exception as ConnectException).code)
+        assertIs<ConnectException>(exception)
+        assertEquals(Code.INTERNAL_ERROR, exception.code)
     }
 
     @Test
@@ -139,7 +140,7 @@ class AttemptLoginUseCaseImplTest {
 
         // Then
         assertTrue(result.isFailure)
-        assertTrue(result.exceptionOrNull() is RuntimeException)
+        assertIs<RuntimeException>(result.exceptionOrNull())
         assertEquals("Something went wrong", result.exceptionOrNull()?.message)
     }
 }
