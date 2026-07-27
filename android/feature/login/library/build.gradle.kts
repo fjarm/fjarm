@@ -21,4 +21,8 @@ dependencies {
 
     implementation(libs.build.buf.gen.fjarm.connectrpc.kotlin.lite)
     implementation(libs.build.buf.gen.fjarm.protocolbuffers.kotlin.lite)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(kotlin("test"))
 }
