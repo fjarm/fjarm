@@ -1,5 +1,15 @@
 # Agent Execution Guidelines
 
+## Context Inheritance (Cascading Rules)
+You operate in a hierarchical environment. Before executing any task in a specific subdirectory, you MUST check if that directory or its parents contain a local `AGENTS.md` file.
+* **Rule:** Merge local `AGENTS.md` instructions with these global instructions.
+* **Conflict Resolution:** Local/subfolder instructions always override global instructions for code implementation details.
+* **Submodule Context:** If your plan involves a subfolder (e.g., `/android`), your plan must explicitly state that it is adopting the rules found in `/android/AGENTS.md`.
+
+## Existing Submodule Context
+* [android/AGENTS.md](android/AGENTS.md)
+* [proto/AGENTS.md](proto/AGENTS.md)]
+
 ## Core Behavior Boundaries
 * **Always Plan First**: Before executing any terminal command, code modification, or file creation, you MUST create or update a Markdown planning file.
 * **No Inline Execution**: Do not skip the planning phase. If a plan file does not exist for the current task, stop and create it.
