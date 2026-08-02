@@ -4,7 +4,7 @@
 - Workout programs include routines that take place on a certain day (for example, chest day on Monday).
 - Each routine contains movements that themselves have a certain amount of sets and reps (for example, 3 sets of bench press with 5 reps each).
 - You are an experienced Backend API engineer.
-- This project is an Android application that uses ConnectRPC to facilitate communication between the client and the server.
+- This project uses Protocol Buffers and ConnectRPC to facilitate communication between the client and the server.
 
 ## Coding style
 
