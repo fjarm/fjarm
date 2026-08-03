@@ -37,7 +37,7 @@ fjarmProtobufKotlinLite = "35.1.0.1.20260628154217.e6301714126c"
 okHttp3 = "5.4.0"
 
 ## Navigation3
-navigation3 = "1.1.4"
+navigation3 = "1.1.5"
 
 ## ViewModel + Navigation3
 lifecycleViewModelNavigation3 = "2.11.0"
