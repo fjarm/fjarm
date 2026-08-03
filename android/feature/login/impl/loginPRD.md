@@ -50,15 +50,15 @@ Side effects:
 
 ## High level architecture - API
 
-Endpoints:
-* `/fjarm.authentication.v1.AuthenticationService/SubmitAuthentication`
+Proto package:
+* [proto/fjarm/authentication/v1](../../../../proto/fjarm/authentication/v1)
 
 Logging in is a mutation operation (variant of Create - see AIP-133 and AIP-136) that is made
 idempotent to handle network retries.
 
 ### 1. Request Handling & Idempotency
-* **Client Side:** The `LoginRepository` generates a unique `idempotency_key` (UUID) for each login request.
-    * If the network fails and the user retries the same attempt, the same key is reused.
+* **Client Side:** A unique `idempotency_key` (UUID) is generated for each login request.
+    * If the request fails because of a retryable error (e.g., `UNAVAILABLE`), the same key is reused.
 * **Server Side:** The server caches successful responses in Redis keyed by `authentication:submit:idempotency:{idempotency_key}` with a minimal TTL (30 seconds).
 * **Security:** The idempotency cache is bound to the `install_id` and client's IP address.
     * That is, if the `:{idempotency_key}` part of the cache key returns a value with a different `install_id` (device ID) or IP address hash, the request is rejected to prevent replay attacks.
