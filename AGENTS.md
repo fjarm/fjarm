@@ -8,7 +8,7 @@ You operate in a hierarchical environment. Before executing any task in a specif
 
 ## Existing Submodule Context
 * [android/AGENTS.md](android/AGENTS.md)
-* [proto/AGENTS.md](proto/AGENTS.md)]
+* [proto/AGENTS.md](proto/AGENTS.md)
 
 ## Core Behavior Boundaries
 * **Always Plan First**: Before executing any terminal command, code modification, or file creation, you MUST create or update a Markdown planning file.
