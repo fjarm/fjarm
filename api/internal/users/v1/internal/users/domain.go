@@ -99,7 +99,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 		return nil, fmt.Errorf("%w: %w", ErrInvalidArgument, err)
 	}
 
-	idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, req.GetIdempotencyKey().GetIdempotencyKey())
+	idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, req.GetIdempotencyKey())
 	_, err = dom.cache.Get(ctx, idempotencyKey)
 	if err == nil {
 		// Found a cached response. We can return a successful response without creating the user again.
@@ -116,11 +116,16 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	// requests are being processed. In that case, the replicas processing duplicate requests should simply wait for the
 	// processing to complete and return the cached result. If the primary server handling the request fails and doesn't
 	// update the cache, the replicas should also fail and the client can attempt retrying.
-	lockKey := fmt.Sprintf("%s:%s", createUserLockKey, req.GetIdempotencyKey().GetIdempotencyKey())
+	lockKey := fmt.Sprintf("%s:%s", createUserLockKey, req.GetIdempotencyKey())
 	lockVal, err := dom.locker.AcquireLock(ctx, lockKey, idempotencyLockTTL)
 	// Ensure we release the lock after processing the request.
 	defer func() {
-		releaseErr := dom.locker.SafeReleaseLock(ctx, lockKey, lockVal)
+		if lockVal == "" {
+			return
+		}
+		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
+		defer cancel()
+		releaseErr := dom.locker.SafeReleaseLock(cleanupCtx, lockKey, lockVal)
 		if releaseErr != nil {
 			logger.ErrorContext(ctx, "failed to release lock in cache", slog.Any(logkeys.Err, releaseErr))
 		}
