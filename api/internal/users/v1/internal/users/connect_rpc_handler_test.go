@@ -10,12 +10,10 @@ import (
 	"testing"
 
 	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/users/v1/usersv1connect"
-	idempotencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/idempotency/v1"
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"buf.build/go/protovalidate"
 	"connectrpc.com/connect"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
@@ -65,10 +63,7 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 		"validation_one_valid_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -92,7 +87,7 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 		"validation_one_no_idempotency_key_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{},
+					IdempotencyKey: proto.String(""),
 					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -109,10 +104,7 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 		"validation_one_no_id_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{},
@@ -129,10 +121,7 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 		"idempotency_two_distinct_valid_users": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -143,10 +132,7 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 					},
 				},
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -165,10 +151,7 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 			// should be hidden from clients.
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -179,10 +162,7 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 					},
 				},
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},

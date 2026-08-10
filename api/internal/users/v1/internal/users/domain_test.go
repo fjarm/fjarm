@@ -7,11 +7,9 @@ import (
 	"log/slog"
 	"testing"
 
-	idempotencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/idempotency/v1"
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"buf.build/go/protovalidate"
 	"google.golang.org/protobuf/proto"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
 )
@@ -34,10 +32,7 @@ func TestUserDomain_createUser(t *testing.T) {
 		"validation_one_valid_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -54,10 +49,7 @@ func TestUserDomain_createUser(t *testing.T) {
 		"validation_one_nil_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User:   nil, // The User field is required but is nil here.
 				},
@@ -68,10 +60,7 @@ func TestUserDomain_createUser(t *testing.T) {
 		"validation_one_mismatched_id_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174555")}, // The User ID here ends in 555, which doesn't match the user ID in the field below.
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -88,10 +77,7 @@ func TestUserDomain_createUser(t *testing.T) {
 		"validation_one_no_password_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -124,7 +110,7 @@ func TestUserDomain_createUser(t *testing.T) {
 		"validation_one_no_idempotency_key_request": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{},
+					IdempotencyKey: proto.String(""),
 					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -141,10 +127,7 @@ func TestUserDomain_createUser(t *testing.T) {
 		"idempotency_two_distinct_valid_users": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -155,10 +138,7 @@ func TestUserDomain_createUser(t *testing.T) {
 					},
 				},
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
@@ -177,10 +157,7 @@ func TestUserDomain_createUser(t *testing.T) {
 			// should be hidden from clients.
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -191,10 +168,7 @@ func TestUserDomain_createUser(t *testing.T) {
 					},
 				},
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -213,10 +187,7 @@ func TestUserDomain_createUser(t *testing.T) {
 			// should be hidden from clients.
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -227,10 +198,7 @@ func TestUserDomain_createUser(t *testing.T) {
 					},
 				},
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // Different user ID from the one in the request above.
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // User ID here matches the user ID in the request message.
@@ -249,10 +217,7 @@ func TestUserDomain_createUser(t *testing.T) {
 			// should be hidden from clients.
 			reqs: []*userspb.CreateUserRequest{
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
@@ -263,10 +228,7 @@ func TestUserDomain_createUser(t *testing.T) {
 					},
 				},
 				{
-					IdempotencyKey: &idempotencypb.IdempotencyKey{
-						IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-						Timestamp:      timestamppb.Now(),
-					},
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
 					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // Different user ID from the one in the request above.
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // User ID here matches the user ID in the request message.
