@@ -133,12 +133,12 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 				},
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+					UserId: &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
 						FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo2@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper2")},
 						Password:     &userspb.UserPassword{Password: proto.String("password")},
 					},
 				},
