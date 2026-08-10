@@ -123,7 +123,9 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 		if lockVal == "" {
 			return
 		}
-		releaseErr := dom.locker.SafeReleaseLock(ctx, lockKey, lockVal)
+		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
+		defer cancel()
+		releaseErr := dom.locker.SafeReleaseLock(cleanupCtx, lockKey, lockVal)
 		if releaseErr != nil {
 			logger.ErrorContext(ctx, "failed to release lock in cache", slog.Any(logkeys.Err, releaseErr))
 		}
