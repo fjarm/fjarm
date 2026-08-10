@@ -120,6 +120,9 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	lockVal, err := dom.locker.AcquireLock(ctx, lockKey, idempotencyLockTTL)
 	// Ensure we release the lock after processing the request.
 	defer func() {
+		if lockVal == "" {
+			return
+		}
 		releaseErr := dom.locker.SafeReleaseLock(ctx, lockKey, lockVal)
 		if releaseErr != nil {
 			logger.ErrorContext(ctx, "failed to release lock in cache", slog.Any(logkeys.Err, releaseErr))
