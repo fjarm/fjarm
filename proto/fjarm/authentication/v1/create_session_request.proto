@@ -17,6 +17,13 @@ option java_package = "xyz.fjarm.authentication.v1";
 //
 // When using this message, the request metadata MUST include an idempotency key (equivalent to a request ID).
 message CreateSessionRequest {
-  optional fjarm.users.v1.UserEmailAddress email_address = 1 [(buf.validate.field).required = true];
-  optional fjarm.users.v1.UserPassword password = 2 [(buf.validate.field).required = true];
+  // Uniquely identifies a request such that a client can retry the request if it failed for a retry-able
+  // error like `UNAVAILABLE`. The same request should always return the same response.
+  optional string idempotency_key = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.uuid = true
+  ];
+
+  optional fjarm.users.v1.UserEmailAddress email_address = 2 [(buf.validate.field).required = true];
+  optional fjarm.users.v1.UserPassword password = 3 [(buf.validate.field).required = true];
 }
