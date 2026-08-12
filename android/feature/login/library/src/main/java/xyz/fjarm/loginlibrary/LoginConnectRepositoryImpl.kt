@@ -9,6 +9,7 @@ import com.connectrpc.getOrThrow
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import xyz.fjarm.servertransport.IDEMPOTENCY_KEY
 
 @Singleton
 class LoginConnectRepositoryImpl @Inject constructor(
@@ -27,7 +28,7 @@ class LoginConnectRepositoryImpl @Inject constructor(
             .build()
         val response = client.createSession(
             request,
-            headers = mapOf("idempotency_key" to listOf(idempotencyKey)),
+            headers = mapOf(IDEMPOTENCY_KEY to listOf(idempotencyKey)),
         ).getOrThrow()
         return response.session
     }
