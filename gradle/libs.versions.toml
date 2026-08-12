@@ -30,8 +30,8 @@ coroutinesCoreJvm = "1.11.0"
 connectRpc = "0.9.0"
 
 ## Fjarm ConnectRPC messages and services
-fjarmConnectRPCKotlinLite = "0.9.0.2.20260628154217.e6301714126c"
-fjarmProtobufKotlinLite = "35.1.0.1.20260628154217.e6301714126c"
+fjarmConnectRPCKotlinLite = "0.9.0.2.20260811010424.ad8df5ebf10d"
+fjarmProtobufKotlinLite = "35.1.0.1.20260811010424.ad8df5ebf10d"
 
 ## OkHttp
 okHttp3 = "5.4.0"
@@ -46,7 +46,7 @@ lifecycleViewModelNavigation3 = "2.11.0"
 robolectric = "4.16.1"
 
 ## Roborazzi
-roborazzi = "1.70.0"
+roborazzi = "1.71.0"
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
