@@ -26,8 +26,8 @@ class LoginConnectRepositoryImplTest {
     @Test
     fun givenValidCredentials_whenCreateSession_thenSetIdempotencyKeyInRequestAndHeaders() = runTest(UnconfinedTestDispatcher()) {
         // Given
-        var capturedRequest: CreateSessionRequest? = null
-        var capturedHeaders: Headers? = null
+        lateinit var capturedRequest: CreateSessionRequest
+        lateinit var capturedHeaders: Headers
 
         val fakeClient = object : AuthenticationServiceClientInterface {
             override suspend fun createSession(
@@ -59,12 +59,10 @@ class LoginConnectRepositoryImplTest {
         repository.createSession("user@example.com", "secret123")
 
         // Then
-        val req = requireNotNull(capturedRequest)
-        val headers = requireNotNull(capturedHeaders)
-        val requestIdempotencyKey = req.idempotencyKey
+        val requestIdempotencyKey = capturedRequest.idempotencyKey
         assertTrue(requestIdempotencyKey.isNotEmpty())
 
-        val headerValues = headers[IDEMPOTENCY_KEY]
+        val headerValues = capturedHeaders[IDEMPOTENCY_KEY]
         assertNotNull(headerValues)
         assertEquals(listOf(requestIdempotencyKey), headerValues)
     }
@@ -72,7 +70,7 @@ class LoginConnectRepositoryImplTest {
     @Test
     fun givenValidCredentials_whenCreateSession_thenPassEmailAndPasswordInRequest() = runTest(UnconfinedTestDispatcher()) {
         // Given
-        var capturedRequest: CreateSessionRequest? = null
+        lateinit var capturedRequest: CreateSessionRequest
 
         val fakeClient = object : AuthenticationServiceClientInterface {
             override suspend fun createSession(
@@ -103,9 +101,8 @@ class LoginConnectRepositoryImplTest {
         repository.createSession("user@example.com", "secret123")
 
         // Then
-        val req = requireNotNull(capturedRequest)
-        assertEquals("user@example.com", req.emailAddress.emailAddress)
-        assertEquals("secret123", req.password.password)
+        assertEquals("user@example.com", capturedRequest.emailAddress.emailAddress)
+        assertEquals("secret123", capturedRequest.password.password)
     }
 
     @Test
@@ -219,7 +216,7 @@ class LoginConnectRepositoryImplTest {
     @Test
     fun givenValidCredentials_whenCreateSession_thenContainOnlyIdempotencyHeader() = runTest(UnconfinedTestDispatcher()) {
         // Given
-        var capturedHeaders: Headers? = null
+        lateinit var capturedHeaders: Headers
 
         val fakeClient = object : AuthenticationServiceClientInterface {
             override suspend fun createSession(
@@ -250,9 +247,8 @@ class LoginConnectRepositoryImplTest {
         repository.createSession("user@example.com", "secret123")
 
         // Then
-        val headers = requireNotNull(capturedHeaders)
-        assertEquals(1, headers.size, "Should only pass 1 header")
-        assertTrue(headers.containsKey(IDEMPOTENCY_KEY), "Headers map must contain idempotency_key")
+        assertEquals(1, capturedHeaders.size, "Should only pass 1 header")
+        assertTrue(capturedHeaders.containsKey(IDEMPOTENCY_KEY), "Headers map must contain idempotency_key")
     }
 
     @Test
