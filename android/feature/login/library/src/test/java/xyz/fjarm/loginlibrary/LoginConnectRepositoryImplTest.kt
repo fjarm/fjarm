@@ -174,4 +174,117 @@ class LoginConnectRepositoryImplTest {
             repository.createSession("user@example.com", "wrongpassword")
         }
     }
+
+    @Test
+    fun givenMultipleCalls_whenCreateSession_thenGenerateUniqueIdempotencyKeys() = runTest(UnconfinedTestDispatcher()) {
+        // Given
+        val capturedKeys = mutableListOf<String>()
+
+        val fakeClient = object : AuthenticationServiceClientInterface {
+            override suspend fun createSession(
+                request: CreateSessionRequest,
+                headers: Headers,
+            ): ResponseMessage<CreateSessionResponse> {
+                capturedKeys.add(request.idempotencyKey)
+                return ResponseMessage.Success(
+                    message = createSessionResponse {
+                        session = session { }
+                    },
+                    headers = emptyMap(),
+                    trailers = emptyMap(),
+                )
+            }
+
+            override fun createSession(
+                request: CreateSessionRequest,
+                headers: Headers,
+                onResult: (ResponseMessage<CreateSessionResponse>) -> Unit
+            ): Cancelable {
+                throw NotImplementedError()
+            }
+        }
+        val repository = LoginConnectRepositoryImpl(client = fakeClient)
+
+        // When
+        repository.createSession("user@example.com", "secret123")
+        repository.createSession("user@example.com", "secret123")
+
+        // Then
+        assertEquals(2, capturedKeys.size)
+        val firstKey = capturedKeys[0]
+        val secondKey = capturedKeys[1]
+        assertTrue(firstKey != secondKey, "Idempotency keys must be unique per request")
+    }
+
+    @Test
+    fun givenValidCredentials_whenCreateSession_thenContainOnlyIdempotencyHeader() = runTest(UnconfinedTestDispatcher()) {
+        // Given
+        var capturedHeaders: Headers? = null
+
+        val fakeClient = object : AuthenticationServiceClientInterface {
+            override suspend fun createSession(
+                request: CreateSessionRequest,
+                headers: Headers,
+            ): ResponseMessage<CreateSessionResponse> {
+                capturedHeaders = headers
+                return ResponseMessage.Success(
+                    message = createSessionResponse {
+                        session = session { }
+                    },
+                    headers = emptyMap(),
+                    trailers = emptyMap(),
+                )
+            }
+
+            override fun createSession(
+                request: CreateSessionRequest,
+                headers: Headers,
+                onResult: (ResponseMessage<CreateSessionResponse>) -> Unit
+            ): Cancelable {
+                throw NotImplementedError()
+            }
+        }
+        val repository = LoginConnectRepositoryImpl(client = fakeClient)
+
+        // When
+        repository.createSession("user@example.com", "secret123")
+
+        // Then
+        val headers = requireNotNull(capturedHeaders)
+        assertEquals(1, headers.size, "Should only pass 1 header")
+        assertTrue(headers.containsKey(IDEMPOTENCY_KEY), "Headers map must contain idempotency_key")
+    }
+
+    @Test
+    fun givenServerUnavailable_whenCreateSession_thenThrowConnectException() = runTest(UnconfinedTestDispatcher()) {
+        // Given
+        val fakeClient = object : AuthenticationServiceClientInterface {
+            override suspend fun createSession(
+                request: CreateSessionRequest,
+                headers: Headers,
+            ): ResponseMessage<CreateSessionResponse> {
+                return ResponseMessage.Failure(
+                    cause = ConnectException(Code.UNAVAILABLE, "server unavailable"),
+                    headers = emptyMap(),
+                    trailers = emptyMap(),
+                )
+            }
+
+            override fun createSession(
+                request: CreateSessionRequest,
+                headers: Headers,
+                onResult: (ResponseMessage<CreateSessionResponse>) -> Unit
+            ): Cancelable {
+                throw NotImplementedError()
+            }
+        }
+        val repository = LoginConnectRepositoryImpl(client = fakeClient)
+
+        // Then
+        val exception = assertFailsWith<ConnectException> {
+            // When
+            repository.createSession("user@example.com", "secret123")
+        }
+        assertEquals(Code.UNAVAILABLE, exception.code)
+    }
 }
