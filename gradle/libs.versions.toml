@@ -12,7 +12,7 @@ composeBom = "2026.06.01"
 
 ## Dagger/Hilt
 hilt = "2.60.1"
-ksp = "2.3.10"
+ksp = "2.3.11"
 
 ## Hilt + Compose (provides the hiltViewModel() @Composable function)
 androidXHilt = "1.4.0"
