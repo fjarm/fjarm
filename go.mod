@@ -4,17 +4,17 @@ go 1.26.0
 
 require (
 	buf.build/gen/go/fjarm/fjarm/connectrpc/go v1.20.0-20260811010424-ad8df5ebf10d.1
-	buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.11-20260811010424-ad8df5ebf10d.1
+	buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.12-20260811010424-ad8df5ebf10d.1
 	buf.build/go/protovalidate v1.2.0
 	connectrpc.com/connect v1.20.0
 	github.com/google/uuid v1.6.0
 	github.com/redis/rueidis v1.0.76
 	golang.org/x/crypto v0.54.0
-	google.golang.org/protobuf v1.36.11
+	google.golang.org/protobuf v1.36.12
 )
 
 require (
-	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.11-20260415201107-50325440f8f2.1 // indirect
+	buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260415201107-50325440f8f2.1 // indirect
 	cel.dev/expr v0.25.1 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/google/cel-go v0.29.0 // indirect
