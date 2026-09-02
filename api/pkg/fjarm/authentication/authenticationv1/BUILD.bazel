@@ -1,8 +1,36 @@
-load("@rules_go//go:def.bzl", "go_library")
+load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "authenticationv1",
-    srcs = ["authentication.go"],
+    srcs = [
+        "authentication.go",
+        "common_errors.go",
+        "utils.go",
+    ],
     importpath = "github.com/fjarm/fjarm/api/pkg/fjarm/authentication/authenticationv1",
     visibility = ["//visibility:public"],
+    deps = [
+        "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/authentication/v1:authentication",
+        "@build_buf_go_protovalidate//:protovalidate",
+    ],
+)
+
+go_test(
+    name = "authenticationv1_test",
+    srcs = [
+        "access_token_test.go",
+        "create_session_request_test.go",
+        "create_session_response_test.go",
+        "refresh_token_test.go",
+        "session_id_test.go",
+        "session_test.go",
+        "utils_test.go",
+    ],
+    embed = [":authenticationv1"],
+    deps = [
+        "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/authentication/v1:authentication",
+        "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",
+        "@build_buf_go_protovalidate//:protovalidate",
+        "@org_golang_google_protobuf//proto",
+    ],
 )
