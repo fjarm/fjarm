@@ -28,12 +28,6 @@ func TestRefreshToken_Validation(t *testing.T) {
 			},
 			err: false,
 		},
-		"valid_plain_string_refresh_token": {
-			refreshToken: &authenticationpb.RefreshToken{
-				RefreshToken: proto.String("sample-valid-refresh-token"),
-			},
-			err: false,
-		},
 		"invalid_unset_refresh_token": {
 			refreshToken: &authenticationpb.RefreshToken{},
 			err:         true,

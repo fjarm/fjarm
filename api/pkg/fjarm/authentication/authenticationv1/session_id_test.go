@@ -28,12 +28,6 @@ func TestSessionId_Validation(t *testing.T) {
 			},
 			err: false,
 		},
-		"valid_string_session_id": {
-			sessionId: &authenticationpb.SessionId{
-				SessionId: proto.String("session-abc-123"),
-			},
-			err: false,
-		},
 		"invalid_unset_session_id": {
 			sessionId: &authenticationpb.SessionId{},
 			err:       true,

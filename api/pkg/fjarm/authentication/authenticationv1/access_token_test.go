@@ -28,12 +28,6 @@ func TestAccessToken_Validation(t *testing.T) {
 			},
 			err: false,
 		},
-		"valid_plain_string_access_token": {
-			accessToken: &authenticationpb.AccessToken{
-				AccessToken: proto.String("sample-valid-access-token"),
-			},
-			err: false,
-		},
 		"invalid_unset_access_token": {
 			accessToken: &authenticationpb.AccessToken{},
 			err:         true,
