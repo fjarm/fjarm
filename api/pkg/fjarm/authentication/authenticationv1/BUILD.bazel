@@ -1,0 +1,8 @@
+load("@rules_go//go:def.bzl", "go_library")
+
+go_library(
+    name = "authenticationv1",
+    srcs = ["authentication.go"],
+    importpath = "github.com/fjarm/fjarm/api/pkg/fjarm/authentication/authenticationv1",
+    visibility = ["//visibility:public"],
+)
