@@ -20,36 +20,36 @@ func TestSessionId_Validation(t *testing.T) {
 	}
 	tests := map[string]struct {
 		sessionId *authenticationpb.SessionId
-		wantErr   bool
+		err       bool
 	}{
 		"valid_session_id": {
 			sessionId: &authenticationpb.SessionId{
 				SessionId: proto.String("123e4567-e89b-12d3-a456-426614174000"),
 			},
-			wantErr: false,
+			err: false,
 		},
 		"valid_string_session_id": {
 			sessionId: &authenticationpb.SessionId{
 				SessionId: proto.String("session-abc-123"),
 			},
-			wantErr: false,
+			err: false,
 		},
 		"invalid_unset_session_id": {
 			sessionId: &authenticationpb.SessionId{},
-			wantErr:   true,
+			err:       true,
 		},
 		"invalid_nil_session_id": {
 			sessionId: nil,
-			wantErr:   true,
+			err:       true,
 		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			err = validator.Validate(tc.sessionId)
-			if err != nil && !tc.wantErr {
+			if err != nil && !tc.err {
 				t.Errorf("Validate got an unexpected error: %v", err)
 			}
-			if err == nil && tc.wantErr {
+			if err == nil && tc.err {
 				t.Error("Validate expected an error but got nil")
 			}
 		})

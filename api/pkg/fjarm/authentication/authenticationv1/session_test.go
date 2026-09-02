@@ -20,7 +20,7 @@ func TestSession_Validation(t *testing.T) {
 	}
 	tests := map[string]struct {
 		session *authenticationpb.Session
-		wantErr bool
+		err     bool
 	}{
 		"valid_session": {
 			session: &authenticationpb.Session{
@@ -34,11 +34,11 @@ func TestSession_Validation(t *testing.T) {
 					RefreshToken: proto.String("valid-refresh-token"),
 				},
 			},
-			wantErr: false,
+			err: false,
 		},
 		"invalid_empty_session": {
 			session: &authenticationpb.Session{},
-			wantErr: true,
+			err:     true,
 		},
 		"invalid_missing_session_id": {
 			session: &authenticationpb.Session{
@@ -49,7 +49,7 @@ func TestSession_Validation(t *testing.T) {
 					RefreshToken: proto.String("valid-refresh-token"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_missing_access_token": {
 			session: &authenticationpb.Session{
@@ -60,7 +60,7 @@ func TestSession_Validation(t *testing.T) {
 					RefreshToken: proto.String("valid-refresh-token"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_missing_refresh_token": {
 			session: &authenticationpb.Session{
@@ -71,7 +71,7 @@ func TestSession_Validation(t *testing.T) {
 					AccessToken: proto.String("valid-access-token"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_unset_inner_session_id": {
 			session: &authenticationpb.Session{
@@ -83,7 +83,7 @@ func TestSession_Validation(t *testing.T) {
 					RefreshToken: proto.String("valid-refresh-token"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_unset_inner_access_token": {
 			session: &authenticationpb.Session{
@@ -95,7 +95,7 @@ func TestSession_Validation(t *testing.T) {
 					RefreshToken: proto.String("valid-refresh-token"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_unset_inner_refresh_token": {
 			session: &authenticationpb.Session{
@@ -107,20 +107,20 @@ func TestSession_Validation(t *testing.T) {
 				},
 				RefreshToken: &authenticationpb.RefreshToken{},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_nil_session": {
 			session: nil,
-			wantErr: true,
+			err:     true,
 		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			err = validator.Validate(tc.session)
-			if err != nil && !tc.wantErr {
+			if err != nil && !tc.err {
 				t.Errorf("Validate got an unexpected error: %v", err)
 			}
-			if err == nil && tc.wantErr {
+			if err == nil && tc.err {
 				t.Error("Validate expected an error but got nil")
 			}
 		})

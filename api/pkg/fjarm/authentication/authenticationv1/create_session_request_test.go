@@ -21,7 +21,7 @@ func TestCreateSessionRequest_Validation(t *testing.T) {
 	}
 	tests := map[string]struct {
 		request *authenticationpb.CreateSessionRequest
-		wantErr bool
+		err     bool
 	}{
 		"valid_create_session_request": {
 			request: &authenticationpb.CreateSessionRequest{
@@ -33,7 +33,7 @@ func TestCreateSessionRequest_Validation(t *testing.T) {
 					Password: proto.String("password123"),
 				},
 			},
-			wantErr: false,
+			err: false,
 		},
 		"invalid_empty_idempotency_key": {
 			request: &authenticationpb.CreateSessionRequest{
@@ -45,7 +45,7 @@ func TestCreateSessionRequest_Validation(t *testing.T) {
 					Password: proto.String("password123"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_non_uuid_idempotency_key": {
 			request: &authenticationpb.CreateSessionRequest{
@@ -57,7 +57,7 @@ func TestCreateSessionRequest_Validation(t *testing.T) {
 					Password: proto.String("password123"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_missing_idempotency_key": {
 			request: &authenticationpb.CreateSessionRequest{
@@ -68,7 +68,7 @@ func TestCreateSessionRequest_Validation(t *testing.T) {
 					Password: proto.String("password123"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_missing_email_address": {
 			request: &authenticationpb.CreateSessionRequest{
@@ -77,7 +77,7 @@ func TestCreateSessionRequest_Validation(t *testing.T) {
 					Password: proto.String("password123"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_empty_email_address": {
 			request: &authenticationpb.CreateSessionRequest{
@@ -89,7 +89,7 @@ func TestCreateSessionRequest_Validation(t *testing.T) {
 					Password: proto.String("password123"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_bad_format_email_address": {
 			request: &authenticationpb.CreateSessionRequest{
@@ -101,7 +101,7 @@ func TestCreateSessionRequest_Validation(t *testing.T) {
 					Password: proto.String("password123"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_missing_password": {
 			request: &authenticationpb.CreateSessionRequest{
@@ -110,7 +110,7 @@ func TestCreateSessionRequest_Validation(t *testing.T) {
 					EmailAddress: proto.String("user@example.com"),
 				},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_unset_password": {
 			request: &authenticationpb.CreateSessionRequest{
@@ -120,24 +120,24 @@ func TestCreateSessionRequest_Validation(t *testing.T) {
 				},
 				Password: &userspb.UserPassword{},
 			},
-			wantErr: true,
+			err: true,
 		},
 		"invalid_empty_create_session_request": {
 			request: &authenticationpb.CreateSessionRequest{},
-			wantErr: true,
+			err:     true,
 		},
 		"invalid_nil_create_session_request": {
 			request: nil,
-			wantErr: true,
+			err:     true,
 		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			err = validator.Validate(tc.request)
-			if err != nil && !tc.wantErr {
+			if err != nil && !tc.err {
 				t.Errorf("Validate got an unexpected error: %v", err)
 			}
-			if err == nil && tc.wantErr {
+			if err == nil && tc.err {
 				t.Error("Validate expected an error but got nil")
 			}
 		})

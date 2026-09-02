@@ -20,36 +20,36 @@ func TestAccessToken_Validation(t *testing.T) {
 	}
 	tests := map[string]struct {
 		accessToken *authenticationpb.AccessToken
-		wantErr     bool
+		err         bool
 	}{
 		"valid_access_token": {
 			accessToken: &authenticationpb.AccessToken{
 				AccessToken: proto.String("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-ae7H8M3AzbKlCfgUpjJWCGbKaBEvpAcNJBK9l406s"),
 			},
-			wantErr: false,
+			err: false,
 		},
 		"valid_plain_string_access_token": {
 			accessToken: &authenticationpb.AccessToken{
 				AccessToken: proto.String("sample-valid-access-token"),
 			},
-			wantErr: false,
+			err: false,
 		},
 		"invalid_unset_access_token": {
 			accessToken: &authenticationpb.AccessToken{},
-			wantErr:     true,
+			err:         true,
 		},
 		"invalid_nil_access_token": {
 			accessToken: nil,
-			wantErr:     true,
+			err:         true,
 		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			err = validator.Validate(tc.accessToken)
-			if err != nil && !tc.wantErr {
+			if err != nil && !tc.err {
 				t.Errorf("Validate got an unexpected error: %v", err)
 			}
-			if err == nil && tc.wantErr {
+			if err == nil && tc.err {
 				t.Error("Validate expected an error but got nil")
 			}
 		})

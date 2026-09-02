@@ -20,36 +20,36 @@ func TestRefreshToken_Validation(t *testing.T) {
 	}
 	tests := map[string]struct {
 		refreshToken *authenticationpb.RefreshToken
-		wantErr      bool
+		err          bool
 	}{
 		"valid_refresh_token": {
 			refreshToken: &authenticationpb.RefreshToken{
 				RefreshToken: proto.String("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.e30.t-ae7H8M3AzbKlCfgUpjJWCGbKaBEvpAcNJBK9l406s"),
 			},
-			wantErr: false,
+			err: false,
 		},
 		"valid_plain_string_refresh_token": {
 			refreshToken: &authenticationpb.RefreshToken{
 				RefreshToken: proto.String("sample-valid-refresh-token"),
 			},
-			wantErr: false,
+			err: false,
 		},
 		"invalid_unset_refresh_token": {
 			refreshToken: &authenticationpb.RefreshToken{},
-			wantErr:     true,
+			err:         true,
 		},
 		"invalid_nil_refresh_token": {
 			refreshToken: nil,
-			wantErr:     true,
+			err:         true,
 		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			err = validator.Validate(tc.refreshToken)
-			if err != nil && !tc.wantErr {
+			if err != nil && !tc.err {
 				t.Errorf("Validate got an unexpected error: %v", err)
 			}
-			if err == nil && tc.wantErr {
+			if err == nil && tc.err {
 				t.Error("Validate expected an error but got nil")
 			}
 		})
