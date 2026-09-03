@@ -12,6 +12,5 @@ go_library(
         "@build_buf_gen_go_fjarm_fjarm_connectrpc_go//fjarm/authentication/v1/authenticationv1connect",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/authentication/v1:authentication",
         "@build_buf_go_protovalidate//:protovalidate",
-        "@com_connectrpc_connect//:connect",
     ],
 )
