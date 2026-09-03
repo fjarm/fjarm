@@ -3,7 +3,7 @@ package authentication
 import (
 	"log/slog"
 
-	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/authentication/v1/authenticationv1connect"
+	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/authentication/v1/authenticationv1connect"
 	authenticationpb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/authentication/v1"
 	"buf.build/go/protovalidate"
 
