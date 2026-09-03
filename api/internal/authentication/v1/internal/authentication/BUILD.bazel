@@ -2,7 +2,10 @@ load("@rules_go//go:def.bzl", "go_library")
 
 go_library(
     name = "authentication",
-    srcs = ["create_session_connect_rpc_handler.go"],
+    srcs = [
+        "connect_rpc_handler.go",
+        "connect_rpc_handler_create_session.go",
+    ],
     importpath = "github.com/fjarm/fjarm/api/internal/authentication/v1/internal/authentication",
     visibility = ["//api/internal/authentication/v1:__subpackages__"],
 )
