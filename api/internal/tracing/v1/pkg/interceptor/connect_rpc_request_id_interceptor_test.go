@@ -20,10 +20,10 @@ func TestNewConnectRPCRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 	l := slog.New(slog.NewTextHandler(&buf, nil))
 	slog.SetDefault(l)
 
-	var capturedRequestID string
 	next := func(ctx context.Context, _ connect.AnyRequest) (connect.AnyResponse, error) {
-		capturedRequestID = tracing.RequestIDFromContext(ctx)
-		return nil, nil
+		res := connect.NewResponse(&[]string{})
+		res.Header().Set(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx))
+		return res, nil
 	}
 
 	si := NewConnectRPCRequestIDLoggingInterceptor(l)(next)
@@ -56,19 +56,18 @@ func TestNewConnectRPCRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			capturedRequestID = ""
 			req := connect.NewRequest(
 				&[]string{"a", "cool", "request"},
 			)
 			for key, val := range tc.headers {
 				req.Header().Add(key, val)
 			}
-			_, err := si(context.Background(), req)
+			res, err := si(context.Background(), req)
 			if err != nil && !tc.err {
 				t.Errorf("NewConnectRPCRequestIDLoggingInterceptor got an unexpected error: %v", err)
 			}
-			if !tc.err && capturedRequestID != tc.headers["request-id"] {
-				t.Errorf("NewConnectRPCRequestIDLoggingInterceptor got request ID %q, want %q", capturedRequestID, tc.headers["request-id"])
+			if !tc.err && res.Header().Get(tracing.RequestIDKey) != tc.headers["request-id"] {
+				t.Errorf("NewConnectRPCRequestIDLoggingInterceptor got request ID %q, want %q", res.Header().Get(tracing.RequestIDKey), tc.headers["request-id"])
 			}
 			actual := buf.String()
 			for _, exp := range tc.expected {
