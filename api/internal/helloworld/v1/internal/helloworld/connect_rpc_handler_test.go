@@ -12,13 +12,18 @@ import (
 	"connectrpc.com/connect"
 
 	"github.com/fjarm/fjarm/api/internal/tracing"
+	tracinginterceptor "github.com/fjarm/fjarm/api/internal/tracing/v1/pkg/interceptor"
 )
 
 var srv *httptest.Server = nil
 
 func TestMain(m *testing.M) {
-	connectRPCHandler := NewConnectRPCHandler(slog.Default())
-	path, handler := helloworldv1connect.NewHelloWorldServiceHandler(connectRPCHandler)
+	logger := slog.Default()
+	interceptors := connect.WithInterceptors(
+		tracinginterceptor.NewConnectRPCRequestIDLoggingInterceptor(logger),
+	)
+	connectRPCHandler := NewConnectRPCHandler(logger)
+	path, handler := helloworldv1connect.NewHelloWorldServiceHandler(connectRPCHandler, interceptors)
 
 	mux := http.NewServeMux()
 	mux.Handle(path, handler)

@@ -30,7 +30,7 @@ func newInteractor(logger *slog.Logger, repo getHelloWorldMessageer) *interactor
 func (svc *interactor) getHelloWorld(ctx context.Context, input string) (string, error) {
 	logger := svc.logger.With(
 		slog.String(logkeys.Tag, interactorTag),
-		slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
+		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
 	)
 
 	msg, err := svc.repo.getHelloWorldMessage(ctx)
