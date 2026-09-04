@@ -38,7 +38,7 @@ func (h *ConnectRPCHandler) CreateUser(
 ) (*userspb.CreateUserResponse, error) {
 	logger := h.logger.With(
 		slog.String(logkeys.Tag, connectRPCHandlerTag),
-		slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
+		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
 	)
 	logger.InfoContext(ctx, "received request to create user")
 

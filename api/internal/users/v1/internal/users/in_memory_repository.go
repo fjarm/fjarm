@@ -23,7 +23,7 @@ type inMemoryRepository struct {
 func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.User) (*user, error) {
 	logger := repo.logger.With(
 		slog.String(logkeys.Tag, inMemoryRepositoryTag),
-		slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
+		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
 	)
 	logger.InfoContext(ctx, "requested user creation")
 
