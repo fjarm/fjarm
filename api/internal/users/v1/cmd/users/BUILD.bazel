@@ -5,7 +5,7 @@ go_library(
     srcs = ["main.go"],
     importpath = "github.com/fjarm/fjarm/api/internal/users/v1/cmd/users",
     visibility = ["//visibility:public"],
-    deps = ["@build_buf_gen_go_fjarm_fjarm_connectrpc_go//fjarm/users/v1/usersv1connect"],
+    deps = ["@build_buf_gen_go_fjarm_fjarm_connectrpc_gosimple//fjarm/users/v1/usersv1connect"],
 )
 
 go_binary(

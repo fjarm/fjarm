@@ -19,6 +19,7 @@ go_library(
         "//api/internal/logvals",
         "//api/internal/tracing",
         "//api/pkg/fjarm/users/usersv1",
+        "@build_buf_gen_go_fjarm_fjarm_connectrpc_gosimple//fjarm/users/v1/usersv1connect",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/consistency/v1:consistency",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",
         "@build_buf_go_protovalidate//:protovalidate",
@@ -39,7 +40,7 @@ go_test(
     deps = [
         "//api/internal/cache/v1/pkg/remote",
         "//api/internal/logkeys",
-        "@build_buf_gen_go_fjarm_fjarm_connectrpc_go//fjarm/users/v1/usersv1connect",
+        "@build_buf_gen_go_fjarm_fjarm_connectrpc_gosimple//fjarm/users/v1/usersv1connect",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",
         "@build_buf_go_protovalidate//:protovalidate",
         "@com_connectrpc_connect//:connect",

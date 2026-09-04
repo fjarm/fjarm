@@ -9,7 +9,7 @@ import (
 	"os"
 	"testing"
 
-	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/users/v1/usersv1connect"
+	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/users/v1/usersv1connect"
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"buf.build/go/protovalidate"
 	"connectrpc.com/connect"
@@ -182,7 +182,7 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 			client := usersv1connect.NewUserServiceClient(http.DefaultClient, srv.URL, connect.WithGRPC())
 
 			for index, req := range tc.reqs {
-				_, err := client.CreateUser(context.Background(), connect.NewRequest(req))
+				_, err := client.CreateUser(context.Background(), req)
 				if err != nil && !tc.errs[index] {
 					t.Errorf("CreateUser got an unexpected error: %v", err)
 				}
