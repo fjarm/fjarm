@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/helloworld/v1/helloworldv1connect"
+	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/helloworld/v1/helloworldv1connect"
 	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/helloworld/v1"
 	"connectrpc.com/connect"
 
@@ -70,19 +70,19 @@ func TestConnectRPCHandler_GetHelloWorld_gRPCClient(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			msg := &pb.GetHelloWorldRequest{Input: &pb.HelloWorldInput{Input: &tc.input}}
-			req := connect.NewRequest(msg)
-			req.Header().Set(tc.header[0], tc.header[1])
+			ctx, callInfo := connect.NewClientContext(context.Background())
+			callInfo.RequestHeader().Set(tc.header[0], tc.header[1])
 
-			output, err := client.GetHelloWorld(context.Background(), req)
+			output, err := client.GetHelloWorld(ctx, msg)
 			if err != nil && !tc.err {
 				t.Errorf("GetHelloWorld got an unexpected error: %v", err)
 			}
 			if err == nil && tc.err {
-				t.Errorf("GetHelloWorld expected an error but got none: %v", output.Msg.GetOutput().GetOutput())
+				t.Errorf("GetHelloWorld expected an error but got none: %v", output.GetOutput().GetOutput())
 			}
 
-			if !tc.err && output.Msg.GetOutput().GetOutput() != tc.expected {
-				t.Errorf("GetHelloWorld got: %v, want: %v", output.Msg.GetOutput().GetOutput(), tc.expected)
+			if !tc.err && output.GetOutput().GetOutput() != tc.expected {
+				t.Errorf("GetHelloWorld got: %v, want: %v", output.GetOutput().GetOutput(), tc.expected)
 			}
 		})
 	}

@@ -10,7 +10,7 @@ import (
 	"os"
 	"os/signal"
 
-	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/helloworld/v1/helloworldv1connect"
+	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/helloworld/v1/helloworldv1connect"
 	"connectrpc.com/connect"
 
 	"github.com/fjarm/fjarm/api/internal/helloworld/v1/internal/helloworld"

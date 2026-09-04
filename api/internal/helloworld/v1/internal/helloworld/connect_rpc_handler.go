@@ -4,7 +4,7 @@ import (
 	"context"
 	"log/slog"
 
-	"buf.build/gen/go/fjarm/fjarm/connectrpc/go/fjarm/helloworld/v1/helloworldv1connect"
+	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/helloworld/v1/helloworldv1connect"
 	pb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/helloworld/v1"
 	"buf.build/go/protovalidate"
 	"connectrpc.com/connect"
@@ -21,6 +21,7 @@ type getHelloWorlder interface {
 
 // ConnectRPCHandler defines a ConnectRPC handler for the `fjarm.helloworld.v1.HelloWorldService` service.
 type ConnectRPCHandler struct {
+	helloworldv1connect.UnimplementedHelloWorldServiceHandler
 	domain    getHelloWorlder
 	logger    *slog.Logger
 	validator protovalidate.Validator
@@ -29,8 +30,8 @@ type ConnectRPCHandler struct {
 // GetHelloWorld implements the similarly named RPC defined in the `fjarm.helloworld.v1.HelloWorldService` service.
 func (h *ConnectRPCHandler) GetHelloWorld(
 	ctx context.Context,
-	req *connect.Request[pb.GetHelloWorldRequest],
-) (*connect.Response[pb.GetHelloWorldResponse], error) {
+	req *pb.GetHelloWorldRequest,
+) (*pb.GetHelloWorldResponse, error) {
 	requestID := tracing.RequestIDFromContext(ctx)
 
 	logger := h.logger.With(
@@ -41,25 +42,25 @@ func (h *ConnectRPCHandler) GetHelloWorld(
 	logger.InfoContext(
 		ctx,
 		"received request",
-		slog.String(logkeys.Request, req.Msg.String()),
+		slog.String(logkeys.Request, req.String()),
 	)
 
-	err := h.validator.Validate(req.Msg)
+	err := h.validator.Validate(req)
 	if err != nil {
-		logger.WarnContext(ctx, "failed to validate request", slog.Any(logkeys.Raw, req.Msg))
+		logger.WarnContext(ctx, "failed to validate request", slog.Any(logkeys.Raw, req))
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
-	msg, err := h.domain.getHelloWorld(ctx, req.Msg.GetInput().GetInput())
+	msg, err := h.domain.getHelloWorld(ctx, req.GetInput().GetInput())
 	if err != nil {
 		return nil, connect.NewError(connect.CodeUnknown, err)
 	}
 
-	res := connect.NewResponse(&pb.GetHelloWorldResponse{
+	res := &pb.GetHelloWorldResponse{
 		Output: &pb.HelloWorldOutput{
 			Output: &msg,
 		},
-	})
+	}
 	return res, nil
 }
 
