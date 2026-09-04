@@ -42,6 +42,7 @@ func NewConnectRPCRequestIDLoggingInterceptor(l *slog.Logger) connect.UnaryInter
 				slog.String(tracing.RequestIDKey, reqID),
 			)
 
+			ctx = tracing.ContextWithRequestID(ctx, reqID)
 			res, err := next(ctx, req)
 			return res, err
 		}
