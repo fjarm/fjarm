@@ -65,7 +65,7 @@ func (h *ConnectRPCHandler) GetHelloWorld(
 }
 
 // NewConnectRPCHandler creates a concrete helloworld
-func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
+func NewConnectRPCHandler(l *slog.Logger) (*ConnectRPCHandler, error) {
 	logger := l.With(
 		slog.String(logkeys.Tag, connectRPCHandlerTag),
 	)
@@ -80,7 +80,7 @@ func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 	)
 	if err != nil {
 		logger.Error("failed to create message validator", slog.Any(logkeys.Err, err))
-		return nil
+		return nil, err
 	}
 
 	repo := newInMemoryRepository()
@@ -90,5 +90,5 @@ func NewConnectRPCHandler(l *slog.Logger) *ConnectRPCHandler {
 		logger:    logger,
 		validator: validator,
 	}
-	return &han
+	return &han, nil
 }

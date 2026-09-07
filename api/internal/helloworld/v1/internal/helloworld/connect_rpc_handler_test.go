@@ -22,7 +22,10 @@ func TestMain(m *testing.M) {
 	interceptors := connect.WithInterceptors(
 		tracinginterceptor.NewConnectRPCRequestIDLoggingInterceptor(logger),
 	)
-	connectRPCHandler := NewConnectRPCHandler(logger)
+	connectRPCHandler, err := NewConnectRPCHandler(logger)
+	if err != nil {
+		logger.Error("failed to initialize ConnectRPC handler", slog.Any("error", err))
+	}
 	path, handler := helloworldv1connect.NewHelloWorldServiceHandler(connectRPCHandler, interceptors)
 
 	mux := http.NewServeMux()
