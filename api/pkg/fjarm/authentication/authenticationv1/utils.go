@@ -50,16 +50,16 @@ func ValidateSession(ctx context.Context, session *authenticationpb.Session) err
 	if session == nil {
 		return ErrValidationError
 	}
-	if !session.HasSessionId() || !session.HasAccessToken() || !session.HasRefreshToken() {
-		return ErrValidationError
-	}
-	if err := ValidateSessionID(ctx, session.GetSessionId()); err != nil {
+	err := ValidateSessionID(ctx, session.GetSessionId())
+	if err != nil {
 		return err
 	}
-	if err := ValidateAccessToken(ctx, session.GetAccessToken()); err != nil {
+	err = ValidateAccessToken(ctx, session.GetAccessToken())
+	if err != nil {
 		return err
 	}
-	if err := ValidateRefreshToken(ctx, session.GetRefreshToken()); err != nil {
+	err = ValidateRefreshToken(ctx, session.GetRefreshToken())
+	if err != nil {
 		return err
 	}
 	return protovalidate.Validate(session)
@@ -67,9 +67,6 @@ func ValidateSession(ctx context.Context, session *authenticationpb.Session) err
 
 func ValidateCreateSessionRequest(_ context.Context, req *authenticationpb.CreateSessionRequest) error {
 	if req == nil {
-		return ErrValidationError
-	}
-	if !req.HasIdempotencyKey() || !req.HasEmailAddress() || !req.HasPassword() {
 		return ErrValidationError
 	}
 	if req.GetPassword().GetPassword() == "" {
@@ -83,7 +80,8 @@ func ValidateCreateSessionResponse(ctx context.Context, res *authenticationpb.Cr
 		return ErrValidationError
 	}
 	if res.HasSession() {
-		if err := ValidateSession(ctx, res.GetSession()); err != nil {
+		err := ValidateSession(ctx, res.GetSession())
+		if err != nil {
 			return err
 		}
 	}
