@@ -6,7 +6,7 @@ import (
 	authenticationpb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/authentication/v1"
 )
 
-func (h *AuthenticationServiceConnectRPCHandler) CreateSession(
+func (h *ConnectRPCHandler) CreateSession(
 	ctx context.Context,
 	req *authenticationpb.CreateSessionRequest,
 ) (*authenticationpb.CreateSessionResponse, error) {

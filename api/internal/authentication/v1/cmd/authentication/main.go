@@ -46,7 +46,15 @@ func main() {
 		obfuscation.NewConnectRPCConstantTimingInterceptor(logger, obfuscation.DelayDuration_100ms),
 		tracing.NewConnectRPCRequestIDLoggingInterceptor(logger),
 	)
-	connectRPCHandler := authentication.NewConnectRPCHandler(logger)
+	connectRPCHandler, err := authentication.NewConnectRPCHandler(logger)
+	if err != nil {
+		logger.ErrorContext(
+			ctx,
+			"failed to initialize ConnectRPC handler",
+			slog.String(logkeys.Tag, mainTag),
+			slog.Any(logkeys.Err, err),
+		)
+	}
 	path, handler := authenticationv1connect.NewAuthenticationServiceHandler(connectRPCHandler, interceptors)
 
 	mux := http.NewServeMux()

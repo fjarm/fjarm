@@ -12,13 +12,13 @@ import (
 
 const connectRPCHandlerTag = "connect_rpc_handler"
 
-type AuthenticationServiceConnectRPCHandler struct {
+type ConnectRPCHandler struct {
 	authenticationv1connect.UnimplementedAuthenticationServiceHandler
 	logger    *slog.Logger
 	validator protovalidate.Validator
 }
 
-func NewConnectRPCHandler(l *slog.Logger) *AuthenticationServiceConnectRPCHandler {
+func NewConnectRPCHandler(l *slog.Logger) (*ConnectRPCHandler, error) {
 	logger := l.With(
 		slog.String(logkeys.Tag, connectRPCHandlerTag),
 	)
@@ -33,12 +33,12 @@ func NewConnectRPCHandler(l *slog.Logger) *AuthenticationServiceConnectRPCHandle
 	)
 	if err != nil {
 		logger.Error("failed to create message validator", slog.Any(logkeys.Err, err))
-		return nil
+		return nil, err
 	}
 
-	h := AuthenticationServiceConnectRPCHandler{
+	h := ConnectRPCHandler{
 		logger:    logger,
 		validator: validator,
 	}
-	return &h
+	return &h, nil
 }
