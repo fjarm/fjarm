@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"time"
 
 	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/helloworld/v1/helloworldv1connect"
 	"connectrpc.com/connect"
@@ -62,9 +63,12 @@ func main() {
 	defer func() {
 		logger.InfoContext(ctx, "shut down server", slog.String(logkeys.Tag, mainTag))
 
-		err := srv.Shutdown(ctx)
+		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		// Using shutdownCtx provides a finite window to wait for in-flight requests.
+		err := srv.Shutdown(shutdownCtx)
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
-			logger.ErrorContext(ctx, "failed to shut down server", slog.String(logkeys.Tag, mainTag))
+			logger.ErrorContext(ctx, "failed to shut down server", slog.String(logkeys.Tag, mainTag), slog.Any(logkeys.Err, err))
 		}
 	}()
 
