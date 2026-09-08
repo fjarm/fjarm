@@ -54,6 +54,7 @@ func main() {
 			slog.String(logkeys.Tag, mainTag),
 			slog.Any(logkeys.Err, err),
 		)
+		os.Exit(1)
 	}
 	path, handler := authenticationv1connect.NewAuthenticationServiceHandler(connectRPCHandler, interceptors)
 
