@@ -10,5 +10,5 @@ func (h *ConnectRPCHandler) CreateSession(
 	ctx context.Context,
 	req *authenticationpb.CreateSessionRequest,
 ) (*authenticationpb.CreateSessionResponse, error) {
-	return nil, nil
+	return h.UnimplementedAuthenticationServiceHandler.CreateSession(ctx, req)
 }
