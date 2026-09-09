@@ -2,7 +2,7 @@ package tracing
 
 import "context"
 
-// RequestIDKey represents the string used as the key to access the request ID value from the request metadata map.
+// RequestIDKey represents the string used as the key to log the request ID property of a request.
 const RequestIDKey = "request-id"
 
 type contextKey string
