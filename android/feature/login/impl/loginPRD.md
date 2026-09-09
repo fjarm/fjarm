@@ -27,12 +27,12 @@ If the submitted credentials are incorrect, I want to see an error message.
 
 ## Milestones
 
-- [ ] Delete `IdempotencyKey` message type from existing messages
-- [ ] Add `string idempotency_key` field to request messages that belong to idempotent RPCs
-- [ ] Publish and pull new messages to/from the Buf schema registry
-- [ ] Refactor Go tests that use `IdempotencyKey` to use the new `string idempotency_key` field
-- [ ] Set the `idempotency_key` field on the `CreateSessionRequest` in `LoginConnectRepositoryImpl.kt`
-- [ ] Set the `idempotency_key` in the headers parameter of the `AuthenticationServiceClientInterface::createSession` method
+- [x] Delete `IdempotencyKey` message type from existing messages
+- [x] Add `string idempotency_key` field to request messages that belong to idempotent RPCs
+- [x] Publish and pull new messages to/from the Buf schema registry
+- [x] Refactor Go tests that use `IdempotencyKey` to use the new `string idempotency_key` field
+- [x] Set the `idempotency_key` field on the `CreateSessionRequest` in `LoginConnectRepositoryImpl.kt`
+- [x] Set the `idempotency_key` in the headers parameter of the `AuthenticationServiceClientInterface::createSession` method
 - [ ] Implement `create_session_handler.go` on the backend
 - [ ] Stub an in-memory version of `create_session_use_case.go` on the backend
 - [ ] Use a `DataStore` to store the session tokens

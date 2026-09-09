@@ -11,10 +11,10 @@ import (
 	"os/signal"
 	"time"
 
-	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/helloworld/v1/helloworldv1connect"
+	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/authentication/v1/authenticationv1connect"
 	"connectrpc.com/connect"
 
-	"github.com/fjarm/fjarm/api/internal/helloworld/v1/internal/helloworld"
+	"github.com/fjarm/fjarm/api/internal/authentication/v1/internal/authentication"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	obfuscation "github.com/fjarm/fjarm/api/internal/obfuscation/v1/pkg/interceptor"
 	tracing "github.com/fjarm/fjarm/api/internal/tracing/v1/pkg/interceptor"
@@ -28,7 +28,7 @@ func main() {
 	logger := slog.New(
 		slog.NewJSONHandler(os.Stdout, nil),
 	).With(
-		slog.String(logkeys.Service, helloworldv1connect.HelloWorldServiceName),
+		slog.String(logkeys.Service, authenticationv1connect.AuthenticationServiceName),
 	)
 
 	// Handle SIGINT (CTRL+C) gracefully.
@@ -46,7 +46,7 @@ func main() {
 		obfuscation.NewConnectRPCConstantTimingInterceptor(logger, obfuscation.DelayDuration_100ms),
 		tracing.NewConnectRPCRequestIDLoggingInterceptor(logger),
 	)
-	connectRPCHandler, err := helloworld.NewConnectRPCHandler(logger)
+	connectRPCHandler, err := authentication.NewConnectRPCHandler(logger)
 	if err != nil {
 		logger.ErrorContext(
 			ctx,
@@ -56,7 +56,7 @@ func main() {
 		)
 		os.Exit(1)
 	}
-	path, handler := helloworldv1connect.NewHelloWorldServiceHandler(connectRPCHandler, interceptors)
+	path, handler := authenticationv1connect.NewAuthenticationServiceHandler(connectRPCHandler, interceptors)
 
 	mux := http.NewServeMux()
 	mux.Handle(path, handler)
@@ -74,7 +74,6 @@ func main() {
 
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		// Using shutdownCtx provides a finite window to wait for in-flight requests.
 		err := srv.Shutdown(shutdownCtx)
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			logger.ErrorContext(ctx, "failed to shut down server", slog.String(logkeys.Tag, mainTag), slog.Any(logkeys.Err, err))

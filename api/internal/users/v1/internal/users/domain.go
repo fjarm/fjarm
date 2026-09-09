@@ -84,7 +84,7 @@ func newUserDomain(
 func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error) {
 	logger := dom.logger.With(
 		slog.String(logkeys.Tag, domainTag),
-		slog.Any(tracing.RequestIDKey, ctx.Value(tracing.RequestIDKey)),
+		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
 	)
 
 	// Validate the incoming request. The user it contains and its fields will be validated by the repository.

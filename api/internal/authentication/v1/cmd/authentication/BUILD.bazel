@@ -1,0 +1,22 @@
+load("@rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "authentication_lib",
+    srcs = ["main.go"],
+    importpath = "github.com/fjarm/fjarm/api/internal/authentication/v1/cmd/authentication",
+    visibility = ["//api:__subpackages__"],
+    deps = [
+        "//api/internal/authentication/v1/internal/authentication",
+        "//api/internal/logkeys",
+        "//api/internal/obfuscation/v1/pkg/interceptor",
+        "//api/internal/tracing/v1/pkg/interceptor",
+        "@build_buf_gen_go_fjarm_fjarm_connectrpc_gosimple//fjarm/authentication/v1/authenticationv1connect",
+        "@com_connectrpc_connect//:connect",
+    ],
+)
+
+go_binary(
+    name = "authentication",
+    embed = [":authentication_lib"],
+    visibility = ["//visibility:public"],
+)

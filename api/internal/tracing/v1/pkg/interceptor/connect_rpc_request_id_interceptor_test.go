@@ -8,6 +8,8 @@ import (
 	"testing"
 
 	"connectrpc.com/connect"
+
+	"github.com/fjarm/fjarm/api/internal/tracing"
 )
 
 func TestNewConnectRPCRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
@@ -18,8 +20,10 @@ func TestNewConnectRPCRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 	l := slog.New(slog.NewTextHandler(&buf, nil))
 	slog.SetDefault(l)
 
-	next := func(context.Context, connect.AnyRequest) (connect.AnyResponse, error) {
-		return nil, nil
+	next := func(ctx context.Context, _ connect.AnyRequest) (connect.AnyResponse, error) {
+		res := connect.NewResponse(&[]string{})
+		res.Header().Set(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx))
+		return res, nil
 	}
 
 	si := NewConnectRPCRequestIDLoggingInterceptor(l)(next)
@@ -58,9 +62,12 @@ func TestNewConnectRPCRequestIDLoggingInterceptor_LogOutput(t *testing.T) {
 			for key, val := range tc.headers {
 				req.Header().Add(key, val)
 			}
-			_, err := si(context.Background(), req)
+			res, err := si(context.Background(), req)
 			if err != nil && !tc.err {
 				t.Errorf("NewConnectRPCRequestIDLoggingInterceptor got an unexpected error: %v", err)
+			}
+			if !tc.err && res.Header().Get(tracing.RequestIDKey) != tc.headers["request-id"] {
+				t.Errorf("NewConnectRPCRequestIDLoggingInterceptor got request ID %q, want %q", res.Header().Get(tracing.RequestIDKey), tc.headers["request-id"])
 			}
 			actual := buf.String()
 			for _, exp := range tc.expected {
