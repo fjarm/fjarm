@@ -5,6 +5,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/helloworld/v1/helloworldv1connect"
@@ -25,6 +26,7 @@ func TestMain(m *testing.M) {
 	connectRPCHandler, err := NewConnectRPCHandler(logger)
 	if err != nil {
 		logger.Error("failed to initialize ConnectRPC handler", slog.Any("error", err))
+		os.Exit(1)
 	}
 	path, handler := helloworldv1connect.NewHelloWorldServiceHandler(connectRPCHandler, interceptors)
 
