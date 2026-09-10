@@ -53,3 +53,8 @@ use_repo(
     "redis_alpine_latest",
     "redis_alpine_latest_linux_arm64_v8",
 )
+
+go_deps.gazelle_override(
+    build_file_generation = "on",
+    path = "cel.dev/cel-go",
+)
