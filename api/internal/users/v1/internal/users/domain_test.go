@@ -33,7 +33,6 @@ func TestUserDomain_createUser(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
@@ -49,24 +48,7 @@ func TestUserDomain_createUser(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User:           nil, // The User field is required but is nil here.
-				},
-			},
-			errs: []bool{true},
-			kind: []error{ErrInvalidArgument},
-		},
-		"validation_one_mismatched_id_user": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174555")}, // The User ID here ends in 555, which doesn't match the user ID in the field below.
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
 				},
 			},
 			errs: []bool{true},
@@ -76,7 +58,6 @@ func TestUserDomain_createUser(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
@@ -91,7 +72,6 @@ func TestUserDomain_createUser(t *testing.T) {
 		"validation_one_unset_idempotency_key_request": {
 			reqs: []*userspb.CreateUserRequest{
 				{
-					UserId: &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
@@ -107,7 +87,6 @@ func TestUserDomain_createUser(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String(""),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
@@ -123,7 +102,6 @@ func TestUserDomain_createUser(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
@@ -133,7 +111,6 @@ func TestUserDomain_createUser(t *testing.T) {
 				},
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key.
-					UserId:         &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -151,7 +128,6 @@ func TestUserDomain_createUser(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -161,7 +137,6 @@ func TestUserDomain_createUser(t *testing.T) {
 				},
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -179,7 +154,6 @@ func TestUserDomain_createUser(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -188,8 +162,7 @@ func TestUserDomain_createUser(t *testing.T) {
 					},
 				},
 				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"),                          // Different idempotency key - ends with 888 instead of 999.
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // Different user ID from the one in the request above.
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // User ID here matches the user ID in the request message.
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -207,7 +180,6 @@ func TestUserDomain_createUser(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
@@ -216,8 +188,7 @@ func TestUserDomain_createUser(t *testing.T) {
 					},
 				},
 				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"),                          // Different idempotency key - ends with 888 instead of 999.
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // Different user ID from the one in the request above.
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // User ID here matches the user ID in the request message.
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},

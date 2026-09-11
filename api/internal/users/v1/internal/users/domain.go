@@ -89,8 +89,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 
 	// Validate the incoming request. The user it contains and its fields will be validated by the repository.
 	err := dom.validator.Validate(req)
-	// The user ID in the request must match the user ID in the user entity.
-	if err != nil || req.GetUserId().GetUserId() != req.GetUser().GetUserId().GetUserId() {
+	if err != nil {
 		logger.ErrorContext(ctx,
 			"failed to validate incoming request message",
 			slog.String(logkeys.Raw, redactedUserMessageString(req.GetUser())),
