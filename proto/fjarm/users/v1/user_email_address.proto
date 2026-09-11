@@ -13,5 +13,8 @@ option java_package = "xyz.fjarm.users.v1";
 // to reach out to a user for promotions or to reset a password.
 message UserEmailAddress {
   // Required field that represents a user's email address.
-  optional string email_address = 1 [(buf.validate.field).string.email = true];
+  optional string email_address = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.example = "bleep@bloop.com"
+  ];
 }
