@@ -35,7 +35,8 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	// should result in invalid input from going uncaught.
 	err := validateUserMessageForCreate(ctx, msg)
 	if err != nil {
-		logger.ErrorContext(ctx,
+		logger.ErrorContext(
+			ctx,
 			"failed to validate user message for creation",
 			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
 			slog.Any(logkeys.Err, err),
@@ -67,7 +68,8 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	// elsewhere.
 	entity, err := wireUserToStorageUser(msg)
 	if err != nil {
-		logger.ErrorContext(ctx,
+		logger.ErrorContext(
+			ctx,
 			"failed to convert user message to storage entity",
 			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
 			slog.Any(logkeys.Err, err),
@@ -78,7 +80,8 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 
 	pwd, err := authentication.HashPassword(msg.GetPassword().GetPassword())
 	if err != nil {
-		logger.ErrorContext(ctx,
+		logger.ErrorContext(
+			ctx,
 			"failed to hash credentials supplied in user message",
 			slog.String(logkeys.Raw, redactedUserMessageString(msg)),
 			slog.Any(logkeys.Err, err),
