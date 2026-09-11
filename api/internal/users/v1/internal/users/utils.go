@@ -39,11 +39,6 @@ func validateUserMessageForCreate(ctx context.Context, msg *userspb.User) error 
 		return err
 	}
 
-	err = usersv1.ValidateUserFullName(ctx, msg.GetFullName())
-	if err != nil {
-		return err
-	}
-
 	err = usersv1.ValidateUserPassword(ctx, msg.GetPassword())
 	if err != nil {
 		return err

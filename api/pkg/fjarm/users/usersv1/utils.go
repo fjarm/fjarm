@@ -1,10 +1,11 @@
 package usersv1
 
 import (
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
-	"buf.build/go/protovalidate"
 	"context"
 	"strings"
+
+	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+	"buf.build/go/protovalidate"
 )
 
 func ValidateUserEmailAddress(_ context.Context, email *userspb.UserEmailAddress) error {
@@ -15,16 +16,6 @@ func ValidateUserEmailAddress(_ context.Context, email *userspb.UserEmailAddress
 		return ErrValidationError
 	}
 	return protovalidate.Validate(email)
-}
-
-func ValidateUserFullName(_ context.Context, name *userspb.UserFullName) error {
-	if name == nil {
-		return ErrValidationError
-	}
-	if !name.HasGivenName() || !name.HasFamilyName() {
-		return ErrValidationError
-	}
-	return protovalidate.Validate(name)
 }
 
 func ValidateUserHandle(_ context.Context, handle *userspb.UserHandle) error {
@@ -41,7 +32,6 @@ func ValidateUserHandle(_ context.Context, handle *userspb.UserHandle) error {
 		return ErrValidationError
 	}
 	return protovalidate.Validate(handle)
-
 }
 
 func ValidateUserID(_ context.Context, id *userspb.UserId) error {
