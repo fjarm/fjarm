@@ -7,6 +7,7 @@ import (
 	"time"
 
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+	"github.com/google/uuid"
 
 	authentication "github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
@@ -46,12 +47,6 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		return nil, fmt.Errorf("%w: %w", ErrInvalidArgument, err)
 	}
 
-	// If a user entity with the same ID as the message already exists, return an already exists error.
-	_, ok := repo.database[msg.GetUserId().GetUserId()]
-	if ok {
-		return nil, ErrAlreadyExists
-	}
-
 	// If a user entity with the same email address or handle as the submitted message already exists, return an
 	// already exists error.
 	for _, usr := range repo.database {
@@ -76,6 +71,11 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		)
 		// The error message from wireUserToStorageUser is already wrapped with ErrInvalidArgument.
 		return &user{}, err
+	}
+	entity.UserID = uuid.NewString()
+	_, ok := repo.database[entity.UserID]
+	if ok {
+		return nil, ErrAlreadyExists
 	}
 
 	pwd, err := authentication.HashPassword(msg.GetPassword().GetPassword())

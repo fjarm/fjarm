@@ -58,17 +58,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			err:  []bool{true},
 			kind: []error{ErrInvalidArgument},
 		},
-		"validation_one_unset_id_user": {
-			users: []*userspb.User{
-				{
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
-				},
-			},
-			err:  []bool{true},
-			kind: []error{ErrInvalidArgument},
-		},
 		"validation_one_invalid_id_user": {
 			users: []*userspb.User{
 				{
