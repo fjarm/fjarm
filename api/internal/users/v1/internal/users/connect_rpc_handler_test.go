@@ -64,7 +64,6 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -87,7 +86,6 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String(""),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -103,7 +101,6 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -119,7 +116,6 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -129,7 +125,6 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 				},
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-					UserId:         &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo2@bar.com")},
@@ -147,7 +142,6 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -157,7 +151,6 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 				},
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-					UserId:         &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
