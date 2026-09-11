@@ -33,7 +33,7 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 
 	// The message validation is redundant, but protects against upstream changes in the input/domain layer(s) that
 	// should result in invalid input from going uncaught.
-	err := validateUserMessageForCreate(ctx, msg)
+	err := validateUserMessageForCreate(msg)
 	if err != nil {
 		logger.ErrorContext(
 			ctx,

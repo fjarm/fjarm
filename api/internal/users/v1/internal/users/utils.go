@@ -1,12 +1,10 @@
 package users
 
 import (
-	"context"
-
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+	"buf.build/go/protovalidate"
 
 	"github.com/fjarm/fjarm/api/internal/logvals"
-	"github.com/fjarm/fjarm/api/pkg/fjarm/users/usersv1"
 )
 
 func redactedUserMessageString(msg *userspb.User) string {
@@ -19,30 +17,14 @@ func redactedUserMessageString(msg *userspb.User) string {
 	return rm.String()
 }
 
-func validateUserMessageForCreate(ctx context.Context, msg *userspb.User) error {
+func validateUserMessageForCreate(msg *userspb.User) error {
 	if msg == nil {
 		return ErrInvalidArgument
 	}
-
-	err := usersv1.ValidateUserID(ctx, msg.GetUserId())
-	if err != nil {
-		return err
+	// Context-specific: Create requires these sub-messages to be present
+	if !msg.HasHandle() || !msg.HasEmailAddress() || !msg.HasPassword() {
+		return ErrInvalidArgument
 	}
 
-	err = usersv1.ValidateUserHandle(ctx, msg.GetHandle())
-	if err != nil {
-		return err
-	}
-
-	err = usersv1.ValidateUserEmailAddress(ctx, msg.GetEmailAddress())
-	if err != nil {
-		return err
-	}
-
-	err = usersv1.ValidateUserPassword(ctx, msg.GetPassword())
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return protovalidate.Validate(msg)
 }
