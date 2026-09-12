@@ -18,9 +18,6 @@ const connectRPCHandlerTag = "connect_rpc_handler"
 
 type userDomain interface {
 	createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error)
-	getUser(ctx context.Context, req *userspb.GetUserRequest) (*userspb.User, error)
-	updateUser(ctx context.Context, req *userspb.UpdateUserRequest) (*userspb.User, error)
-	deleteUser(ctx context.Context, req *userspb.DeleteUserRequest) error
 }
 
 // ConnectRPCHandler defines a ConnectRPC handler for the `fjarm.users.v1.UserService` service.

@@ -90,7 +90,8 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	// Validate the incoming request. The user it contains and its fields will be validated by the repository.
 	err := dom.validator.Validate(req)
 	if err != nil {
-		logger.ErrorContext(ctx,
+		logger.ErrorContext(
+			ctx,
 			"failed to validate incoming request message",
 			slog.String(logkeys.Raw, redactedUserMessageString(req.GetUser())),
 			slog.Any(logkeys.Err, err),
@@ -204,16 +205,4 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 		logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, err))
 	}
 	return &userspb.User{}, nil
-}
-
-func (dom *domain) getUser(ctx context.Context, req *userspb.GetUserRequest) (*userspb.User, error) {
-	return nil, ErrUnimplemented
-}
-
-func (dom *domain) updateUser(ctx context.Context, req *userspb.UpdateUserRequest) (*userspb.User, error) {
-	return nil, ErrUnimplemented
-}
-
-func (dom *domain) deleteUser(ctx context.Context, req *userspb.DeleteUserRequest) error {
-	return ErrUnimplemented
 }
