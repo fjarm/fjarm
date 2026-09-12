@@ -5,6 +5,7 @@ go_library(
     srcs = [
         "common_errors.go",
         "connect_rpc_handler.go",
+        "connect_rpc_handler_create_user.go",
         "domain.go",
         "in_memory_repository.go",
         "user.go",
@@ -31,7 +32,7 @@ go_library(
 go_test(
     name = "users_test",
     srcs = [
-        "connect_rpc_handler_test.go",
+        "connect_rpc_handler_create_user_test.go",
         "domain_test.go",
         "in_memory_repository_test.go",
         "user_test.go",

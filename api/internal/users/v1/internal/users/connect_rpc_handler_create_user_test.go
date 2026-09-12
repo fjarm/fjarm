@@ -30,8 +30,6 @@ func TestMain(m *testing.M) {
 		protovalidate.WithMessages(
 			&userspb.CreateUserRequest{},
 			&userspb.CreateUserResponse{},
-			&userspb.GetUserRequest{},
-			&userspb.GetUserResponse{},
 		),
 	)
 	if err != nil {
