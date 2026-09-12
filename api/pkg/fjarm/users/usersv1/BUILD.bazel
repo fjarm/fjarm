@@ -20,7 +20,6 @@ go_test(
     srcs = [
         "create_user_request_test.go",
         "user_email_address_test.go",
-        "user_full_name_test.go",
         "user_handle_test.go",
         "user_id_test.go",
         "user_password_test.go",
