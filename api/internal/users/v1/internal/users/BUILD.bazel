@@ -8,7 +8,7 @@ go_library(
         "domain.go",
         "in_memory_repository.go",
         "user.go",
-        "utils.go",
+        "users_utils.go",
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/users/v1/internal/users",
     visibility = ["//api:__subpackages__"],
