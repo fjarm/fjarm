@@ -1,7 +1,6 @@
 package authenticationv1
 
 import (
-	"context"
 	"testing"
 
 	authenticationpb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/authentication/v1"
@@ -10,7 +9,6 @@ import (
 )
 
 func TestValidateSessionID(t *testing.T) {
-	ctx := context.Background()
 	tests := map[string]struct {
 		id  *authenticationpb.SessionId
 		err bool
@@ -38,7 +36,7 @@ func TestValidateSessionID(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			err := ValidateSessionID(ctx, tc.id)
+			err := ValidateSessionID(tc.id)
 			if err != nil && !tc.err {
 				t.Errorf("ValidateSessionID got an unexpected error = %v", err)
 			}
@@ -50,7 +48,6 @@ func TestValidateSessionID(t *testing.T) {
 }
 
 func TestValidateAccessToken(t *testing.T) {
-	ctx := context.Background()
 	tests := map[string]struct {
 		token *authenticationpb.AccessToken
 		err   bool
@@ -78,7 +75,7 @@ func TestValidateAccessToken(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			err := ValidateAccessToken(ctx, tc.token)
+			err := ValidateAccessToken(tc.token)
 			if err != nil && !tc.err {
 				t.Errorf("ValidateAccessToken got an unexpected error = %v", err)
 			}
@@ -90,7 +87,6 @@ func TestValidateAccessToken(t *testing.T) {
 }
 
 func TestValidateRefreshToken(t *testing.T) {
-	ctx := context.Background()
 	tests := map[string]struct {
 		token *authenticationpb.RefreshToken
 		err   bool
@@ -118,7 +114,7 @@ func TestValidateRefreshToken(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			err := ValidateRefreshToken(ctx, tc.token)
+			err := ValidateRefreshToken(tc.token)
 			if err != nil && !tc.err {
 				t.Errorf("ValidateRefreshToken got an unexpected error = %v", err)
 			}
@@ -130,7 +126,6 @@ func TestValidateRefreshToken(t *testing.T) {
 }
 
 func TestValidateSession(t *testing.T) {
-	ctx := context.Background()
 	tests := map[string]struct {
 		session *authenticationpb.Session
 		err     bool
@@ -183,7 +178,7 @@ func TestValidateSession(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			err := ValidateSession(ctx, tc.session)
+			err := ValidateSession(tc.session)
 			if err != nil && !tc.err {
 				t.Errorf("ValidateSession got an unexpected error = %v", err)
 			}
@@ -195,7 +190,6 @@ func TestValidateSession(t *testing.T) {
 }
 
 func TestValidateCreateSessionRequest(t *testing.T) {
-	ctx := context.Background()
 	tests := map[string]struct {
 		req *authenticationpb.CreateSessionRequest
 		err bool
@@ -227,7 +221,7 @@ func TestValidateCreateSessionRequest(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			err := ValidateCreateSessionRequest(ctx, tc.req)
+			err := ValidateCreateSessionRequest(tc.req)
 			if err != nil && !tc.err {
 				t.Errorf("ValidateCreateSessionRequest got an unexpected error = %v", err)
 			}
@@ -239,7 +233,6 @@ func TestValidateCreateSessionRequest(t *testing.T) {
 }
 
 func TestValidateCreateSessionResponse(t *testing.T) {
-	ctx := context.Background()
 	tests := map[string]struct {
 		res *authenticationpb.CreateSessionResponse
 		err bool
@@ -271,7 +264,7 @@ func TestValidateCreateSessionResponse(t *testing.T) {
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			err := ValidateCreateSessionResponse(ctx, tc.res)
+			err := ValidateCreateSessionResponse(tc.res)
 			if err != nil && !tc.err {
 				t.Errorf("ValidateCreateSessionResponse got an unexpected error = %v", err)
 			}
