@@ -217,6 +217,6 @@ func TestUserUseCase_createUser(t *testing.T) {
 			}
 		})
 		// Reset the database for each test run.
-		repo.database = map[string]user{}
+		repo.reset()
 	}
 }

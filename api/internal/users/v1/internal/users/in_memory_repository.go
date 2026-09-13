@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"sync"
 	"time"
 
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
@@ -16,9 +17,52 @@ import (
 
 const inMemoryRepositoryTag = "in_memory_repository"
 
+// userStore encapsulates thread-safe in-memory storage for user entities.
+type userStore struct {
+	mu    sync.RWMutex
+	users map[string]user
+}
+
+func newUserStore() *userStore {
+	return &userStore{
+		users: make(map[string]user),
+	}
+}
+
+// insert atomically checks unique constraints (email, handle, userID) and stores the entity.
+func (s *userStore) insert(u user) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for _, existing := range s.users {
+		if existing.EmailAddress == u.EmailAddress {
+			return ErrAlreadyExists
+		}
+		if existing.Handle == u.Handle {
+			return ErrAlreadyExists
+		}
+	}
+	if _, ok := s.users[u.UserID]; ok {
+		return ErrAlreadyExists
+	}
+
+	s.users[u.UserID] = u
+	return nil
+}
+
+func (s *userStore) reset() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.users = make(map[string]user)
+}
+
 type inMemoryRepository struct {
-	database map[string]user
-	logger   *slog.Logger
+	store  *userStore
+	logger *slog.Logger
+}
+
+func (repo *inMemoryRepository) reset() {
+	repo.store.reset()
 }
 
 func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.User) (*user, error) {
@@ -47,17 +91,6 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 		return nil, fmt.Errorf("%w: %w", ErrInvalidArgument, err)
 	}
 
-	// If a user entity with the same email address or handle as the submitted message already exists, return an
-	// already exists error.
-	for _, usr := range repo.database {
-		if usr.EmailAddress == msg.GetEmailAddress().GetEmailAddress() {
-			return nil, ErrAlreadyExists
-		}
-		if usr.Handle == msg.GetHandle().GetHandle() {
-			return nil, ErrAlreadyExists
-		}
-	}
-
 	// At this point, the supplied user message should be valid. Convert the Protobuf message to a storage entity.
 	// Because `wireUserToStorageUser` returns an error if the message is nil, we don't need to check for `nil` here or
 	// elsewhere.
@@ -70,13 +103,9 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 			slog.Any(logkeys.Err, err),
 		)
 		// The error message from wireUserToStorageUser is already wrapped with ErrInvalidArgument.
-		return &user{}, err
+		return nil, err
 	}
 	entity.UserID = uuid.NewString()
-	_, ok := repo.database[entity.UserID]
-	if ok {
-		return nil, ErrAlreadyExists
-	}
 
 	pwd, err := authentication.HashPassword(msg.GetPassword().GetPassword())
 	if err != nil {
@@ -95,15 +124,17 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	entity.CreatedAt = now
 	entity.LastUpdated = now
 
-	// Store the entity in the in-memory database.
-	repo.database[entity.UserID] = *entity
-	return &user{}, nil
+	// Atomically verify unique constraints and store the entity in the in-memory store.
+	if err := repo.store.insert(*entity); err != nil {
+		return nil, err
+	}
+	return entity, nil
 }
 
 func newInMemoryRepository(l *slog.Logger) *inMemoryRepository {
 	repo := inMemoryRepository{
-		database: map[string]user{},
-		logger:   l,
+		store:  newUserStore(),
+		logger: l,
 	}
 	return &repo
 }
