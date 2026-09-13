@@ -16,12 +16,8 @@ import (
 //
 // Note  that pointer fields are optional. Thus, pointers are used to distinguish between a valid value, an explicit
 // null (nil pointer), or a zero value.
-//
-// TODO(2026-01-17): Remove the following fields - GivenName, FamilyName.
 type user struct {
 	UserID       string    `db:"user_id"`
-	GivenName    string    `db:"given_name"`
-	FamilyName   string    `db:"family_name"`
 	Handle       string    `db:"handle"`
 	EmailAddress string    `db:"email_address"`
 	Password     string    `db:"password"`     // Argon2ID hashed password with salt embedded.
@@ -39,8 +35,6 @@ func calculateETag(usr *user) (string, error) {
 
 	// Note: We're explicitly ordering fields to ensure consistency
 	hasher.Write([]byte(usr.UserID))
-	hasher.Write([]byte(usr.GivenName))
-	hasher.Write([]byte(usr.FamilyName))
 	hasher.Write([]byte(usr.Handle))
 	hasher.Write([]byte(usr.EmailAddress))
 	if usr.Avatar != nil {
@@ -59,11 +53,7 @@ func storageUserToWireUser(storageUser *user) (*userspb.User, error) {
 		return nil, fmt.Errorf("%w: cannot convert nil user to user message", ErrInvalidArgument)
 	}
 	userMsg := userspb.User{
-		UserId: &userspb.UserId{UserId: &storageUser.UserID},
-		FullName: &userspb.UserFullName{
-			FamilyName: &storageUser.FamilyName,
-			GivenName:  &storageUser.GivenName,
-		},
+		UserId:       &userspb.UserId{UserId: &storageUser.UserID},
 		Handle:       &userspb.UserHandle{Handle: &storageUser.Handle},
 		EmailAddress: &userspb.UserEmailAddress{EmailAddress: &storageUser.EmailAddress},
 		Avatar:       &userspb.UserAvatar{Avatar: storageUser.Avatar},
@@ -83,8 +73,6 @@ func wireUserToStorageUser(msg *userspb.User) (*user, error) {
 	}
 	usr := user{
 		UserID:       msg.GetUserId().GetUserId(),
-		GivenName:    msg.GetFullName().GetGivenName(),
-		FamilyName:   msg.GetFullName().GetFamilyName(),
 		Handle:       msg.GetHandle().GetHandle(),
 		EmailAddress: msg.GetEmailAddress().GetEmailAddress(),
 		Avatar:       proto.String(msg.GetAvatar().GetAvatar()),

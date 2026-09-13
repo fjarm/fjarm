@@ -13,5 +13,8 @@ option java_package = "xyz.fjarm.authentication.v1";
 // to re-authenticate.
 message RefreshToken {
   // An opaque string, likely a JWT, to be sent when the access token expires.
-  optional string refresh_token = 1 [(buf.validate.field).required = true];
+  optional string refresh_token = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.min_len = 1
+  ];
 }

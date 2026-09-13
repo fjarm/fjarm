@@ -2,17 +2,9 @@ load("@rules_go//go:def.bzl", "go_library", "go_test")
 
 go_library(
     name = "usersv1",
-    srcs = [
-        "common_errors.go",
-        "users.go",
-        "utils.go",
-    ],
+    srcs = ["users.go"],
     importpath = "github.com/fjarm/fjarm/api/pkg/fjarm/users/usersv1",
     visibility = ["//:__subpackages__"],
-    deps = [
-        "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",
-        "@build_buf_go_protovalidate//:protovalidate",
-    ],
 )
 
 go_test(
@@ -20,7 +12,6 @@ go_test(
     srcs = [
         "create_user_request_test.go",
         "user_email_address_test.go",
-        "user_full_name_test.go",
         "user_handle_test.go",
         "user_id_test.go",
         "user_password_test.go",

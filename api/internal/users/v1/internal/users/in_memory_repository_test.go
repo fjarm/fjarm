@@ -3,8 +3,10 @@ package users
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
+	"sync"
 	"testing"
 
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
@@ -24,7 +26,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -51,19 +52,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
-				},
-			},
-			err:  []bool{true},
-			kind: []error{ErrInvalidArgument},
-		},
-		"validation_one_unset_id_user": {
-			users: []*userspb.User{
-				{
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -76,7 +64,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("user_id")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -89,7 +76,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -102,7 +88,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
@@ -114,7 +99,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -127,7 +111,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String(" ")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -140,7 +123,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -153,7 +135,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:   &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName: &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					Handle:   &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password: &userspb.UserPassword{Password: proto.String("password")},
 				},
@@ -165,59 +146,7 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
-				},
-			},
-			err:  []bool{true},
-			kind: []error{ErrInvalidArgument},
-		},
-		"validation_one_no_full_name_user": {
-			users: []*userspb.User{
-				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper@glopper.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
-				},
-			},
-			err:  []bool{true},
-			kind: []error{ErrInvalidArgument},
-		},
-		"validation_one_unset_full_name_user": {
-			users: []*userspb.User{
-				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper@glopper.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
-				},
-			},
-			err:  []bool{true},
-			kind: []error{ErrInvalidArgument},
-		},
-		"validation_one_no_family_name_user": {
-			users: []*userspb.User{
-				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper@glopper.com")},
-					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-					Password:     &userspb.UserPassword{Password: proto.String("password")},
-				},
-			},
-			err:  []bool{true},
-			kind: []error{ErrInvalidArgument},
-		},
-		"validation_one_no_given_name_user": {
-			users: []*userspb.User{
-				{
-					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{FamilyName: proto.String("foo")},
-					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("gleeper@glopper.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
@@ -229,7 +158,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{},
@@ -242,7 +170,6 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 				},
@@ -254,14 +181,12 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper1")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -274,14 +199,12 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -294,14 +217,12 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper1")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -314,14 +235,12 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			users: []*userspb.User{
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
 				},
 				{
 					UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")},
-					FullName:     &userspb.UserFullName{GivenName: proto.String("foo"), FamilyName: proto.String("bar")},
 					EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 					Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 					Password:     &userspb.UserPassword{Password: proto.String("password")},
@@ -347,6 +266,80 @@ func TestInMemoryRepository_createUser(t *testing.T) {
 			}
 		})
 		// Reset the database for each test run.
-		repo.database = map[string]user{}
+		repo.reset()
+	}
+}
+
+func TestInMemoryRepository_createUser_concurrency(t *testing.T) {
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	repo := newInMemoryRepository(logger)
+
+	const numGoroutines = 50
+	var wg sync.WaitGroup
+	errChan := make(chan error, numGoroutines)
+
+	for i := range numGoroutines {
+		wg.Add(1)
+		go func(idx int) {
+			defer wg.Done()
+			user := &userspb.User{
+				UserId:       &userspb.UserId{UserId: proto.String(fmt.Sprintf("123e4567-e89b-12d3-a456-426614174%03d", idx))},
+				EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String(fmt.Sprintf("user%d@example.com", idx))},
+				Handle:       &userspb.UserHandle{Handle: proto.String(fmt.Sprintf("user%d", idx))},
+				Password:     &userspb.UserPassword{Password: proto.String("password123")},
+			}
+			created, err := repo.createUser(context.Background(), user)
+			if err != nil {
+				errChan <- err
+				return
+			}
+			if created == nil || created.UserID == "" {
+				errChan <- errors.New("created user or UserID is empty")
+				return
+			}
+		}(i)
+	}
+
+	wg.Wait()
+	close(errChan)
+
+	for err := range errChan {
+		t.Errorf("concurrent createUser failed: %v", err)
+	}
+}
+
+func TestInMemoryRepository_createUser_concurrentDuplicates(t *testing.T) {
+	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	repo := newInMemoryRepository(logger)
+
+	const numGoroutines = 20
+	var wg sync.WaitGroup
+
+	successCount := 0
+	var mu sync.Mutex
+
+	for range numGoroutines {
+		wg.Go(func() {
+			user := &userspb.User{
+				UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+				EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("duplicate@example.com")},
+				Handle:       &userspb.UserHandle{Handle: proto.String("duplicate")},
+				Password:     &userspb.UserPassword{Password: proto.String("password123")},
+			}
+			_, err := repo.createUser(context.Background(), user)
+			if err == nil {
+				mu.Lock()
+				successCount++
+				mu.Unlock()
+			} else if !errors.Is(err, ErrAlreadyExists) {
+				t.Errorf("unexpected error for duplicate creation: %v", err)
+			}
+		})
+	}
+
+	wg.Wait()
+
+	if successCount != 1 {
+		t.Errorf("expected exactly 1 successful creation, got %d", successCount)
 	}
 }

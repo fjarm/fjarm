@@ -11,5 +11,8 @@ option java_package = "xyz.fjarm.authentication.v1";
 
 // SessionId uniquely identifies a session.
 message SessionId {
-  optional string session_id = 1 [(buf.validate.field).required = true];
+  optional string session_id = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.min_len = 1
+  ];
 }

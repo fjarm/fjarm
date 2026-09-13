@@ -5,10 +5,11 @@ go_library(
     srcs = [
         "common_errors.go",
         "connect_rpc_handler.go",
-        "domain.go",
+        "connect_rpc_handler_create_user.go",
+        "create_user_use_case.go",
         "in_memory_repository.go",
         "user.go",
-        "utils.go",
+        "users_utils.go",
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/users/v1/internal/users",
     visibility = ["//api:__subpackages__"],
@@ -18,12 +19,12 @@ go_library(
         "//api/internal/logkeys",
         "//api/internal/logvals",
         "//api/internal/tracing",
-        "//api/pkg/fjarm/users/usersv1",
         "@build_buf_gen_go_fjarm_fjarm_connectrpc_gosimple//fjarm/users/v1/usersv1connect",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/consistency/v1:consistency",
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",
         "@build_buf_go_protovalidate//:protovalidate",
         "@com_connectrpc_connect//:connect",
+        "@com_github_google_uuid//:uuid",
         "@org_golang_google_protobuf//proto",
     ],
 )
@@ -31,8 +32,8 @@ go_library(
 go_test(
     name = "users_test",
     srcs = [
-        "connect_rpc_handler_test.go",
-        "domain_test.go",
+        "connect_rpc_handler_create_user_test.go",
+        "create_user_use_case_test.go",
         "in_memory_repository_test.go",
         "user_test.go",
     ],

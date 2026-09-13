@@ -13,5 +13,8 @@ option java_package = "xyz.fjarm.authentication.v1";
 // of the user.
 message AccessToken {
   // An opaque string, likely a JWT, to be sent on every protected RPC.
-  optional string access_token = 1 [(buf.validate.field).required = true];
+  optional string access_token = 1 [
+    (buf.validate.field).required = true,
+    (buf.validate.field).string.min_len = 1
+  ];
 }

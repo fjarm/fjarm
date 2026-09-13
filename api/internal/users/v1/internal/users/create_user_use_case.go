@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	domainTag = "domain"
+	createUserUseCaseTag = "create_user_use_case"
 
 	// Including the operation (create) in the cache key to differentiate between different idempotent operations. That
 	// way, if another operation like update creates the same cache key, it won't collide with the create operation.
@@ -56,7 +56,7 @@ type remoteLock interface {
 	VerifyLock(cxt context.Context, lockKey string, lockVal string) (bool, error)
 }
 
-type domain struct {
+type createUserUseCase struct {
 	logger    *slog.Logger
 	cache     idempotencyCache
 	locker    remoteLock
@@ -64,14 +64,14 @@ type domain struct {
 	validator protovalidate.Validator
 }
 
-func newUserDomain(
+func newUserUseCase(
 	logger *slog.Logger,
 	cache idempotencyCache,
 	locker remoteLock,
 	repo userRepository,
 	validator protovalidate.Validator,
-) userDomain {
-	dom := &domain{
+) userUseCase {
+	dom := &createUserUseCase{
 		logger:    logger,
 		cache:     cache,
 		locker:    locker,
@@ -81,17 +81,17 @@ func newUserDomain(
 	return dom
 }
 
-func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error) {
-	logger := dom.logger.With(
-		slog.String(logkeys.Tag, domainTag),
+func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error) {
+	logger := uc.logger.With(
+		slog.String(logkeys.Tag, createUserUseCaseTag),
 		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
 	)
 
 	// Validate the incoming request. The user it contains and its fields will be validated by the repository.
-	err := dom.validator.Validate(req)
-	// The user ID in the request must match the user ID in the user entity.
-	if err != nil || req.GetUserId().GetUserId() != req.GetUser().GetUserId().GetUserId() {
-		logger.ErrorContext(ctx,
+	err := uc.validator.Validate(req)
+	if err != nil {
+		logger.ErrorContext(
+			ctx,
 			"failed to validate incoming request message",
 			slog.String(logkeys.Raw, redactedUserMessageString(req.GetUser())),
 			slog.Any(logkeys.Err, err),
@@ -100,7 +100,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	}
 
 	idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, req.GetIdempotencyKey())
-	_, err = dom.cache.Get(ctx, idempotencyKey)
+	_, err = uc.cache.Get(ctx, idempotencyKey)
 	if err == nil {
 		// Found a cached response. We can return a successful response without creating the user again.
 		return &userspb.User{}, nil
@@ -117,7 +117,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	// processing to complete and return the cached result. If the primary server handling the request fails and doesn't
 	// update the cache, the replicas should also fail and the client can attempt retrying.
 	lockKey := fmt.Sprintf("%s:%s", createUserLockKey, req.GetIdempotencyKey())
-	lockVal, err := dom.locker.AcquireLock(ctx, lockKey, idempotencyLockTTL)
+	lockVal, err := uc.locker.AcquireLock(ctx, lockKey, idempotencyLockTTL)
 	// Ensure we release the lock after processing the request.
 	defer func() {
 		if lockVal == "" {
@@ -125,7 +125,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 		}
 		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
 		defer cancel()
-		releaseErr := dom.locker.SafeReleaseLock(cleanupCtx, lockKey, lockVal)
+		releaseErr := uc.locker.SafeReleaseLock(cleanupCtx, lockKey, lockVal)
 		if releaseErr != nil {
 			logger.ErrorContext(ctx, "failed to release lock in cache", slog.Any(logkeys.Err, releaseErr))
 		}
@@ -149,7 +149,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 				return nil, ErrOperationFailed
 			default:
 				// Try to get the result of the primary server's operation from the cache.
-				_, err = dom.cache.Get(ctx, idempotencyKey)
+				_, err = uc.cache.Get(ctx, idempotencyKey)
 				if err == nil {
 					// Found a cached response. We can return a successful response without creating the user again.
 					return &userspb.User{}, nil
@@ -171,7 +171,7 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	}
 
 	// Verify that we have the lock before proceeding.
-	verified, err := dom.locker.VerifyLock(ctx, lockKey, lockVal)
+	verified, err := uc.locker.VerifyLock(ctx, lockKey, lockVal)
 	if err != nil || !verified {
 		// If there's an error, we do not own the lock (the value in the cache does not match ours), or the lock expired
 		// (the key/value pair was deleted), we abort the operation. The client is responsible for retrying. The retry
@@ -182,12 +182,12 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	}
 
 	msg := req.GetUser()
-	_, err = dom.repo.createUser(ctx, msg)
+	_, err = uc.repo.createUser(ctx, msg)
 	if err != nil && errors.Is(err, ErrAlreadyExists) {
 		logger.WarnContext(ctx, "attempted to create duplicate user", slog.Any(logkeys.Err, err))
 		// User creation is idempotent. But, we don't want to leak this information to the client. So, instead of
 		// returning the error, we return a successful response without the user's details.
-		err = dom.cache.Set(ctx, idempotencyKey, []byte(""), idempotencyKeyTTL)
+		err = uc.cache.Set(ctx, idempotencyKey, []byte(""), idempotencyKeyTTL)
 		if err != nil {
 			logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, err))
 		}
@@ -200,21 +200,9 @@ func (dom *domain) createUser(ctx context.Context, req *userspb.CreateUserReques
 	}
 	// Creating a user is dead simple because enrolling is not the same as authenticating. Users first sign up then
 	// log in.
-	err = dom.cache.Set(ctx, idempotencyKey, []byte(""), idempotencyKeyTTL)
+	err = uc.cache.Set(ctx, idempotencyKey, []byte(""), idempotencyKeyTTL)
 	if err != nil {
 		logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, err))
 	}
 	return &userspb.User{}, nil
-}
-
-func (dom *domain) getUser(ctx context.Context, req *userspb.GetUserRequest) (*userspb.User, error) {
-	return nil, ErrUnimplemented
-}
-
-func (dom *domain) updateUser(ctx context.Context, req *userspb.UpdateUserRequest) (*userspb.User, error) {
-	return nil, ErrUnimplemented
-}
-
-func (dom *domain) deleteUser(ctx context.Context, req *userspb.DeleteUserRequest) error {
-	return ErrUnimplemented
 }

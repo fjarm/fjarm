@@ -24,9 +24,6 @@ func TestCreateUserRequest_Validation(t *testing.T) {
 		"valid_create_user_request": {
 			request: &userspb.CreateUserRequest{
 				IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174000"),
-				UserId: &userspb.UserId{
-					UserId: proto.String("123e4567-e89b-12d3-a456-426614174000"),
-				},
 				User: &userspb.User{
 					UserId: &userspb.UserId{
 						UserId: proto.String("123e4567-e89b-12d3-a456-426614174000"),
@@ -38,9 +35,6 @@ func TestCreateUserRequest_Validation(t *testing.T) {
 		"invalid_empty_idempotency_key_create_user_request": {
 			request: &userspb.CreateUserRequest{
 				IdempotencyKey: proto.String(""),
-				UserId: &userspb.UserId{
-					UserId: proto.String("123e4567-e89b-12d3-a456-426614174000"),
-				},
 				User: &userspb.User{
 					UserId: &userspb.UserId{
 						UserId: proto.String("123e4567-e89b-12d3-a456-426614174000"),

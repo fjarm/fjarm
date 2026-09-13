@@ -4,7 +4,6 @@ package fjarm.users.v1;
 
 import "buf/validate/validate.proto";
 import "fjarm/users/v1/user.proto";
-import "fjarm/users/v1/user_id.proto";
 
 option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1";
 option java_multiple_files = true;
@@ -25,9 +24,6 @@ message CreateUserRequest {
     (buf.validate.field).string.uuid = true
   ];
 
-  // The ID of the user being created. This should match the ID found in the `user` field below.
-  optional fjarm.users.v1.UserId user_id = 2 [(buf.validate.field).required = true];
-
   // The user to create.
-  optional fjarm.users.v1.User user = 3 [(buf.validate.field).required = true];
+  optional fjarm.users.v1.User user = 2 [(buf.validate.field).required = true];
 }
