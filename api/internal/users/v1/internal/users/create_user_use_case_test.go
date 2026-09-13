@@ -14,7 +14,7 @@ import (
 	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
 )
 
-func TestUserDomain_createUser(t *testing.T) {
+func TestUserUseCase_createUser(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	cache := remote.NewFakeRedisCache()
 	repo := newInMemoryRepository(logger)
@@ -22,7 +22,7 @@ func TestUserDomain_createUser(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to create a new validator: %v", err)
 	}
-	dom := newUserDomain(logger, cache, cache, repo, validator)
+	dom := newUserUseCase(logger, cache, cache, repo, validator)
 
 	tests := map[string]struct {
 		reqs []*userspb.CreateUserRequest

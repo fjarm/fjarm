@@ -9,14 +9,14 @@ import (
 	"buf.build/go/protovalidate"
 )
 
-type userDomain interface {
+type userUseCase interface {
 	createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error)
 }
 
 // ConnectRPCHandler defines a ConnectRPC handler for the `fjarm.users.v1.UserService` service.
 type ConnectRPCHandler struct {
 	usersv1connect.UnimplementedUserServiceHandler
-	domain    userDomain
+	useCase   userUseCase
 	logger    *slog.Logger
 	validator protovalidate.Validator
 }
@@ -24,11 +24,11 @@ type ConnectRPCHandler struct {
 // NewConnectRPCHandler creates a concrete users ConnectRPC service with logging and business/domain logic.
 func NewConnectRPCHandler(
 	logger *slog.Logger,
-	domain userDomain,
+	domain userUseCase,
 	validator protovalidate.Validator,
 ) *ConnectRPCHandler {
 	han := ConnectRPCHandler{
-		domain:    domain,
+		useCase:   domain,
 		logger:    logger,
 		validator: validator,
 	}

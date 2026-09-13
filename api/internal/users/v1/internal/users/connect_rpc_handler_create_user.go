@@ -27,7 +27,7 @@ func (h *ConnectRPCHandler) CreateUser(
 	logger.InfoContext(ctx, "received request to create user")
 
 	// Create the user entity.
-	usr, err := h.domain.createUser(ctx, req)
+	usr, err := h.useCase.createUser(ctx, req)
 	if err != nil {
 		logger.ErrorContext(
 			ctx,
