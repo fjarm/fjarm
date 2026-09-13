@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
@@ -25,6 +26,11 @@ func (h *ConnectRPCHandler) CreateUser(
 		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
 	)
 	logger.InfoContext(ctx, "received request to create user")
+
+	if req == nil {
+		logger.ErrorContext(ctx, "request cannot be nil")
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("%w: request cannot be nil", ErrInvalidArgument))
+	}
 
 	// Create the user entity.
 	usr, err := h.useCase.createUser(ctx, req)
