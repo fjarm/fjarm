@@ -33,7 +33,7 @@ func (h *ConnectRPCHandler) CreateUser(
 	}
 
 	// Create the user entity.
-	usr, err := h.useCase.createUser(ctx, req)
+	_, err := h.useCase.createUser(ctx, req)
 	if err != nil {
 		logger.ErrorContext(
 			ctx,
@@ -52,9 +52,7 @@ func (h *ConnectRPCHandler) CreateUser(
 		return nil, connect.NewError(connect.CodeUnknown, ErrOperationFailed)
 	}
 
-	res := &userspb.CreateUserResponse{
-		User: usr,
-	}
+	res := userspb.CreateUserResponse{}
 	// User creation was successful.
-	return res, nil
+	return &res, nil
 }
