@@ -81,7 +81,7 @@ func newUserUseCase(
 	return dom
 }
 
-func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error) {
+func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.CreateUserRequest) error {
 	logger := uc.logger.With(
 		slog.String(logkeys.Tag, createUserUseCaseTag),
 		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
@@ -96,19 +96,19 @@ func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.Create
 			slog.String(logkeys.Raw, redactedUserMessageString(req.GetUser())),
 			slog.Any(logkeys.Err, err),
 		)
-		return nil, fmt.Errorf("%w: %w", ErrInvalidArgument, err)
+		return fmt.Errorf("%w: %w", ErrInvalidArgument, err)
 	}
 
 	idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, req.GetIdempotencyKey())
 	_, err = uc.cache.Get(ctx, idempotencyKey)
 	if err == nil {
 		// Found a cached response. We can return a successful response without creating the user again.
-		return &userspb.User{}, nil
+		return nil
 	} else if !errors.Is(err, cache.ErrCacheMiss) {
 		// This is a real Redis error, not a cache miss. Return an ErrOperationFailed that will be sent to the client
 		// with a connect.CodeInternal status.
 		logger.ErrorContext(ctx, "failed to get idempotency key from cache", slog.Any(logkeys.Err, err))
-		return nil, ErrOperationFailed
+		return ErrOperationFailed
 	}
 
 	// At this point, we know that the idempotency key doesn't exist in the cache. So, we can proceed with creating the
@@ -133,7 +133,7 @@ func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.Create
 	if err != nil && !errors.Is(err, cache.ErrKeyExists) {
 		// This is a real Redis error, not a cache miss.
 		logger.ErrorContext(ctx, "failed to acquire lock in cache", slog.Any(logkeys.Err, err))
-		return nil, ErrOperationFailed
+		return ErrOperationFailed
 	}
 	if err != nil && errors.Is(err, cache.ErrKeyExists) {
 		// Another process already owns the lock. Retry with a backoff.
@@ -146,17 +146,17 @@ func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.Create
 			select {
 			case <-timeoutCtx.Done():
 				logger.ErrorContext(ctx, "timed out waiting for concurrent operation to finish")
-				return nil, ErrOperationFailed
+				return ErrOperationFailed
 			default:
 				// Try to get the result of the primary server's operation from the cache.
 				_, err = uc.cache.Get(ctx, idempotencyKey)
 				if err == nil {
 					// Found a cached response. We can return a successful response without creating the user again.
-					return &userspb.User{}, nil
+					return nil
 				} else if !errors.Is(err, cache.ErrCacheMiss) {
 					// This is a real Redis error, not a cache miss.
 					logger.ErrorContext(ctx, "failed to poll cache for response", slog.Any(logkeys.Err, err))
-					return nil, ErrOperationFailed
+					return ErrOperationFailed
 				}
 			}
 
@@ -165,7 +165,7 @@ func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.Create
 				// Wait before retrying.
 			case <-timeoutCtx.Done():
 				logger.ErrorContext(ctx, "timed out waiting for concurrent operation to finish")
-				return nil, ErrOperationFailed
+				return ErrOperationFailed
 			}
 		}
 	}
@@ -178,7 +178,7 @@ func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.Create
 		// will either find the cached response in the idempotency cache, succeed in creating the user, or find that the
 		// user already exists in the database/repository.
 		logger.ErrorContext(ctx, "failed to verify lock in cache", slog.Any(logkeys.Err, err))
-		return nil, ErrOperationFailed
+		return ErrOperationFailed
 	}
 
 	msg := req.GetUser()
@@ -191,12 +191,12 @@ func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.Create
 		if err != nil {
 			logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, err))
 		}
-		return &userspb.User{}, nil
+		return nil
 	} else if err != nil && errors.Is(err, ErrAuthenticationIssue) {
 		// Obscure authentication issues from the client.
-		return nil, ErrOperationFailed
+		return ErrOperationFailed
 	} else if err != nil {
-		return nil, err
+		return err
 	}
 	// Creating a user is dead simple because enrolling is not the same as authenticating. Users first sign up then
 	// log in.
@@ -204,5 +204,5 @@ func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.Create
 	if err != nil {
 		logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, err))
 	}
-	return &userspb.User{}, nil
+	return nil
 }

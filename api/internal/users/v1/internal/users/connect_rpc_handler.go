@@ -10,7 +10,7 @@ import (
 )
 
 type userUseCase interface {
-	createUser(ctx context.Context, req *userspb.CreateUserRequest) (*userspb.User, error)
+	createUser(ctx context.Context, req *userspb.CreateUserRequest) error
 }
 
 // ConnectRPCHandler defines a ConnectRPC handler for the `fjarm.users.v1.UserService` service.
