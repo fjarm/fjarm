@@ -2,15 +2,12 @@ syntax = "proto3";
 
 package fjarm.users.v1;
 
-import "google/rpc/status.proto";
-
 option go_package = "github.com/fjarm/fjarm/api/pkg/fjarm/users/v1";
 option java_multiple_files = true;
 option java_outer_classname = "CreateUserResponseProto";
 option java_package = "xyz.fjarm.users.v1";
 
-// CreateUserResponse represents the result of attempting an RPC that creates a user.
-message CreateUserResponse {
-  // The status of the RPC request to create a user.
-  optional google.rpc.Status status = 1;
-}
+// CreateUserResponse represents the result of attempting an RPC that creates a user. Its presence indicates the
+// acknowledgment of a successful user creation. The created resource is intentionally omitted to prevent account
+// enumeration.
+message CreateUserResponse {}

@@ -204,7 +204,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			for i, req := range tc.reqs {
-				_, err = dom.createUser(context.Background(), req)
+				err = dom.createUser(context.Background(), req)
 				if err != nil && !tc.errs[i] {
 					t.Errorf("createUser got an unexpected error: %v", err)
 				}

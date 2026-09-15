@@ -3,10 +3,10 @@ module github.com/fjarm/fjarm
 go 1.26.0
 
 require (
-	buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple v1.20.0-20260811010424-ad8df5ebf10d.1
-	buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.12-20260811010424-ad8df5ebf10d.2
+	buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple v1.21.0-20260913205342-11c667024fd3.1
+	buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.12-20260913205342-11c667024fd3.2
 	buf.build/go/protovalidate v1.4.0
-	connectrpc.com/connect v1.20.0
+	connectrpc.com/connect v1.21.0
 	github.com/google/uuid v1.6.0
 	github.com/redis/rueidis v1.0.77
 	golang.org/x/crypto v0.56.0
@@ -23,5 +23,5 @@ require (
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.41.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20260819154853-08b0e4226688 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20260819154853-08b0e4226688 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260911204522-f61a6ca850bd // indirect
 )
