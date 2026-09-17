@@ -18,7 +18,7 @@ ksp = "2.3.11"
 androidXHilt = "1.4.0"
 
 ## Parcelize
-parcelize = "2.4.10"
+parcelize = "2.4.20"
 
 ## Jetbrains Kotlin JVM
 jetbrainsKotlinJvm = "2.4.10"
