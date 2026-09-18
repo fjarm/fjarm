@@ -24,11 +24,11 @@ type ConnectRPCHandler struct {
 // NewConnectRPCHandler creates a concrete users ConnectRPC service with logging and business/domain logic.
 func NewConnectRPCHandler(
 	logger *slog.Logger,
-	domain userUseCase,
+	useCase userUseCase,
 	validator protovalidate.Validator,
 ) *ConnectRPCHandler {
 	han := ConnectRPCHandler{
-		useCase:   domain,
+		useCase:   useCase,
 		logger:    logger,
 		validator: validator,
 	}
