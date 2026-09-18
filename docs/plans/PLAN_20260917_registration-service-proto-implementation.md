@@ -96,3 +96,36 @@ buf build
   - [ ] Create `proto/fjarm/registration/v1/registration_service.proto`
   - [ ] Run `buf lint` to verify all files pass linting
   - [ ] Run `buf build` to verify compilation
+
+---
+
+## [Update: 2026-09-17 23:48] - Email-based token delivery
+
+* **Context**: The `RegistrationToken` should be delivered to the user via email, not returned in the `BeginRegistrationResponse`. This turns registration into an email verification flow: client submits credentials → server emails a token → client submits the token to complete registration.
+* **Objective**: Adjust message designs to reflect that the token is never exposed in API responses.
+* **Changes to Tasks**:
+  - **Modified**: `BeginRegistrationResponse` is now an empty acknowledgment (like `CompleteRegistrationResponse`).
+  - **Modified**: `RegistrationToken` simplified to a string wrapper (like `AccessToken`). The `expires_at` field is removed — token expiry is a server-side concern, not part of the API contract.
+  - **Modified**: `CompleteRegistrationRequest` now includes a `RegistrationToken` field (the token the user received via email) in addition to the `idempotency_key`.
+  - **Removed**: `registration_token.proto` no longer imports `google/protobuf/timestamp.proto`.
+* **Revised Message Designs**:
+
+  | Message | Fields |
+  |---|---|
+  | `RegistrationCredentials` | `email_address` (UserEmailAddress) + `password` (UserPassword) |
+  | `RegistrationToken` | `registration_token` (string, required, min_len=1) |
+  | `BeginRegistrationRequest` | `idempotency_key` (string, required, uuid) + `registration_credentials` (RegistrationCredentials, required) |
+  | `BeginRegistrationResponse` | *(empty)* |
+  | `CompleteRegistrationRequest` | `idempotency_key` (string, required, uuid) + `registration_token` (RegistrationToken, required) |
+  | `CompleteRegistrationResponse` | *(empty)* |
+
+* **Revised Task Checklist** (unchanged file list, updated content):
+  - [ ] Create `proto/fjarm/registration/v1/registration_credentials.proto`
+  - [ ] Create `proto/fjarm/registration/v1/registration_token.proto` (simplified — string wrapper only)
+  - [ ] Create `proto/fjarm/registration/v1/begin_registration_request.proto`
+  - [ ] Create `proto/fjarm/registration/v1/begin_registration_response.proto` (empty message)
+  - [ ] Create `proto/fjarm/registration/v1/complete_registration_request.proto` (includes registration token)
+  - [ ] Create `proto/fjarm/registration/v1/complete_registration_response.proto` (empty message)
+  - [ ] Create `proto/fjarm/registration/v1/registration_service.proto`
+  - [ ] Run `buf lint` to verify all files pass linting
+  - [ ] Run `buf build` to verify compilation
