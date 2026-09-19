@@ -20,17 +20,17 @@ const inMemoryRepositoryTag = "in_memory_repository"
 // userStore encapsulates thread-safe in-memory storage for user entities.
 type userStore struct {
 	mu    sync.RWMutex
-	users map[string]user
+	users map[string]User
 }
 
 func newUserStore() *userStore {
 	return &userStore{
-		users: make(map[string]user),
+		users: make(map[string]User),
 	}
 }
 
 // insert atomically checks unique constraints (email, handle, userID) and stores the entity.
-func (s *userStore) insert(u user) error {
+func (s *userStore) insert(u User) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
@@ -53,7 +53,7 @@ func (s *userStore) insert(u user) error {
 func (s *userStore) reset() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.users = make(map[string]user)
+	s.users = make(map[string]User)
 }
 
 type inMemoryRepository struct {
@@ -65,7 +65,7 @@ func (repo *inMemoryRepository) reset() {
 	repo.store.reset()
 }
 
-func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.User) (*user, error) {
+func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.User) (*User, error) {
 	logger := repo.logger.With(
 		slog.String(logkeys.Tag, inMemoryRepositoryTag),
 		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
@@ -122,7 +122,7 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	// Configure the entity's creation and last updated timestamps.
 	now := time.Now()
 	entity.CreatedAt = now
-	entity.LastUpdated = now
+	entity.UpdatedAt = now
 
 	// Atomically verify unique constraints and store the entity in the in-memory store.
 	if err := repo.store.insert(*entity); err != nil {

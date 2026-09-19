@@ -26,8 +26,9 @@ const (
 	idempotencyLockTTL = 30 * time.Second // Short-lived to coordinate concurrent requests
 )
 
-type userRepository interface {
-	createUser(ctx context.Context, user *userspb.User) (*user, error)
+// UserRepository orchestrates persisting a User entity to durable storage like a SQL database.
+type UserRepository interface {
+	createUser(ctx context.Context, user *userspb.User) (*User, error)
 }
 
 // idempotencyCache is an interface that describes how idempotency is leveraged in the users domain.
@@ -62,7 +63,7 @@ type UserUseCase struct {
 	logger    *slog.Logger
 	cache     idempotencyCache
 	locker    remoteLock
-	repo      userRepository
+	repo      UserRepository
 	validator protovalidate.Validator
 }
 
@@ -71,7 +72,7 @@ func NewUserUseCase(
 	logger *slog.Logger,
 	cache idempotencyCache,
 	locker remoteLock,
-	repo userRepository,
+	repo UserRepository,
 	validator protovalidate.Validator,
 ) *UserUseCase {
 	return &UserUseCase{
