@@ -85,7 +85,7 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	entity.UpdatedAt = now
 
 	// Atomically verify unique constraints and store the entity in the in-memory store.
-	if err := repo.store.create(entity); err != nil {
+	if err := repo.store.create(ctx, entity); err != nil {
 		return nil, err
 	}
 	return entity, nil

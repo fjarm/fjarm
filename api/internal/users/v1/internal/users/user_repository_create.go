@@ -1,7 +1,9 @@
 package users
 
+import "context"
+
 // create atomically checks unique constraints (email, handle, userID) and stores the entity.
-func (s *userStore) create(u *User) error {
+func (s *userStore) create(_ context.Context, u *User) error {
 	if u == nil {
 		return ErrInvalidArgument
 	}
