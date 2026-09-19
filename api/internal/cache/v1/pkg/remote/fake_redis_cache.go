@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	cachev1 "github.com/fjarm/fjarm/api/internal/cache"
@@ -12,6 +13,7 @@ import (
 // FakeRedisCache is a duplicate of RedisCache that doesn't actually connect to Redis. Instead, it uses an in-memory map
 // to replicate the behavior of Redis for testing purposes.
 type FakeRedisCache struct {
+	mu  sync.RWMutex
 	rdb map[string]*fakeRedisCacheValue
 }
 
@@ -35,6 +37,9 @@ func (c *FakeRedisCache) removeExpiredValues() {
 // Get retrieves the value associated with the supplied key from the in-memory map. If no such key/value pair exists, a
 // pkg.ErrCacheMiss error is returned. Other errors indicate something more serious.
 func (c *FakeRedisCache) Get(ctx context.Context, key string) ([]byte, error) {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+
 	if strings.TrimSpace(key) == "" || strings.Contains(key, " ") {
 		return nil, fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or contain whitespace")
 	}
@@ -50,6 +55,9 @@ func (c *FakeRedisCache) Get(ctx context.Context, key string) ([]byte, error) {
 
 // Set adds the supplied key/value pair to the in-memory map. If the key already exists, an error is returned.
 func (c *FakeRedisCache) Set(ctx context.Context, key string, value []byte, ttl time.Duration) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	if strings.TrimSpace(key) == "" || strings.Contains(key, " ") {
 		return fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or whitespace")
 	}
@@ -73,6 +81,9 @@ func (c *FakeRedisCache) Set(ctx context.Context, key string, value []byte, ttl 
 
 // Update adds the supplied key/value pair to the in-memory map. If the key already exists, the value is overwritten.
 func (c *FakeRedisCache) Update(ctx context.Context, key string, value []byte, ttl time.Duration) error {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	if strings.TrimSpace(key) == "" || strings.Contains(key, " ") {
 		return fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or whitespace")
 	}
@@ -87,6 +98,12 @@ func (c *FakeRedisCache) Update(ctx context.Context, key string, value []byte, t
 	}
 	c.rdb[key] = cacheValue
 	return nil
+}
+
+func (c *FakeRedisCache) Reset() {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.rdb = make(map[string]*fakeRedisCacheValue)
 }
 
 // NewFakeRedisCache creates a new instance of FakeRedisCache.
