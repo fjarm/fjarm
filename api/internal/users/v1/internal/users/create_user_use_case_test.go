@@ -16,7 +16,7 @@ import (
 func TestUserUseCase_createUser(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	cache := remote.NewFakeRedisCache()
-	repo := newInMemoryRepository(logger)
+	repo := newUserStore()
 	uc := NewUserUseCase(logger, cache, cache, repo)
 
 	tests := map[string]struct {
