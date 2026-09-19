@@ -22,7 +22,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to create a new validator: %v", err)
 	}
-	dom := NewUserUseCase(logger, cache, cache, repo, validator)
+	uc := NewUserUseCase(logger, cache, cache, repo, validator)
 
 	tests := map[string]struct {
 		reqs []*userspb.CreateUserRequest
@@ -204,7 +204,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			for i, req := range tc.reqs {
-				err = dom.createUser(context.Background(), req)
+				err = uc.createUser(context.Background(), req.GetIdempotencyKey(), req.GetUser().GetEmailAddress().GetEmailAddress(), req.GetUser().GetPassword().GetPassword())
 				if err != nil && !tc.errs[i] {
 					t.Errorf("createUser got an unexpected error: %v", err)
 				}

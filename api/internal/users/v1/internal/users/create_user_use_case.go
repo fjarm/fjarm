@@ -4,12 +4,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"hash/fnv"
 	"log/slog"
+	"net/mail"
+	"strings"
 	"time"
 
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"buf.build/go/protovalidate"
 
+	"github.com/google/uuid"
+
+	authentication "github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords"
 	"github.com/fjarm/fjarm/api/internal/cache"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
@@ -85,26 +91,14 @@ func NewUserUseCase(
 	}
 }
 
-func (uc *UserUseCase) createUser(ctx context.Context, req *userspb.CreateUserRequest) error {
+func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email string, password string) error {
 	logger := uc.logger.With(
 		slog.String(logkeys.Tag, createUserUseCaseTag),
 		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
 	)
 
-	// Validate the incoming request. The user it contains and its fields will be validated by the repository.
-	err := uc.validator.Validate(req)
-	if err != nil {
-		logger.ErrorContext(
-			ctx,
-			"failed to validate incoming request message",
-			slog.String(logkeys.Raw, redactedUserMessageString(req.GetUser())),
-			slog.Any(logkeys.Err, err),
-		)
-		return fmt.Errorf("%w: %w", ErrInvalidArgument, err)
-	}
-
-	idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, req.GetIdempotencyKey())
-	_, err = uc.cache.Get(ctx, idempotencyKey)
+	idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, idemKey)
+	_, err := uc.cache.Get(ctx, idempotencyKey)
 	if err == nil {
 		// Found a cached response. We can return a successful response without creating the user again.
 		return nil
@@ -120,7 +114,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, req *userspb.CreateUserRe
 	// requests are being processed. In that case, the replicas processing duplicate requests should simply wait for the
 	// processing to complete and return the cached result. If the primary server handling the request fails and doesn't
 	// update the cache, the replicas should also fail and the client can attempt retrying.
-	lockKey := fmt.Sprintf("%s:%s", createUserLockKey, req.GetIdempotencyKey())
+	lockKey := fmt.Sprintf("%s:%s", createUserLockKey, idemKey)
 	lockVal, err := uc.locker.AcquireLock(ctx, lockKey, idempotencyLockTTL)
 	// Ensure we release the lock after processing the request.
 	defer func() {
@@ -134,6 +128,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, req *userspb.CreateUserRe
 			logger.ErrorContext(ctx, "failed to release lock in cache", slog.Any(logkeys.Err, releaseErr))
 		}
 	}()
+
 	if err != nil && !errors.Is(err, cache.ErrKeyExists) {
 		// This is a real Redis error, not a cache miss.
 		logger.ErrorContext(ctx, "failed to acquire lock in cache", slog.Any(logkeys.Err, err))
@@ -152,6 +147,8 @@ func (uc *UserUseCase) createUser(ctx context.Context, req *userspb.CreateUserRe
 				logger.ErrorContext(ctx, "timed out waiting for concurrent operation to finish")
 				return ErrOperationFailed
 			default:
+				// TODO(2026-09-18): Review if immediately returning on nil error is appropriate given that the godoc
+				// for Get states that if a key does not exist, an empty slice with a nil error is returned.
 				// Try to get the result of the primary server's operation from the cache.
 				_, err = uc.cache.Get(ctx, idempotencyKey)
 				if err == nil {
@@ -185,26 +182,43 @@ func (uc *UserUseCase) createUser(ctx context.Context, req *userspb.CreateUserRe
 		return ErrOperationFailed
 	}
 
-	msg := req.GetUser()
-	_, err = uc.repo.createUser(ctx, msg)
-	if err != nil && errors.Is(err, ErrAlreadyExists) {
-		logger.WarnContext(ctx, "attempted to create duplicate user", slog.Any(logkeys.Err, err))
-		// User creation is idempotent. But, we don't want to leak this information to the client. So, instead of
-		// returning the error, we return a successful response without the user's details.
-		err = uc.cache.Set(ctx, idempotencyKey, []byte(""), idempotencyKeyTTL)
-		if err != nil {
-			logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, err))
-		}
-		return nil
-	} else if err != nil && errors.Is(err, ErrAuthenticationIssue) {
-		// Obscure authentication issues from the client.
+	// Parse and validate the email address for use in the handle
+	addr, err := mail.ParseAddress(email)
+	if err != nil {
+		logger.ErrorContext(ctx, "invalid email syntax:", slog.Any(logkeys.Err, err))
 		return ErrOperationFailed
-	} else if err != nil {
-		return err
+	}
+	parts := strings.Split(addr.Address, "@")
+	localName := parts[0]
+	h := fnv.New64a()
+	h.Write([]byte(localName))
+	username := fmt.Sprintf("%s%d", localName, h.Sum64())
+
+	pwd, err := authentication.HashPassword(password)
+	if err != nil {
+		logger.ErrorContext(
+			ctx,
+			"failed to hash credentials supplied in user message",
+			slog.Any(logkeys.Err, err),
+		)
+		return ErrOperationFailed
+	}
+
+	user := User{
+		UserID:       uuid.NewString(),
+		EmailAddress: email,
+		Password:     pwd,
+		Handle:       username,
+	}
+
+	err = uc.repo.create(ctx, &user)
+	if err != nil {
+		logger.ErrorContext(ctx, "failed to create user in repository", slog.Any(logkeys.Err, err))
+		return ErrOperationFailed
 	}
 	// Creating a user is dead simple because enrolling is not the same as authenticating. Users first sign up then
 	// log in.
-	err = uc.cache.Set(ctx, idempotencyKey, []byte(""), idempotencyKeyTTL)
+	err = uc.cache.Set(ctx, idempotencyKey, []byte{}, idempotencyKeyTTL)
 	if err != nil {
 		logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, err))
 	}
