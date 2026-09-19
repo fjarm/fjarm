@@ -44,7 +44,7 @@ func (h *ConnectRPCHandler) CreateUser(
 	}
 
 	// Create the user entity.
-	err = h.useCase.CreateUser(ctx, req.GetIdempotencyKey(), req.GetUser().GetEmailAddress().GetEmailAddress(), req.GetUser().GetPassword().GetPassword())
+	err = h.useCase.createUser(ctx, req.GetIdempotencyKey(), req.GetUser().GetEmailAddress().GetEmailAddress(), req.GetUser().GetPassword().GetPassword())
 	if err != nil {
 		logger.ErrorContext(
 			ctx,

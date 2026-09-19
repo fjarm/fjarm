@@ -10,7 +10,7 @@ import (
 
 // UserCreator is a sealed interface that is used to create instances of User entities.
 type UserCreator interface {
-	CreateUser(ctx context.Context, idemKey string, email string, password string) error
+	createUser(ctx context.Context, idemKey string, email string, password string) error
 }
 
 // UserCommandManager is an interface that defines mutation operations that can be done to a User entity.
