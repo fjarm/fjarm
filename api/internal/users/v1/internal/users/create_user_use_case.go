@@ -90,8 +90,26 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
 	)
 
+	// Validate inputs before cache access and distributed locking
+	if strings.TrimSpace(idemKey) == "" {
+		return fmt.Errorf("%w: idempotency key is required", ErrInvalidArgument)
+	}
+	if _, err := uuid.Parse(idemKey); err != nil {
+		return fmt.Errorf("%w: idempotency key must be a valid UUID", ErrInvalidArgument)
+	}
+	if strings.TrimSpace(email) == "" {
+		return fmt.Errorf("%w: email address is required", ErrInvalidArgument)
+	}
+	addr, err := mail.ParseAddress(email)
+	if err != nil {
+		return fmt.Errorf("%w: invalid email address", ErrInvalidArgument)
+	}
+	if strings.TrimSpace(password) == "" {
+		return fmt.Errorf("%w: password is required", ErrInvalidArgument)
+	}
+
 	idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, idemKey)
-	_, err := uc.cache.Get(ctx, idempotencyKey)
+	_, err = uc.cache.Get(ctx, idempotencyKey)
 	if err == nil {
 		// Found a cached response. We can return a successful response without creating the user again.
 		return nil
@@ -175,12 +193,6 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		return ErrOperationFailed
 	}
 
-	// Parse and validate the email address for use in the handle
-	addr, err := mail.ParseAddress(email)
-	if err != nil {
-		logger.ErrorContext(ctx, "invalid email syntax:", slog.Any(logkeys.Err, err))
-		return ErrOperationFailed
-	}
 	parts := strings.Split(addr.Address, "@")
 	localName := parts[0]
 	h := fnv.New64a()
@@ -207,7 +219,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	err = uc.repo.create(ctx, &user)
 	if err != nil {
 		logger.ErrorContext(ctx, "failed to create user in repository", slog.Any(logkeys.Err, err))
-		return ErrOperationFailed
+		return err
 	}
 	// Creating a user is dead simple because enrolling is not the same as authenticating. Users first sign up then
 	// log in.
