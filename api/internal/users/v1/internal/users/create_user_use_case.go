@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"buf.build/go/protovalidate"
 
 	"github.com/google/uuid"
@@ -34,7 +33,6 @@ const (
 
 // UserRepository orchestrates persisting a User entity to durable storage like a SQL database.
 type UserRepository interface {
-	createUser(ctx context.Context, user *userspb.User) (*User, error)
 	create(ctx context.Context, user *User) error
 }
 
