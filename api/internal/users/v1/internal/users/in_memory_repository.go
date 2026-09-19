@@ -21,6 +21,10 @@ type inMemoryRepository struct {
 	logger *slog.Logger
 }
 
+func (repo *inMemoryRepository) create(ctx context.Context, user *User) error {
+	return repo.store.create(ctx, user)
+}
+
 func (repo *inMemoryRepository) reset() {
 	repo.store.reset()
 }

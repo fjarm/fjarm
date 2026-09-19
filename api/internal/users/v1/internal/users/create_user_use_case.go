@@ -29,6 +29,7 @@ const (
 // UserRepository orchestrates persisting a User entity to durable storage like a SQL database.
 type UserRepository interface {
 	createUser(ctx context.Context, user *userspb.User) (*User, error)
+	create(ctx context.Context, user *User) error
 }
 
 // idempotencyCache is an interface that describes how idempotency is leveraged in the users domain.
