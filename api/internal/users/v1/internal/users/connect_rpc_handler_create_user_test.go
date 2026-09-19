@@ -39,7 +39,7 @@ func TestMain(m *testing.M) {
 
 	cache := remote.NewFakeRedisCache()
 	repo := newInMemoryRepository(logger)
-	dom := NewUserUseCase(logger, cache, cache, repo, validator)
+	dom := NewUserUseCase(logger, cache, cache, repo)
 	connectRPCHandler := NewConnectRPCHandler(logger, dom, validator)
 	path, handler := usersv1connect.NewUserServiceHandler(connectRPCHandler)
 
