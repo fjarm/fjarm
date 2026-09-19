@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
-	"buf.build/go/protovalidate"
 	"google.golang.org/protobuf/proto"
 
 	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
@@ -18,11 +17,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	cache := remote.NewFakeRedisCache()
 	repo := newInMemoryRepository(logger)
-	validator, err := protovalidate.New()
-	if err != nil {
-		t.Errorf("failed to create a new validator: %v", err)
-	}
-	uc := NewUserUseCase(logger, cache, cache, repo, validator)
+	uc := NewUserUseCase(logger, cache, cache, repo)
 
 	tests := map[string]struct {
 		reqs []*userspb.CreateUserRequest
@@ -204,7 +199,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			for i, req := range tc.reqs {
-				err = uc.createUser(context.Background(), req.GetIdempotencyKey(), req.GetUser().GetEmailAddress().GetEmailAddress(), req.GetUser().GetPassword().GetPassword())
+				err := uc.createUser(context.Background(), req.GetIdempotencyKey(), req.GetUser().GetEmailAddress().GetEmailAddress(), req.GetUser().GetPassword().GetPassword())
 				if err != nil && !tc.errs[i] {
 					t.Errorf("createUser got an unexpected error: %v", err)
 				}

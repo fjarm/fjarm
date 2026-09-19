@@ -10,8 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"buf.build/go/protovalidate"
-
 	"github.com/google/uuid"
 
 	authentication "github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords"
@@ -65,11 +63,10 @@ type remoteLock interface {
 // UserUseCase orchestrates business logic for user-related operations like creating a user, reading a user, updating a
 // user, and deleting a user.
 type UserUseCase struct {
-	logger    *slog.Logger
-	cache     idempotencyCache
-	locker    remoteLock
-	repo      UserRepository
-	validator protovalidate.Validator
+	logger *slog.Logger
+	cache  idempotencyCache
+	locker remoteLock
+	repo   UserRepository
 }
 
 // NewUserUseCase creates an instance of UserUseCase.
@@ -78,14 +75,12 @@ func NewUserUseCase(
 	cache idempotencyCache,
 	locker remoteLock,
 	repo UserRepository,
-	validator protovalidate.Validator,
 ) *UserUseCase {
 	return &UserUseCase{
-		logger:    logger,
-		cache:     cache,
-		locker:    locker,
-		repo:      repo,
-		validator: validator,
+		logger: logger,
+		cache:  cache,
+		locker: locker,
+		repo:   repo,
 	}
 }
 
