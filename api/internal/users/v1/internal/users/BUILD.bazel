@@ -9,6 +9,8 @@ go_library(
         "create_user_use_case.go",
         "in_memory_repository.go",
         "user.go",
+        "user_repository.go",
+        "user_repository_create.go",
         "users_utils.go",
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/users/v1/internal/users",

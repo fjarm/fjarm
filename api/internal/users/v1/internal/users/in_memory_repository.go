@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"sync"
 	"time"
 
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
@@ -16,45 +15,6 @@ import (
 )
 
 const inMemoryRepositoryTag = "in_memory_repository"
-
-// userStore encapsulates thread-safe in-memory storage for user entities.
-type userStore struct {
-	mu    sync.RWMutex
-	users map[string]User
-}
-
-func newUserStore() *userStore {
-	return &userStore{
-		users: make(map[string]User),
-	}
-}
-
-// insert atomically checks unique constraints (email, handle, userID) and stores the entity.
-func (s *userStore) insert(u User) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-
-	for _, existing := range s.users {
-		if existing.EmailAddress == u.EmailAddress {
-			return ErrAlreadyExists
-		}
-		if existing.Handle == u.Handle {
-			return ErrAlreadyExists
-		}
-	}
-	if _, ok := s.users[u.UserID]; ok {
-		return ErrAlreadyExists
-	}
-
-	s.users[u.UserID] = u
-	return nil
-}
-
-func (s *userStore) reset() {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.users = make(map[string]User)
-}
 
 type inMemoryRepository struct {
 	store  *userStore
@@ -125,7 +85,7 @@ func (repo *inMemoryRepository) createUser(ctx context.Context, msg *userspb.Use
 	entity.UpdatedAt = now
 
 	// Atomically verify unique constraints and store the entity in the in-memory store.
-	if err := repo.store.insert(*entity); err != nil {
+	if err := repo.store.create(entity); err != nil {
 		return nil, err
 	}
 	return entity, nil
