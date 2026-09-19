@@ -22,7 +22,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 	if err != nil {
 		t.Errorf("failed to create a new validator: %v", err)
 	}
-	dom := newUserUseCase(logger, cache, cache, repo, validator)
+	dom := NewUserUseCase(logger, cache, cache, repo, validator)
 
 	tests := map[string]struct {
 		reqs []*userspb.CreateUserRequest

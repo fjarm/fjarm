@@ -56,7 +56,9 @@ type remoteLock interface {
 	VerifyLock(cxt context.Context, lockKey string, lockVal string) (bool, error)
 }
 
-type createUserUseCase struct {
+// UserUseCase orchestrates business logic for user-related operations like creating a user, reading a user, updating a
+// user, and deleting a user.
+type UserUseCase struct {
 	logger    *slog.Logger
 	cache     idempotencyCache
 	locker    remoteLock
@@ -64,24 +66,24 @@ type createUserUseCase struct {
 	validator protovalidate.Validator
 }
 
-func newUserUseCase(
+// NewUserUseCase creates an instance of UserUseCase.
+func NewUserUseCase(
 	logger *slog.Logger,
 	cache idempotencyCache,
 	locker remoteLock,
 	repo userRepository,
 	validator protovalidate.Validator,
-) UserCreator {
-	dom := &createUserUseCase{
+) *UserUseCase {
+	return &UserUseCase{
 		logger:    logger,
 		cache:     cache,
 		locker:    locker,
 		repo:      repo,
 		validator: validator,
 	}
-	return dom
 }
 
-func (uc *createUserUseCase) createUser(ctx context.Context, req *userspb.CreateUserRequest) error {
+func (uc *UserUseCase) createUser(ctx context.Context, req *userspb.CreateUserRequest) error {
 	logger := uc.logger.With(
 		slog.String(logkeys.Tag, createUserUseCaseTag),
 		slog.String(tracing.RequestIDKey, tracing.RequestIDFromContext(ctx)),
