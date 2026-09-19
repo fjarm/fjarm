@@ -5,13 +5,12 @@ import (
 	"log/slog"
 
 	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/users/v1/usersv1connect"
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
 	"buf.build/go/protovalidate"
 )
 
 // UserCreator is a sealed interface that is used to create instances of User entities.
 type UserCreator interface {
-	createUser(ctx context.Context, req *userspb.CreateUserRequest) error
+	CreateUser(ctx context.Context, idemKey string, email string, password string) error
 }
 
 // UserCommandManager is an interface that defines mutation operations that can be done to a User entity.

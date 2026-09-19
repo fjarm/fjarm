@@ -32,8 +32,19 @@ func (h *ConnectRPCHandler) CreateUser(
 		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("%w: request cannot be nil", ErrInvalidArgument))
 	}
 
+	err := h.validator.Validate(req)
+	if err != nil {
+		logger.ErrorContext(
+			ctx,
+			"failed to validate incoming request message",
+			slog.String(logkeys.Raw, redactedUserMessageString(req.GetUser())),
+			slog.Any(logkeys.Err, err),
+		)
+		return nil, connect.NewError(connect.CodeInvalidArgument, fmt.Errorf("%w: request cannot be invalid", ErrInvalidArgument))
+	}
+
 	// Create the user entity.
-	err := h.useCase.createUser(ctx, req)
+	err = h.useCase.CreateUser(ctx, req.GetIdempotencyKey(), req.GetUser().GetEmailAddress().GetEmailAddress(), req.GetUser().GetPassword().GetPassword())
 	if err != nil {
 		logger.ErrorContext(
 			ctx,
