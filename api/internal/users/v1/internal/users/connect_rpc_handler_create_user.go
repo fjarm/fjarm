@@ -58,6 +58,8 @@ func (h *ConnectRPCHandler) CreateUser(
 		return nil, connect.NewError(connect.CodeInternal, err)
 	} else if err != nil && errors.Is(err, ErrInvalidArgument) {
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	} else if err != nil && errors.Is(err, ErrAlreadyExists) {
+		return &userspb.CreateUserResponse{}, nil
 	} else if err != nil {
 		// A true edge case. This shouldn't happen.
 		return nil, connect.NewError(connect.CodeUnknown, ErrOperationFailed)
