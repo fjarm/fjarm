@@ -70,7 +70,7 @@ func newUserUseCase(
 	locker remoteLock,
 	repo userRepository,
 	validator protovalidate.Validator,
-) userUseCase {
+) UserCreator {
 	dom := &createUserUseCase{
 		logger:    logger,
 		cache:     cache,

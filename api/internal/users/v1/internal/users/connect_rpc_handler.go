@@ -9,14 +9,20 @@ import (
 	"buf.build/go/protovalidate"
 )
 
-type userUseCase interface {
+// UserCreator is a sealed interface that is used to create instances of User entities.
+type UserCreator interface {
 	createUser(ctx context.Context, req *userspb.CreateUserRequest) error
+}
+
+// UserCommandManager is an interface that defines mutation operations that can be done to a User entity.
+type UserCommandManager interface {
+	UserCreator
 }
 
 // ConnectRPCHandler defines a ConnectRPC handler for the `fjarm.users.v1.UserService` service.
 type ConnectRPCHandler struct {
 	usersv1connect.UnimplementedUserServiceHandler
-	useCase   userUseCase
+	useCase   UserCreator
 	logger    *slog.Logger
 	validator protovalidate.Validator
 }
@@ -24,11 +30,11 @@ type ConnectRPCHandler struct {
 // NewConnectRPCHandler creates a concrete users ConnectRPC service with logging and business/domain logic.
 func NewConnectRPCHandler(
 	logger *slog.Logger,
-	useCase userUseCase,
+	uc UserCreator,
 	validator protovalidate.Validator,
 ) *ConnectRPCHandler {
 	han := ConnectRPCHandler{
-		useCase:   useCase,
+		useCase:   uc,
 		logger:    logger,
 		validator: validator,
 	}
