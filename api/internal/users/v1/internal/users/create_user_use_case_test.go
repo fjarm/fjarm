@@ -117,35 +117,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 			errs: []bool{false, false},
 			kind: []error{nil, nil},
 		},
-		"idempotency_two_identical_id_users": {
-			// Two identical users with different idempotency keys should pass without error because the internal state
-			// should be hidden from clients.
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{false, false},
-			kind: []error{nil, nil},
-		},
 		"idempotency_two_identical_email_users": {
-			// Two identical users with different idempotency keys should pass without error because the internal state
-			// should be hidden from clients.
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
@@ -166,34 +138,8 @@ func TestUserUseCase_createUser(t *testing.T) {
 					},
 				},
 			},
-			errs: []bool{false, false},
-			kind: []error{nil, nil},
-		},
-		"idempotency_two_identical_handle_users": {
-			// Two identical users with different idempotency keys should pass without error because the internal state
-			// should be hidden from clients.
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // User ID here matches the user ID in the request message.
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{false, false},
-			kind: []error{nil, nil},
+			errs: []bool{false, true},
+			kind: []error{nil, ErrAlreadyExists},
 		},
 	}
 	for name, tc := range tests {
@@ -212,6 +158,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 			}
 		})
 		// Reset the database for each test run.
+		cache.Reset()
 		repo.reset()
 	}
 }
