@@ -11,22 +11,21 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// user defines the entity as represented in persisted storage like a SQL database. This type is internal to the users
-// service. External services get back a `fjarm.users.v1.User` Protobuf message instead.
+// User defines the entity as represented in persisted storage like a SQL database.
 //
 // Note  that pointer fields are optional. Thus, pointers are used to distinguish between a valid value, an explicit
 // null (nil pointer), or a zero value.
-type user struct {
+type User struct {
 	UserID       string    `db:"user_id"`
 	Handle       string    `db:"handle"`
 	EmailAddress string    `db:"email_address"`
 	Password     string    `db:"password"`     // Argon2ID hashed password with salt embedded.
 	Avatar       *string   `db:"avatar"`       // Optional field/column. Can be nil/NULL.
-	LastUpdated  time.Time `db:"last_updated"` // Used primarily for ETag calculation.
+	UpdatedAt    time.Time `db:"last_updated"` // Used primarily for ETag calculation.
 	CreatedAt    time.Time `db:"created_at"`
 }
 
-func calculateETag(usr *user) (string, error) {
+func calculateETag(usr *User) (string, error) {
 	if usr == nil {
 		return "", fmt.Errorf("%w: cannot calculate eTag for nil user", ErrOperationFailed)
 	}
@@ -40,7 +39,7 @@ func calculateETag(usr *user) (string, error) {
 	if usr.Avatar != nil {
 		hasher.Write([]byte(*usr.Avatar))
 	}
-	hasher.Write([]byte(usr.LastUpdated.UTC().Format(time.RFC3339Nano)))
+	hasher.Write([]byte(usr.UpdatedAt.UTC().Format(time.RFC3339Nano)))
 	hasher.Write([]byte(usr.CreatedAt.UTC().Format(time.RFC3339Nano)))
 
 	// Convert hash to base64 for a shorter string representation
@@ -48,7 +47,7 @@ func calculateETag(usr *user) (string, error) {
 	return base64.RawURLEncoding.EncodeToString(hasher.Sum(nil)), nil
 }
 
-func storageUserToWireUser(storageUser *user) (*userspb.User, error) {
+func storageUserToWireUser(storageUser *User) (*userspb.User, error) {
 	if storageUser == nil {
 		return nil, fmt.Errorf("%w: cannot convert nil user to user message", ErrInvalidArgument)
 	}
@@ -67,11 +66,11 @@ func storageUserToWireUser(storageUser *user) (*userspb.User, error) {
 	return &userMsg, nil
 }
 
-func wireUserToStorageUser(msg *userspb.User) (*user, error) {
+func wireUserToStorageUser(msg *userspb.User) (*User, error) {
 	if msg == nil {
 		return nil, fmt.Errorf("%w: cannot convert nil user message to user", ErrInvalidArgument)
 	}
-	usr := user{
+	usr := User{
 		UserID:       msg.GetUserId().GetUserId(),
 		Handle:       msg.GetHandle().GetHandle(),
 		EmailAddress: msg.GetEmailAddress().GetEmailAddress(),
