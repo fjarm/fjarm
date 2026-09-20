@@ -3,13 +3,13 @@ load("@rules_go//go:def.bzl", "go_library", "go_test")
 go_library(
     name = "users",
     srcs = [
-        "common_errors.go",
+        "common_errors_users.go",
         "connect_rpc_handler.go",
         "connect_rpc_handler_create_user.go",
-        "create_user_use_case.go",
+        "use_case_create_user.go",
         "user.go",
         "user_repository.go",
-        "user_repository_create.go",
+        "user_repository_create_user.go",
         "users_utils.go",
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/users/v1/internal/users",
@@ -34,7 +34,7 @@ go_test(
     name = "users_test",
     srcs = [
         "connect_rpc_handler_create_user_test.go",
-        "create_user_use_case_test.go",
+        "use_case_create_user_test.go",
         "user_test.go",
     ],
     embed = [":users"],
