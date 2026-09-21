@@ -36,8 +36,7 @@ type UserRepository interface {
 
 // idempotencyCache is an interface that describes how idempotency is leveraged in the users domain.
 type idempotencyCache interface {
-	// Get retrieves the value for a given key if it exists. If the key doesn't exist, a nil slice is returned without
-	// any error.
+	// Get retrieves the value for a given key if it exists. If the key doesn't exist, an error is returned
 	Get(ctx context.Context, key string) ([]byte, error)
 
 	// Set writes a key value pair in the cache. If the key already exists, an error is returned.
@@ -154,8 +153,6 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 				logger.ErrorContext(ctx, "timed out waiting for concurrent operation to finish")
 				return ErrOperationFailed
 			default:
-				// TODO(2026-09-18): Review if immediately returning on nil error is appropriate given that the godoc
-				// for Get states that if a key does not exist, an empty slice with a nil error is returned.
 				// Try to get the result of the primary server's operation from the cache.
 				_, err = uc.cache.Get(ctx, idempotencyKey)
 				if err == nil {
