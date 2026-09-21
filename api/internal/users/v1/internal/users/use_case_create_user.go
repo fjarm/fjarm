@@ -42,10 +42,6 @@ type idempotencyCache interface {
 
 	// Set writes a key value pair in the cache. If the key already exists, an error is returned.
 	Set(ctx context.Context, key string, value []byte, ttl time.Duration) error
-
-	// Update writes a key value pair in the cache. If the key already exists, the value is updated. If the key doesn't
-	// exist, the key value pair is created.
-	Update(ctx context.Context, key string, value []byte, ttl time.Duration) error
 }
 
 // remoteLock describes methods for acquiring and releasing distributed locks.
