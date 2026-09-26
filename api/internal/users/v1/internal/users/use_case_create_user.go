@@ -34,9 +34,25 @@ type UserRepository interface {
 	create(ctx context.Context, user *User) error
 }
 
+// IdempotencyKeyStore is a data store that contains idempotency keys. The interface can be used to verify if an
+// idempotency key already exists - i.e. a request has already been served/handled. The interface can also be used to
+// create an entry in the underlying data store - i.e. cache a newly handled request's response.
+type IdempotencyKeyStore interface {
+	isDuplicate(ctx context.Context, key string) (bool, error)
+	saveResult(ctx context.Context, key string) error
+}
+
+// DistributedLocker handles distributed mutual exclusion for user resources. It can be used to verify that an instance
+// of a users is the sole instance responsible for a particular request.
+type DistributedLocker interface {
+	lock(ctx context.Context, key string, ttl time.Duration) (string, error)
+	unlock(ctx context.Context, key string, value string) error
+	verifyLockAcquired(cxt context.Context, lockKey string, lockVal string) (bool, error)
+}
+
 // idempotencyCache is an interface that describes how idempotency is leveraged in the users domain.
 type idempotencyCache interface {
-	// Get retrieves the value for a given key if it exists. If the key doesn't exist, an error is returned
+	// Get retrieves the value for a given key if it exists. If the key doesn't exist, an error is returned.
 	Get(ctx context.Context, key string) ([]byte, error)
 
 	// Set writes a key value pair in the cache. If the key already exists, an error is returned.
@@ -58,10 +74,12 @@ type remoteLock interface {
 // UserUseCase orchestrates business logic for user-related operations like creating a user, reading a user, updating a
 // user, and deleting a user.
 type UserUseCase struct {
-	logger *slog.Logger
-	cache  idempotencyCache
-	locker remoteLock
-	repo   UserRepository
+	logger       *slog.Logger
+	idemKeyStore IdempotencyKeyStore
+	distLock     DistributedLocker
+	cache        idempotencyCache
+	locker       remoteLock
+	repo         UserRepository
 }
 
 // NewUserUseCase creates an instance of UserUseCase.
@@ -104,15 +122,13 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	}
 
 	idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, idemKey)
-	_, err = uc.cache.Get(ctx, idempotencyKey)
-	if err == nil {
+	dup, err := uc.idemKeyStore.isDuplicate(ctx, idempotencyKey)
+	if err != nil {
+		return err
+	}
+	if dup == true {
 		// Found a cached response. We can return a successful response without creating the user again.
 		return nil
-	} else if !errors.Is(err, cache.ErrCacheMiss) {
-		// This is a real Redis error, not a cache miss. Return an ErrOperationFailed that will be sent to the client
-		// with a connect.CodeInternal status.
-		logger.ErrorContext(ctx, "failed to get idempotency key from cache", slog.Any(logkeys.Err, err))
-		return ErrOperationFailed
 	}
 
 	// At this point, we know that the idempotency key doesn't exist in the cache. So, we can proceed with creating the
@@ -154,14 +170,13 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 				return ErrOperationFailed
 			default:
 				// Try to get the result of the primary server's operation from the cache.
-				_, err = uc.cache.Get(ctx, idempotencyKey)
-				if err == nil {
+				dup, err = uc.idemKeyStore.isDuplicate(ctx, idempotencyKey)
+				if err != nil {
+					return err
+				}
+				if dup == true {
 					// Found a cached response. We can return a successful response without creating the user again.
 					return nil
-				} else if !errors.Is(err, cache.ErrCacheMiss) {
-					// This is a real Redis error, not a cache miss.
-					logger.ErrorContext(ctx, "failed to poll cache for response", slog.Any(logkeys.Err, err))
-					return ErrOperationFailed
 				}
 			}
 
@@ -216,7 +231,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	}
 	// Creating a user is dead simple because enrolling is not the same as authenticating. Users first sign up then
 	// log in.
-	err = uc.cache.Set(ctx, idempotencyKey, []byte{}, idempotencyKeyTTL)
+	err = uc.idemKeyStore.saveResult(ctx, idempotencyKey)
 	if err != nil {
 		logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, err))
 	}
