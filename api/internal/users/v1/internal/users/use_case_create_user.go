@@ -45,7 +45,7 @@ type IdempotencyKeyStore interface {
 // DistributedLocker handles distributed mutual exclusion for user resources. It can be used to verify that an instance
 // of a users is the sole instance responsible for a particular request.
 type DistributedLocker interface {
-	lock(ctx context.Context, key string, ttl time.Duration) (string, error)
+	lock(ctx context.Context, key string) (string, error)
 	unlock(ctx context.Context, key string, value string) error
 	verifyLockAcquired(cxt context.Context, lockKey string, lockVal string) (bool, error)
 }
@@ -137,7 +137,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	// processing to complete and return the cached result. If the primary server handling the request fails and doesn't
 	// update the cache, the replicas should also fail and the client can attempt retrying.
 	lockKey := fmt.Sprintf("%s:%s", createUserLockKey, idemKey)
-	lockVal, err := uc.locker.AcquireLock(ctx, lockKey, idempotencyLockTTL)
+	lockVal, err := uc.distLock.lock(ctx, lockKey)
 	// Ensure we release the lock after processing the request.
 	defer func() {
 		if lockVal == "" {
@@ -145,7 +145,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		}
 		cleanupCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), 5*time.Second)
 		defer cancel()
-		releaseErr := uc.locker.SafeReleaseLock(cleanupCtx, lockKey, lockVal)
+		releaseErr := uc.distLock.unlock(cleanupCtx, lockKey, lockVal)
 		if releaseErr != nil {
 			logger.ErrorContext(ctx, "failed to release lock in cache", slog.Any(logkeys.Err, releaseErr))
 		}
@@ -191,7 +191,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	}
 
 	// Verify that we have the lock before proceeding.
-	verified, err := uc.locker.VerifyLock(ctx, lockKey, lockVal)
+	verified, err := uc.distLock.verifyLockAcquired(ctx, lockKey, lockVal)
 	if err != nil || !verified {
 		// If there's an error, we do not own the lock (the value in the cache does not match ours), or the lock expired
 		// (the key/value pair was deleted), we abort the operation. The client is responsible for retrying. The retry
