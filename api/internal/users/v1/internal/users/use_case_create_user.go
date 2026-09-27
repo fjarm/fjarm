@@ -50,50 +50,27 @@ type DistributedLocker interface {
 	verifyLockAcquired(cxt context.Context, lockKey string, lockVal string) (bool, error)
 }
 
-// idempotencyCache is an interface that describes how idempotency is leveraged in the users domain.
-type idempotencyCache interface {
-	// Get retrieves the value for a given key if it exists. If the key doesn't exist, an error is returned.
-	Get(ctx context.Context, key string) ([]byte, error)
-
-	// Set writes a key value pair in the cache. If the key already exists, an error is returned.
-	Set(ctx context.Context, key string, value []byte, ttl time.Duration) error
-}
-
-// remoteLock describes methods for acquiring and releasing distributed locks.
-type remoteLock interface {
-	// AcquireLock creates a lock that can be used to coordinate concurrent requests.
-	AcquireLock(ctx context.Context, key string, ttl time.Duration) (string, error)
-
-	// SafeReleaseLock attempts to safely release a lock without interfering with other processes.
-	SafeReleaseLock(ctx context.Context, key string, value string) error
-
-	// VerifyLock checks if a process's lock is still valid.
-	VerifyLock(cxt context.Context, lockKey string, lockVal string) (bool, error)
-}
-
 // UserUseCase orchestrates business logic for user-related operations like creating a user, reading a user, updating a
 // user, and deleting a user.
 type UserUseCase struct {
 	logger       *slog.Logger
 	idemKeyStore IdempotencyKeyStore
 	distLock     DistributedLocker
-	cache        idempotencyCache
-	locker       remoteLock
 	repo         UserRepository
 }
 
 // NewUserUseCase creates an instance of UserUseCase.
 func NewUserUseCase(
 	logger *slog.Logger,
-	cache idempotencyCache,
-	locker remoteLock,
+	idemKeyStore IdempotencyKeyStore,
+	distLock DistributedLocker,
 	repo UserRepository,
 ) *UserUseCase {
 	return &UserUseCase{
-		logger: logger,
-		cache:  cache,
-		locker: locker,
-		repo:   repo,
+		logger:       logger,
+		idemKeyStore: idemKeyStore,
+		distLock:     distLock,
+		repo:         repo,
 	}
 }
 

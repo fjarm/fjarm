@@ -17,7 +17,9 @@ func TestUserUseCase_createUser(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	cache := remote.NewFakeRedisCache()
 	repo := newUserStore()
-	uc := NewUserUseCase(logger, cache, cache, repo)
+	idemStore := newFakeRedisIdempotencyKeyStore(cache)
+	distLocker := newFakeRedisDistributedLocker(cache)
+	uc := NewUserUseCase(logger, idemStore, distLocker, repo)
 
 	tests := map[string]struct {
 		reqs []*userspb.CreateUserRequest

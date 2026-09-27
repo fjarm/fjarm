@@ -6,6 +6,8 @@ go_library(
         "common_errors_users.go",
         "connect_rpc_handler.go",
         "connect_rpc_handler_create_user.go",
+        "distributed_locker.go",
+        "idempotency_key_store.go",
         "use_case_create_user.go",
         "user.go",
         "user_repository.go",
@@ -17,6 +19,7 @@ go_library(
     deps = [
         "//api/internal/authentication/v1/pkg/passwords",
         "//api/internal/cache",
+        "//api/internal/cache/v1/pkg/remote",
         "//api/internal/logkeys",
         "//api/internal/logvals",
         "//api/internal/tracing",
@@ -34,11 +37,14 @@ go_test(
     name = "users_test",
     srcs = [
         "connect_rpc_handler_create_user_test.go",
+        "distributed_locker_test.go",
+        "idempotency_key_store_test.go",
         "use_case_create_user_test.go",
         "user_test.go",
     ],
     embed = [":users"],
     deps = [
+        "//api/internal/cache",
         "//api/internal/cache/v1/pkg/remote",
         "//api/internal/logkeys",
         "@build_buf_gen_go_fjarm_fjarm_connectrpc_gosimple//fjarm/users/v1/usersv1connect",
