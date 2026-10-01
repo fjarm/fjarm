@@ -8,7 +8,7 @@ require (
 	buf.build/go/protovalidate v1.4.0
 	connectrpc.com/connect v1.21.0
 	github.com/google/uuid v1.6.0
-	github.com/redis/rueidis v1.0.77
+	github.com/redis/rueidis v1.0.78
 	golang.org/x/crypto v0.57.0
 	google.golang.org/protobuf v1.36.12
 )
