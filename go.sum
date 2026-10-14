@@ -1,9 +1,9 @@
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260825204119-511051f7f437.1 h1:Slv0uGxx219srASyiaI5C9cDlyG8kNDcXpTSYcuAeE4=
 buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go v1.36.12-20260825204119-511051f7f437.1/go.mod h1:TCt1lluMFnctISJXvkIQ4x3ABrPuUKCWKyjKdkJNBpw=
-buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple v1.21.0-20260913205342-11c667024fd3.1 h1:TkUCaa0668yHisXX144xe7y66JJaBJFXj9MwH7MHqz4=
-buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple v1.21.0-20260913205342-11c667024fd3.1/go.mod h1:17yAbcQ2bmKHgwrWO/7ETXlMMTzMkBWbLOLoRX9eFN0=
-buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.12-20260913205342-11c667024fd3.2 h1:gCxFW+zTJ9Q0mk6N+HsWFhPXhxaWTMwBHUDfkC8jILM=
-buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.12-20260913205342-11c667024fd3.2/go.mod h1:uEL2JV6cBDcv528GqMZApGvDi1PUlyfX/eY9DSkNvpA=
+buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple v1.21.0-20260915002858-9ccb90f2fde8.1 h1:7jJmdGeMHdUSMwAv+rR2YFS7ivtKR+XIUr+lsnRj0DA=
+buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple v1.21.0-20260915002858-9ccb90f2fde8.1/go.mod h1:ZFR9JQA4uurE4FcUChkcGMRK6xSimYWW0TTKAW1GmOM=
+buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.12-20260915002858-9ccb90f2fde8.2 h1:dp9m7/D+coB3Ftdeze5kzZLb3/cjRDy1v0y1cv2SCro=
+buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.12-20260915002858-9ccb90f2fde8.2/go.mod h1:uEL2JV6cBDcv528GqMZApGvDi1PUlyfX/eY9DSkNvpA=
 buf.build/go/protovalidate v1.4.0 h1:UjLrYbt5VX7+TMOs2+pG5FhZhIG1mSfK4EIopbb4LcM=
 buf.build/go/protovalidate v1.4.0/go.mod h1:8vJfzNT6NIG2qm3uFsJDXMlRmG+bQJzbcIn1Aa0vPGs=
 cel.dev/cel-go v0.32.0 h1:irvpFKr5EuGPyxeME03ERh0rii1TX+BDAnB9eL3IvNk=
