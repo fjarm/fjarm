@@ -3,7 +3,7 @@ module github.com/fjarm/fjarm
 go 1.26.0
 
 require (
-	buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple v1.21.0-20260915002858-9ccb90f2fde8.1
+	buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple v1.21.1-20260915002858-9ccb90f2fde8.1
 	buf.build/gen/go/fjarm/fjarm/protocolbuffers/go v1.36.12-20260915002858-9ccb90f2fde8.2
 	buf.build/go/protovalidate v1.4.0
 	connectrpc.com/connect v1.21.1
