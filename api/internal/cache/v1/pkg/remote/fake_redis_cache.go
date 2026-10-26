@@ -37,8 +37,8 @@ func (c *FakeRedisCache) removeExpiredValues() {
 // Get retrieves the value associated with the supplied key from the in-memory map. If no such key/value pair exists, a
 // pkg.ErrCacheMiss error is returned. Other errors indicate something more serious.
 func (c *FakeRedisCache) Get(ctx context.Context, key string) ([]byte, error) {
-	c.mu.RLock()
-	defer c.mu.RUnlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
 	if strings.TrimSpace(key) == "" || strings.Contains(key, " ") {
 		return nil, fmt.Errorf("%w: %s", cachev1.ErrInvalidKey, "key cannot be empty or contain whitespace")

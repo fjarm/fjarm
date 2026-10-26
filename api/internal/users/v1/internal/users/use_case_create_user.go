@@ -181,7 +181,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	parts := strings.Split(addr.Address, "@")
 	localName := parts[0]
 	h := fnv.New64a()
-	h.Write([]byte(localName))
+	h.Write([]byte(addr.Address))
 	username := fmt.Sprintf("%s%d", localName, h.Sum64())
 
 	pwd, err := authentication.HashPassword(password)
