@@ -1,27 +1,27 @@
 [versions]
-agp = "9.4.0"
-kotlin = "2.4.10"
-core = "1.19.0"
+agp = "9.4.1"
+kotlin = "2.4.21"
+core = "1.19.1"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 activityCompose = "1.13.0"
-composeBom = "2026.08.00"
+composeBom = "2026.09.00"
 
 # Our dependencies below
 
 ## Dagger/Hilt
 hilt = "2.60.1"
-ksp = "2.3.11"
+ksp = "2.3.12"
 
 ## Hilt + Compose (provides the hiltViewModel() @Composable function)
 androidXHilt = "1.4.0"
 
 ## Parcelize
-parcelize = "2.4.10"
+parcelize = "2.4.21"
 
 ## Jetbrains Kotlin JVM
-jetbrainsKotlinJvm = "2.4.10"
+jetbrainsKotlinJvm = "2.4.21"
 
 ## Coroutines
 coroutinesCoreJvm = "1.11.0"
@@ -30,8 +30,8 @@ coroutinesCoreJvm = "1.11.0"
 connectRpc = "0.9.0"
 
 ## Fjarm ConnectRPC messages and services
-fjarmConnectRPCKotlinLite = "0.9.0.2.20260811010424.ad8df5ebf10d"
-fjarmProtobufKotlinLite = "36.0.0.1.20260811010424.ad8df5ebf10d"
+fjarmConnectRPCKotlinLite = "0.9.0.2.20260915002858.9ccb90f2fde8"
+fjarmProtobufKotlinLite = "36.2.0.1.20260915002858.9ccb90f2fde8"
 
 ## OkHttp
 okHttp3 = "5.5.0"
@@ -46,7 +46,7 @@ lifecycleViewModelNavigation3 = "2.11.0"
 robolectric = "4.16.1"
 
 ## Roborazzi
-roborazzi = "1.73.0"
+roborazzi = "1.76.0"
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "core" }
