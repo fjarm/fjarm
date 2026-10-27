@@ -103,7 +103,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	if err != nil {
 		return err
 	}
-	if dup == true {
+	if dup {
 		// Found a cached response. We can return a successful response without creating the user again.
 		return nil
 	}
@@ -151,7 +151,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 				if err != nil {
 					return err
 				}
-				if dup == true {
+				if dup {
 					// Found a cached response. We can return a successful response without creating the user again.
 					return nil
 				}
@@ -196,7 +196,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 
 	user := User{
 		UserID:       uuid.NewString(),
-		EmailAddress: email,
+		EmailAddress: addr.Address,
 		Password:     pwd,
 		Handle:       username,
 	}

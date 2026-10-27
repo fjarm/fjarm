@@ -12,6 +12,9 @@ func (s *userStore) create(_ context.Context, u *User) error {
 	defer s.mu.Unlock()
 
 	for _, existing := range s.users {
+		if existing == nil {
+			continue
+		}
 		if existing.EmailAddress == u.EmailAddress {
 			return ErrAlreadyExists
 		}

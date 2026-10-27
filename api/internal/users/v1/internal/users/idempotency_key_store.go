@@ -23,7 +23,8 @@ func (s *fakeRedisIdempotencyKeyStore) isDuplicate(ctx context.Context, key stri
 	_, err := s.cache.Get(ctx, key)
 	if err == nil {
 		return true, nil
-	} else if errors.Is(err, cache.ErrCacheMiss) {
+	}
+	if errors.Is(err, cache.ErrCacheMiss) {
 		return false, nil
 	}
 	return false, err
