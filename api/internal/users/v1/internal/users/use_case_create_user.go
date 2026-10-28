@@ -12,7 +12,7 @@ import (
 
 	"github.com/google/uuid"
 
-	authentication "github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords"
+	"github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords"
 	"github.com/fjarm/fjarm/api/internal/cache"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
@@ -184,7 +184,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	h.Write([]byte(addr.Address))
 	username := fmt.Sprintf("%s%d", localName, h.Sum64())
 
-	pwd, err := authentication.HashPassword(password)
+	pwd, err := passwords.HashPassword(password)
 	if err != nil {
 		logger.ErrorContext(
 			ctx,
