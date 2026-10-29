@@ -34,7 +34,7 @@ fjarmConnectRPCKotlinLite = "0.9.0.2.20260915002858.9ccb90f2fde8"
 fjarmProtobufKotlinLite = "36.2.0.1.20260915002858.9ccb90f2fde8"
 
 ## OkHttp
-okHttp3 = "5.5.0"
+okHttp3 = "5.5.1"
 
 ## Navigation3
 navigation3 = "1.1.5"
