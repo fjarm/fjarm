@@ -1,12 +1,14 @@
 package users
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"strings"
 	"testing"
 
 	"buf.build/gen/go/fjarm/fjarm/connectrpc/gosimple/fjarm/users/v1/usersv1connect"
@@ -177,6 +179,77 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 				}
 				if tc.errs[index] && connect.CodeOf(err) != tc.code[index] {
 					t.Errorf("CreateUser got an unexpected error kind: %v, wanted: %v", err, tc.code[index])
+				}
+			}
+		})
+	}
+}
+
+type failingUserCreator struct {
+	err error
+}
+
+func (f *failingUserCreator) createUser(_ context.Context, _ string, _ string, _ string) error {
+	return f.err
+}
+
+func TestConnectRPCHandler_CreateUser_ErrorLogRedaction(t *testing.T) {
+	validator, err := protovalidate.New(
+		protovalidate.WithDisableLazy(),
+		protovalidate.WithFailFast(),
+		protovalidate.WithMessages(
+			&userspb.CreateUserRequest{},
+			&userspb.CreateUserResponse{},
+		),
+	)
+	if err != nil {
+		t.Fatalf("failed to create validator: %v", err)
+	}
+
+	req := &userspb.CreateUserRequest{
+		IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
+		User: &userspb.User{
+			UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+			EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("secret@example.com")},
+			Handle:       &userspb.UserHandle{Handle: proto.String("secret_handle")},
+			Password:     &userspb.UserPassword{Password: proto.String("super-secret-password-123")},
+		},
+	}
+
+	tests := map[string]struct {
+		useCaseErr error
+		contains   []string
+		excludes   []string
+	}{
+		"redacts_sensitive_fields_on_already_exists_error": {
+			useCaseErr: ErrAlreadyExists,
+			contains:   []string{"123e4567-e89b-12d3-a456-426614174000"},
+			excludes:   []string{"super-secret-password-123", "secret@example.com", "secret_handle"},
+		},
+		"redacts_sensitive_fields_on_operation_failed_error": {
+			useCaseErr: ErrOperationFailed,
+			contains:   []string{"123e4567-e89b-12d3-a456-426614174000"},
+			excludes:   []string{"super-secret-password-123", "secret@example.com", "secret_handle"},
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			var logBuf bytes.Buffer
+			logger := slog.New(slog.NewTextHandler(&logBuf, nil))
+			handler := NewConnectRPCHandler(logger, &failingUserCreator{err: tc.useCaseErr}, validator)
+
+			_, _ = handler.CreateUser(context.Background(), req)
+
+			logOutput := logBuf.String()
+			for _, want := range tc.contains {
+				if !strings.Contains(logOutput, want) {
+					t.Errorf("log output %q did not contain expected substring %q", logOutput, want)
+				}
+			}
+			for _, forbidden := range tc.excludes {
+				if strings.Contains(logOutput, forbidden) {
+					t.Errorf("log output %q leaked sensitive value %q", logOutput, forbidden)
 				}
 			}
 		})
