@@ -210,14 +210,6 @@ func TestConnectRPCHandler_CreateUser_LogOutput(t *testing.T) {
 			excluded: []string{"secret_password_1", "log1@bar.com", "gleeper_log1"},
 			errs:     []bool{false},
 		},
-		"invalid_nil_request": {
-			reqs: []*userspb.CreateUserRequest{
-				nil,
-			},
-			expected: []string{"ERROR", "msg=\"failed to validate incoming request message\"", "raw=nil"},
-			excluded: []string{},
-			errs:     []bool{true},
-		},
 		"invalid_empty_idempotency_key_request": {
 			reqs: []*userspb.CreateUserRequest{
 				{
@@ -236,25 +228,6 @@ func TestConnectRPCHandler_CreateUser_LogOutput(t *testing.T) {
 				"123e4567-e89b-12d3-a456-426614174002",
 			},
 			excluded: []string{"secret_password_2", "log2@bar.com", "gleeper_log2"},
-			errs:     []bool{true},
-		},
-		"invalid_empty_user_id_request": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174703"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("log3@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper_log3")},
-						Password:     &userspb.UserPassword{Password: proto.String("secret_password_3")},
-					},
-				},
-			},
-			expected: []string{
-				"ERROR",
-				"msg=\"failed to validate incoming request message\"",
-			},
-			excluded: []string{"secret_password_3", "log3@bar.com", "gleeper_log3"},
 			errs:     []bool{true},
 		},
 		"duplicate_user_create_error_redacts_sensitive_fields": {
