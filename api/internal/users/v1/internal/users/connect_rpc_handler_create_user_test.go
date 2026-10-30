@@ -3,7 +3,6 @@ package users
 import (
 	"bytes"
 	"context"
-	"io"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
@@ -21,10 +20,13 @@ import (
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 )
 
-var srv *httptest.Server = nil
+var (
+	srv *httptest.Server = nil
+	buf bytes.Buffer
+)
 
 func TestMain(m *testing.M) {
-	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
+	logger := slog.New(slog.NewTextHandler(&buf, nil))
 
 	validator, err := protovalidate.New(
 		protovalidate.WithDisableLazy(),
@@ -185,71 +187,132 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 	}
 }
 
-type failingUserCreator struct {
-	err error
-}
-
-func (f *failingUserCreator) createUser(_ context.Context, _ string, _ string, _ string) error {
-	return f.err
-}
-
-func TestConnectRPCHandler_CreateUser_ErrorLogRedaction(t *testing.T) {
-	validator, err := protovalidate.New(
-		protovalidate.WithDisableLazy(),
-		protovalidate.WithFailFast(),
-		protovalidate.WithMessages(
-			&userspb.CreateUserRequest{},
-			&userspb.CreateUserResponse{},
-		),
-	)
-	if err != nil {
-		t.Fatalf("failed to create validator: %v", err)
-	}
-
-	req := &userspb.CreateUserRequest{
-		IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-		User: &userspb.User{
-			UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-			EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("secret@example.com")},
-			Handle:       &userspb.UserHandle{Handle: proto.String("secret_handle")},
-			Password:     &userspb.UserPassword{Password: proto.String("super-secret-password-123")},
-		},
-	}
-
+func TestConnectRPCHandler_CreateUser_LogOutput(t *testing.T) {
 	tests := map[string]struct {
-		useCaseErr error
-		contains   []string
-		excludes   []string
+		reqs     []*userspb.CreateUserRequest
+		expected []string
+		excluded []string
+		errs     []bool
 	}{
-		"redacts_sensitive_fields_on_already_exists_error": {
-			useCaseErr: ErrAlreadyExists,
-			contains:   []string{"123e4567-e89b-12d3-a456-426614174000"},
-			excludes:   []string{"super-secret-password-123", "secret@example.com", "secret_handle"},
+		"valid_one_user_request": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174701"),
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174001")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("log1@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper_log1")},
+						Password:     &userspb.UserPassword{Password: proto.String("secret_password_1")},
+					},
+				},
+			},
+			expected: []string{"INFO", "msg=\"received request to create user\""},
+			excluded: []string{"secret_password_1", "log1@bar.com", "gleeper_log1"},
+			errs:     []bool{false},
 		},
-		"redacts_sensitive_fields_on_operation_failed_error": {
-			useCaseErr: ErrOperationFailed,
-			contains:   []string{"123e4567-e89b-12d3-a456-426614174000"},
-			excludes:   []string{"super-secret-password-123", "secret@example.com", "secret_handle"},
+		"invalid_nil_request": {
+			reqs: []*userspb.CreateUserRequest{
+				nil,
+			},
+			expected: []string{"ERROR", "msg=\"failed to validate incoming request message\"", "raw=nil"},
+			excluded: []string{},
+			errs:     []bool{true},
+		},
+		"invalid_empty_idempotency_key_request": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: proto.String(""),
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174002")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("log2@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper_log2")},
+						Password:     &userspb.UserPassword{Password: proto.String("secret_password_2")},
+					},
+				},
+			},
+			expected: []string{
+				"ERROR",
+				"msg=\"failed to validate incoming request message\"",
+				"123e4567-e89b-12d3-a456-426614174002",
+			},
+			excluded: []string{"secret_password_2", "log2@bar.com", "gleeper_log2"},
+			errs:     []bool{true},
+		},
+		"invalid_empty_user_id_request": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174703"),
+					User: &userspb.User{
+						UserId:       &userspb.UserId{},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("log3@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper_log3")},
+						Password:     &userspb.UserPassword{Password: proto.String("secret_password_3")},
+					},
+				},
+			},
+			expected: []string{
+				"ERROR",
+				"msg=\"failed to validate incoming request message\"",
+			},
+			excluded: []string{"secret_password_3", "log3@bar.com", "gleeper_log3"},
+			errs:     []bool{true},
+		},
+		"duplicate_user_create_error_redacts_sensitive_fields": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174704"),
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174004")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("log4@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper_log4")},
+						Password:     &userspb.UserPassword{Password: proto.String("secret_password_4")},
+					},
+				},
+				{
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174705"),
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174004")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("log4@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper_log4")},
+						Password:     &userspb.UserPassword{Password: proto.String("secret_password_4")},
+					},
+				},
+			},
+			expected: []string{
+				"ERROR",
+				"msg=\"failed to create user entity\"",
+				"123e4567-e89b-12d3-a456-426614174004",
+				"error=\"resource already exists\"",
+			},
+			excluded: []string{"secret_password_4", "log4@bar.com", "gleeper_log4"},
+			errs:     []bool{false, false},
 		},
 	}
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			var logBuf bytes.Buffer
-			logger := slog.New(slog.NewTextHandler(&logBuf, nil))
-			handler := NewConnectRPCHandler(logger, &failingUserCreator{err: tc.useCaseErr}, validator)
+			buf.Reset()
+			client := usersv1connect.NewUserServiceClient(http.DefaultClient, srv.URL, connect.WithGRPC())
 
-			_, _ = handler.CreateUser(context.Background(), req)
-
-			logOutput := logBuf.String()
-			for _, want := range tc.contains {
-				if !strings.Contains(logOutput, want) {
-					t.Errorf("log output %q did not contain expected substring %q", logOutput, want)
+			for index, req := range tc.reqs {
+				_, err := client.CreateUser(context.Background(), req)
+				if err != nil && !tc.errs[index] {
+					t.Errorf("CreateUser got an unexpected error: %v", err)
+				}
+				if err == nil && tc.errs[index] {
+					t.Errorf("CreateUser expected an error but got nil")
 				}
 			}
-			for _, forbidden := range tc.excludes {
-				if strings.Contains(logOutput, forbidden) {
-					t.Errorf("log output %q leaked sensitive value %q", logOutput, forbidden)
+
+			actual := buf.String()
+			for _, exp := range tc.expected {
+				if !strings.Contains(actual, exp) {
+					t.Errorf("CreateUser log output got: %v, want: %v", actual, tc.expected)
+				}
+			}
+			for _, exc := range tc.excluded {
+				if strings.Contains(actual, exc) {
+					t.Errorf("CreateUser log output got: %v, must exclude: %v", actual, tc.excluded)
 				}
 			}
 		})
