@@ -38,8 +38,10 @@ func TestMain(m *testing.M) {
 	}
 
 	cache := remote.NewFakeRedisCache()
-	repo := newInMemoryRepository(logger)
-	dom := newUserUseCase(logger, cache, cache, repo, validator)
+	repo := newUserStore()
+	idemStore := newFakeRedisIdempotencyKeyStore(cache)
+	distLocker := newFakeRedisDistributedLocker(cache)
+	dom := NewUserUseCase(logger, idemStore, distLocker, repo)
 	connectRPCHandler := NewConnectRPCHandler(logger, dom, validator)
 	path, handler := usersv1connect.NewUserServiceHandler(connectRPCHandler)
 

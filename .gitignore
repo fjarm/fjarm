@@ -35,3 +35,6 @@ local.properties
 # Gemini generated files
 .artifacts/
 **/*.artifact.md
+
+# Env variables
+.env

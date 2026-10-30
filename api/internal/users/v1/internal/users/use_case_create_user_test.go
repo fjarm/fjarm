@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
-	"buf.build/go/protovalidate"
 	"google.golang.org/protobuf/proto"
 
 	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
@@ -17,12 +16,10 @@ import (
 func TestUserUseCase_createUser(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	cache := remote.NewFakeRedisCache()
-	repo := newInMemoryRepository(logger)
-	validator, err := protovalidate.New()
-	if err != nil {
-		t.Errorf("failed to create a new validator: %v", err)
-	}
-	dom := newUserUseCase(logger, cache, cache, repo, validator)
+	repo := newUserStore()
+	idemStore := newFakeRedisIdempotencyKeyStore(cache)
+	distLocker := newFakeRedisDistributedLocker(cache)
+	uc := NewUserUseCase(logger, idemStore, distLocker, repo)
 
 	tests := map[string]struct {
 		reqs []*userspb.CreateUserRequest
@@ -122,35 +119,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 			errs: []bool{false, false},
 			kind: []error{nil, nil},
 		},
-		"idempotency_two_identical_id_users": {
-			// Two identical users with different idempotency keys should pass without error because the internal state
-			// should be hidden from clients.
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{false, false},
-			kind: []error{nil, nil},
-		},
 		"idempotency_two_identical_email_users": {
-			// Two identical users with different idempotency keys should pass without error because the internal state
-			// should be hidden from clients.
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
@@ -171,40 +140,14 @@ func TestUserUseCase_createUser(t *testing.T) {
 					},
 				},
 			},
-			errs: []bool{false, false},
-			kind: []error{nil, nil},
-		},
-		"idempotency_two_identical_handle_users": {
-			// Two identical users with different idempotency keys should pass without error because the internal state
-			// should be hidden from clients.
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // User ID here matches the user ID in the request message.
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{false, false},
-			kind: []error{nil, nil},
+			errs: []bool{false, true},
+			kind: []error{nil, ErrAlreadyExists},
 		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			for i, req := range tc.reqs {
-				err = dom.createUser(context.Background(), req)
+				err := uc.createUser(context.Background(), req.GetIdempotencyKey(), req.GetUser().GetEmailAddress().GetEmailAddress(), req.GetUser().GetPassword().GetPassword())
 				if err != nil && !tc.errs[i] {
 					t.Errorf("createUser got an unexpected error: %v", err)
 				}
@@ -217,6 +160,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 			}
 		})
 		// Reset the database for each test run.
+		cache.Reset()
 		repo.reset()
 	}
 }
