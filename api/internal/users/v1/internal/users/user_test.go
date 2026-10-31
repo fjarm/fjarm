@@ -9,59 +9,59 @@ import (
 
 func TestCalculateETag(t *testing.T) {
 	tests := map[string]struct {
-		u1    user
-		u2    user
+		u1    User
+		u2    User
 		equal bool
 	}{
 		"valid_two_empty_users": {
-			u1:    user{},
-			u2:    user{},
+			u1:    User{},
+			u2:    User{},
 			equal: true,
 		},
 		"valid_two_non_empty_users": {
-			u1: user{
-				UserID:      "abc123",
-				LastUpdated: time.Date(2024, time.December, 12, 12, 12, 12, 12, time.Local),
-				CreatedAt:   time.Date(2024, time.December, 12, 12, 12, 7, 12, time.Local),
+			u1: User{
+				UserID:    "abc123",
+				UpdatedAt: time.Date(2024, time.December, 12, 12, 12, 12, 12, time.Local),
+				CreatedAt: time.Date(2024, time.December, 12, 12, 12, 7, 12, time.Local),
 			},
-			u2: user{
-				UserID:      "abc123",
-				LastUpdated: time.Date(2024, time.December, 12, 12, 12, 12, 12, time.Local),
-				CreatedAt:   time.Date(2024, time.December, 12, 12, 12, 7, 12, time.Local),
+			u2: User{
+				UserID:    "abc123",
+				UpdatedAt: time.Date(2024, time.December, 12, 12, 12, 12, 12, time.Local),
+				CreatedAt: time.Date(2024, time.December, 12, 12, 12, 7, 12, time.Local),
 			},
 			equal: true,
 		},
 		"valid_different_passwords_similar_users": {
-			u1: user{
+			u1: User{
 				UserID:   "abc123",
 				Password: "password",
 			},
-			u2: user{
+			u2: User{
 				UserID:   "abc123",
 				Password: "password1",
 			},
 			equal: true,
 		},
 		"valid_nil_and_valid_passwords_similar_users": {
-			u1: user{
+			u1: User{
 				UserID:   "abc123",
 				Password: "password",
 			},
-			u2: user{
+			u2: User{
 				UserID: "abc123",
 			},
 			equal: true,
 		},
 		"invalid_two_non_empty_users": {
-			u1: user{
-				UserID:      "abc123",
-				LastUpdated: time.Now(),
-				CreatedAt:   time.Now(),
+			u1: User{
+				UserID:    "abc123",
+				UpdatedAt: time.Now(),
+				CreatedAt: time.Now(),
 			},
-			u2: user{
-				UserID:      "abc123",
-				LastUpdated: time.Now(),
-				CreatedAt:   time.Now(),
+			u2: User{
+				UserID:    "abc123",
+				UpdatedAt: time.Now(),
+				CreatedAt: time.Now(),
 			},
 			equal: false,
 		},
@@ -79,13 +79,13 @@ func TestCalculateETag(t *testing.T) {
 
 func TestRedactedUserMessageString(t *testing.T) {
 	tests := map[string]struct {
-		usr      *user
+		usr      *User
 		contains []string
 		excludes []string
 		err      bool
 	}{
 		"valid_empty_user": {
-			usr:      &user{},
+			usr:      &User{},
 			contains: []string{"{", "}", "user_id"},
 			excludes: []string{"password", "nil", "full_name", "handle", "email_address", "avatar", "last_updated", "created_at"},
 			err:      false,
@@ -96,7 +96,7 @@ func TestRedactedUserMessageString(t *testing.T) {
 			err:      true,
 		},
 		"valid_valid_password_and_salt_user": {
-			usr: &user{
+			usr: &User{
 				Password: "abc123",
 			},
 			contains: []string{"{", "}", "user_id"},
@@ -104,7 +104,7 @@ func TestRedactedUserMessageString(t *testing.T) {
 			err:      false,
 		},
 		"valid_valid_user_id_user": {
-			usr: &user{
+			usr: &User{
 				UserID: "abc123",
 			},
 			contains: []string{"{", "}", "user_id", "abc123"},
@@ -145,15 +145,15 @@ func TestStorageUserToWireUser_ErrorWrapping(t *testing.T) {
 
 func TestStorageUserToWireUser_EtagCalculation(t *testing.T) {
 	tests := map[string]struct {
-		usr user
+		usr User
 		err bool
 	}{
 		"valid_empty_user": {
-			usr: user{},
+			usr: User{},
 			err: false,
 		},
 		"valid_non_empty_user": {
-			usr: user{
+			usr: User{
 				UserID: "abc123",
 			},
 			err: false,
