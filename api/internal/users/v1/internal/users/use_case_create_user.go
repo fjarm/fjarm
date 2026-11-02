@@ -202,7 +202,9 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	}
 
 	err = uc.repo.create(ctx, &user)
-	if err != nil {
+	if err != nil && errors.Is(err, ErrAlreadyExists) {
+		logger.WarnContext(ctx, "attempted to create duplicate user", slog.Any(logkeys.Err, err))
+	} else if err != nil {
 		logger.ErrorContext(ctx, "failed to create user in repository", slog.Any(logkeys.Err, err))
 		return err
 	}
