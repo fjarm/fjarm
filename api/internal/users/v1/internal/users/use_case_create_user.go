@@ -202,7 +202,13 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	}
 
 	err = uc.repo.create(ctx, &user)
-	if err != nil {
+	if err != nil && errors.Is(err, ErrAlreadyExists) {
+		logger.WarnContext(ctx, "attempted to create duplicate user", slog.Any(logkeys.Err, err))
+		if saveErr := uc.idemKeyStore.saveResult(ctx, idempotencyKey); saveErr != nil {
+			logger.WarnContext(ctx, "failed to set idempotency key in cache", slog.Any(logkeys.Err, saveErr))
+		}
+		return err
+	} else if err != nil {
 		logger.ErrorContext(ctx, "failed to create user in repository", slog.Any(logkeys.Err, err))
 		return err
 	}
