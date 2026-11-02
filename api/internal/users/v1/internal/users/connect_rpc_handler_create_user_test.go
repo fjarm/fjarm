@@ -230,24 +230,14 @@ func TestConnectRPCHandler_CreateUser_LogOutput(t *testing.T) {
 			excluded: []string{"secret_password_2", "log2@bar.com", "gleeper_log2"},
 			errs:     []bool{true},
 		},
-		"duplicate_user_create_error_redacts_sensitive_fields": {
+		"invalid_missing_email_address_request": {
 			reqs: []*userspb.CreateUserRequest{
 				{
 					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174704"),
 					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174004")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("log4@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper_log4")},
-						Password:     &userspb.UserPassword{Password: proto.String("secret_password_4")},
-					},
-				},
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174705"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174004")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("log4@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper_log4")},
-						Password:     &userspb.UserPassword{Password: proto.String("secret_password_4")},
+						UserId:   &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174004")},
+						Handle:   &userspb.UserHandle{Handle: proto.String("gleeper_log4")},
+						Password: &userspb.UserPassword{Password: proto.String("secret_password_4")},
 					},
 				},
 			},
@@ -255,10 +245,10 @@ func TestConnectRPCHandler_CreateUser_LogOutput(t *testing.T) {
 				"ERROR",
 				"msg=\"failed to create user entity\"",
 				"123e4567-e89b-12d3-a456-426614174004",
-				"error=\"resource already exists\"",
+				"error=\"supplied argument is invalid: email address is required\"",
 			},
-			excluded: []string{"secret_password_4", "log4@bar.com", "gleeper_log4"},
-			errs:     []bool{false, false},
+			excluded: []string{"secret_password_4", "gleeper_log4"},
+			errs:     []bool{true},
 		},
 	}
 
