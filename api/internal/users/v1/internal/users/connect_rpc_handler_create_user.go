@@ -49,7 +49,7 @@ func (h *ConnectRPCHandler) CreateUser(
 		logger.ErrorContext(
 			ctx,
 			"failed to create user entity",
-			slog.String(logkeys.Raw, req.String()),
+			slog.String(logkeys.Raw, redactedUserMessageString(req.GetUser())),
 			slog.Any(logkeys.Err, err),
 		)
 	}
