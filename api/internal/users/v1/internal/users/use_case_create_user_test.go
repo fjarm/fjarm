@@ -3,6 +3,7 @@ package users
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"testing"
@@ -140,8 +141,8 @@ func TestUserUseCase_createUser(t *testing.T) {
 					},
 				},
 			},
-			errs: []bool{false, true},
-			kind: []error{nil, ErrAlreadyExists},
+			errs: []bool{false, false},
+			kind: []error{nil, nil},
 		},
 		"idempotency_retry_identical_email_user_with_same_idempotency_key": {
 			reqs: []*userspb.CreateUserRequest{
@@ -155,7 +156,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 					},
 				},
 				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key triggers ErrAlreadyExists and caches the key.
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key triggers ErrAlreadyExists internally and caches the key.
 					User: &userspb.User{
 						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")},
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
@@ -173,8 +174,8 @@ func TestUserUseCase_createUser(t *testing.T) {
 					},
 				},
 			},
-			errs: []bool{false, true, false},
-			kind: []error{nil, ErrAlreadyExists, nil},
+			errs: []bool{false, false, false},
+			kind: []error{nil, nil, nil},
 		},
 	}
 	for name, tc := range tests {
@@ -189,6 +190,16 @@ func TestUserUseCase_createUser(t *testing.T) {
 				}
 				if !errors.Is(err, tc.kind[i]) {
 					t.Errorf("createUser got an unexpected error type: %v", err)
+				}
+				if !tc.errs[i] {
+					idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, req.GetIdempotencyKey())
+					dup, dupErr := idemStore.isDuplicate(context.Background(), idempotencyKey)
+					if dupErr != nil {
+						t.Errorf("isDuplicate got an unexpected error: %v", dupErr)
+					}
+					if !dup {
+						t.Errorf("createUser expected idempotency key %q to be cached, but it was not", idempotencyKey)
+					}
 				}
 			}
 		})
