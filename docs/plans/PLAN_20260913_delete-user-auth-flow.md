@@ -26,8 +26,8 @@ Document and implement the correct authorization flow for the `DeleteUser` RPC s
 
 ```
 ┌────────┐                              ┌──────────────────┐                        ┌────────────────┐
-│ Client │                              │  Auth Interceptor │                        │ DeleteUser     │
-│        │                              │  (ConnectRPC)     │                        │ Handler        │
+│ Client │                              │ Auth Interceptor │                        │ DeleteUser     │
+│        │                              │ (ConnectRPC)     │                        │ Handler        │
 └───┬────┘                              └────────┬─────────┘                        └───────┬────────┘
     │                                            │                                          │
     │  DeleteUserRequest + Bearer <jwt>          │                                          │
@@ -38,7 +38,7 @@ Document and implement the correct authorization flow for the `DeleteUser` RPC s
     │                                            │ 3. Inject identity into context          │
     │                                            │                                          │
     │                                            │  If JWT invalid:                         │
-    │  <── UNAUTHENTICATED ─────────────────────│                                          │
+    │  <── UNAUTHENTICATED ──────────────────────│                                          │
     │                                            │                                          │
     │                                            │  If JWT valid:                           │
     │                                            │─────────────────────────────────────────>│
@@ -47,13 +47,13 @@ Document and implement the correct authorization flow for the `DeleteUser` RPC s
     │                                            │             context with user_id in req  │
     │                                            │                                          │
     │                                            │          If mismatch:                    │
-    │  <── PERMISSION_DENIED ──────────────────────────────────────────────────────────────│
+    │  <── PERMISSION_DENIED ───────────────────────────────────────────────────────────────│
     │                                            │                                          │
     │                                            │          If match:                       │
     │                                            │          5. Hard-delete user             │
     │                                            │          6. Invalidate all sessions      │
     │                                            │                                          │
-    │  <── DeleteUserResponse {} ──────────────────────────────────────────────────────────│
+    │  <── DeleteUserResponse {} ───────────────────────────────────────────────────────────│
     │                                            │                                          │
     │  7. Discard local tokens                   │                                          │
     │  8. Navigate to login screen               │                                          │
