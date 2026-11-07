@@ -11,43 +11,55 @@ You operate in a hierarchical environment. Before executing any task in a specif
 * [proto/AGENTS.md](proto/AGENTS.md)
 
 ## Core Behavior Boundaries
-* **Always Plan First**: Before executing any terminal command, code modification, or file creation, you MUST create or update a Markdown planning file.
-* **No Inline Execution**: Do not skip the planning phase. If a plan file does not exist for the current task, stop and create it.
+* **Plan via GitHub Issues**: Before making any code modifications (creating, updating, or deleting code, build, or configuration files), you MUST have an active GitHub Issue that serves as the plan of record.
+* **Scope**: Tasks that are purely conversational, investigative, or read-only do not require an issue. Codebase exploration, reading files, and running non-destructive CLI commands to research and establish the plan are permitted before the GitHub Issue is created.
+* **Existing vs. New Issues**:
+  * If the user references an existing issue (e.g., `#123`), inspect it using `gh issue view 123` and update its plan if necessary.
+  * Otherwise, create a new issue using `gh issue create`.
+* **Planning via Issue Artifacts**:
+  * Create an issue artifact of type `plan` named `<issue-number>-implementation-plan` if one does not already exist on the target issue using: `gh issue artifact create <issue-number> --type plan --name "implementation-plan" --file <path-or-stdin>`
+* **Progress Tracking**:
+  * When using a Markdown checklist to list tasks, use `- [x]` to indicate a completed task.
+  * Use `- [/]` to indicate a blocked task.
+  * Use `- [ ]` to indicate an incomplete task.
+  * Update the artifact's checklist as tasks are worked on using: `gh issue artifact edit <issue-number> <artifact-id>`
+* **Amendments & Pivots**:
+  * Update the plan artifact with an appended amendment section detailing the reason for pivot, adjusted goals, and revised checklist using the same format described in the GitHub Issue and Plan Specifications header.
+  * Post a brief issue comment alerting reviewers to the change in direction.
+* **Fallback**:
+  * If the repository or CLI environment does not have issue artifacts enabled, place and maintain the plan directly in the GitHub Issue body.
+  * If after retrying, GitHub is unavailable, temporarily use a locally stored and edited markdown file to track the plan.
 
-## Plan File Specifications
-* **File Format**: The file must be exclusively written in standard GitHub Flavored Markdown (GFM).
-* **File Naming Convention**: Every plan file name must follow the strict pattern: `PLAN_YYYYMMDD_kebab-case-short-description.md`.
-* **Example**: `PLAN_20260727_auth-bug-fix.md`.
-* **Time Check**: Before generating a plan, use your closest available system tool (e.g., terminal `date` command) to fetch the exact current timestamp.
-* **File Creation**: Write your initial plan to the newly generated timestamped filename using standard GFM.
-* **Directory**: Save all plan files inside the `./docs/plans/` directory. Create this directory if it does not exist.
+## GitHub Issue and Plan Specifications
+* **Issue Title**: Follow conventional prefix format: `<type>: <short-kebab-or-sentence-description>` (e.g., `feat: add workout rest timer` or `fix: resolve memory leak in routine viewmodel`).
+* **Required Issue Body Layout**:
+```markdown
+## Objective
+A few (1–5) sentences summarizing the ultimate goal.
 
-## Required Plan Layout
-The top level of the plan Markdown file must explicitly follow this structure:
-1. `# Objective` - A few (one to five) sentences summarizing the ultimate goal.
-2. `# Research & Context` - Findings, relevant files, relevant links/URLs with summaries, and known constraints.
-3. `# Tasks Checklist` - A Markdown checklist (`- [ ]`) breaking down individual, actionable steps.
-4. `# Verification` - Explicit commands to run to prove success (e.g., test scripts).
+## Research & Context
+Findings, relevant files, architectural constraints and/or diagrams, and reference links.
+```
+* **Required Issue Plan Artifact Layout**:
+  * Structure the `plan` artifact with the following layout:
+```markdown
+## Objective
+A few (1–5) sentences summarizing the ultimate goal.
 
-## Plan Amendment Rules (No Overwriting)
-* **Never Overwrite**: Once a timestamped plan file is created for a task, you are forbidden from deleting, replacing, or modifying existing content in that file.
-* **Append via Sections**: If a plan needs an update, correction, or pivot during execution, append a horizontal separator (`---`) followed by a new Markdown section to the bottom of the file.
-* **Timestamp Each Pivot**: The contents of a new amendment section must begin with a level-2 header containing the exact update timestamp and a brief title.
+## Research & Context
+Findings, relevant files, architectural constraints and/or diagrams, and reference links.
 
-## Format for Plan Updates
-* **Plan Update**: When appending an update, use the following exact structure at the bottom of the active file:
+## Tasks Checklist
+- [ ] Task 1
+- [ ] Task 2
 
----
+### 1. Task 1 implementation details
 
-## [Update: YYYY-MM-DD HH:MM] - Reason for Pivot
-* **Context**: Explain why the original plan failed or why an update is necessary (e.g., unexpected error, scope change).
-* **Objective**: Summarize the ultimate goal of the new step.
-* **Changes to Tasks**: Specify which original steps are being abandoned, modified, or added.
-* **Revised Task Checklist**:
-    - [ ] New or modified step 1
-    - [ ] New or modified step 2
+### 2. Task 2 implementaiton details
 
-## Status Tracking
-* **Complete Task**: When using a Markdown checklist to list tasks, use `- [x]` to indicate a completed task.
-* **Blocked Task**: Use `- [/]` to indicate a blocked task.
-* **Incomplete Task**: Use `- [ ]` to indicate an incomplete task.
+## Verification
+Explicit commands and test scenarios to prove success (e.g., unit test commands, UI verification steps).
+```
+
+## Pull Request Linking
+* Any PR associated with the task must reference the issue in its description (e.g., `Fixes #<issue-number>` or `Closes #<issue-number>`).
