@@ -14,23 +14,25 @@ You operate in a hierarchical environment. Before executing any task in a specif
 * **Plan via GitHub Issues**: Before making any code modifications (creating, updating, or deleting code, build, or configuration files), you MUST have an active GitHub Issue that serves as the plan of record.
 * **Scope**: Tasks that are purely conversational, investigative, or read-only do not require an issue. Codebase exploration, reading files, and running non-destructive CLI commands to research and establish the plan are permitted before the GitHub Issue is created.
 * **Existing vs. New Issues**:
-  * If the user references an existing issue (e.g., `#123`), inspect it using `gh issue view 123` and inspect its artifacts using `gh issue artifact list 123`.
+  * If the user references an existing issue (e.g., `#123`), inspect it using `gh issue view 123` and inspect its plan artifacts using `gh issue artifact list 123 --type plan`.
+  * View the content of an existing plan using: `gh issue artifact view <issue-number> <artifact-number>`.
   * Otherwise, create a new issue using `gh issue create`.
 * **Planning via Issue Artifacts**:
   * Create an issue artifact of type `plan` named `<issue-number>-implementation-plan` if one does not already exist on the target issue using:
-    `gh issue artifact create <issue-number> --type plan --name "<issue-number>-implementation-plan" --file <path-or-stdin>`
+    `gh issue artifact create <issue-number> --type plan --name "<issue-number>-short-description-implementation-plan.md" --body-file <path-or-->`
 * **Progress Tracking**:
   * When using a Markdown checklist to list tasks, use `- [x]` to indicate a completed task.
   * Use `- [/]` to indicate a blocked task.
   * Use `- [ ]` to indicate an incomplete task.
-  * Retrieve the artifact ID using `gh issue artifact list <issue-number>` and `gh issue artifact view {<issue-number> <artifact-number> | <artifact-url>}`, and update the checklist as tasks are completed using:
-    `gh issue artifact edit <issue-number> <artifact-number> --file <path-or-stdin>`
+  * Retrieve the `<artifact-number>` from `gh issue artifact list <issue-number>`, and update the checklist as tasks are completed using:
+    `gh issue artifact edit <issue-number> <artifact-number> --body-file <path-or-->`
 * **Amendments & Pivots**:
   * Append an amendment section to the plan artifact detailing the reason for pivot, adjusted goals, and revised checklist (see layout below).
-  * Post a brief issue comment alerting reviewers to the change in direction (`gh issue comment <issue-number> --body "..."`).
+  * Post a brief issue comment alerting reviewers to the change in direction:
+    `gh issue comment <issue-number> --body "..."`
 * **Fallback**:
   * If the repository or CLI environment does not have issue artifacts enabled, place and maintain the plan directly in the GitHub Issue body.
-  * If GitHub is unavailable after retrying, temporarily track the plan in a local Markdown file under `./docs/plans/`.
+  * If GitHub is unavailable after retrying, temporarily track the plan in a local Markdown file under `./docs/plans/` named `<issue-number>-short-description-implementation-plan.md`.
 
 ## GitHub Issue and Plan Specifications
 * **Issue Title**: Follow conventional prefix format: `<type>: <short-kebab-or-sentence-description>` (e.g., `feat: add workout rest timer` or `fix: resolve memory leak in routine viewmodel`).
