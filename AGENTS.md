@@ -23,8 +23,8 @@ You operate in a hierarchical environment. Before executing any task in a specif
   * When using a Markdown checklist to list tasks, use `- [x]` to indicate a completed task.
   * Use `- [/]` to indicate a blocked task.
   * Use `- [ ]` to indicate an incomplete task.
-  * Retrieve the artifact ID using `gh issue artifact list <issue-number>`, and update the checklist as tasks are completed using:
-    `gh issue artifact edit <issue-number> <artifact-id> --file <path-or-stdin>`
+  * Retrieve the artifact ID using `gh issue artifact list <issue-number>` and `gh issue artifact view {<issue-number> <artifact-number> | <artifact-url>}`, and update the checklist as tasks are completed using:
+    `gh issue artifact edit <issue-number> <artifact-number> --file <path-or-stdin>`
 * **Amendments & Pivots**:
   * Append an amendment section to the plan artifact detailing the reason for pivot, adjusted goals, and revised checklist (see layout below).
   * Post a brief issue comment alerting reviewers to the change in direction (`gh issue comment <issue-number> --body "..."`).
