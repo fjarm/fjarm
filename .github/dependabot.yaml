@@ -10,18 +10,28 @@ updates:
     schedule:
       interval: "weekly"
       day: "thursday"
+    commit-message:
+      prefix: "build"
+      include: "scope"
   
   - package-ecosystem: "github-actions" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
       day: "thursday"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
 
   - package-ecosystem: "gomod" # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
       day: "thursday"
+    commit-message:
+      prefix: "fix"
+      prefix-development: "build"
+      include: "scope"
   
   - package-ecosystem: "gradle" # See documentation for possible values
     directory: "/" # Location of package manifests
@@ -29,3 +39,7 @@ updates:
       interval: "weekly"
       day: "thursday"
     open-pull-requests-limit: 20
+    commit-message:
+      prefix: "fix"
+      prefix-development: "build"
+      include: "scope"
