@@ -18,14 +18,14 @@ You operate in a hierarchical environment. Before executing any task in a specif
   * View the content of an existing plan using: `gh issue artifact view <issue-number> <artifact-number>`.
   * Otherwise, create a new issue using `gh issue create`.
 * **Planning via Issue Artifacts**:
-  * Create an issue artifact of type `plan` named `<issue-number>-implementation-plan` if one does not already exist on the target issue using:
-    `gh issue artifact create <issue-number> --type plan --name "<issue-number>-short-description-implementation-plan.md" --body-file <file-path>` (Note: pass "-" as the argument to read from standard input).
+  * Create an issue artifact of type `plan` named `<issue-number>-short-description-implementation-plan` if one does not already exist on the target issue using:
+    `gh issue artifact create <issue-number> --type plan --name "<issue-number>-short-description-implementation-plan" --body-file <file-path>` (Note: pass "-" as the argument to `--body-file` to read from standard input).
 * **Progress Tracking**:
   * When using a Markdown checklist to list tasks, use `- [x]` to indicate a completed task.
   * Use `- [/]` to indicate a blocked task.
   * Use `- [ ]` to indicate an incomplete task.
   * Retrieve the `<artifact-number>` from `gh issue artifact list <issue-number>`, and update the checklist as tasks are completed using:
-    `gh issue artifact edit <issue-number> <artifact-number> --body-file <file-path>` (Note: pass "-" as the argument to read from standard input).
+    `gh issue artifact edit <issue-number> <artifact-number> --body-file <file-path>` (Note: pass "-" as the argument to `--body-file` to read from standard input).
 * **Amendments & Pivots**:
   * Append an amendment section to the plan artifact detailing the reason for pivot, adjusted goals, and revised checklist (see layout below).
   * Post a brief issue comment alerting reviewers to the change in direction:
