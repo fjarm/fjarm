@@ -32,7 +32,8 @@ You operate in a hierarchical environment. Before executing any task in a specif
     `gh issue comment <issue-number> --body "..."`
 * **Fallback**:
   * If the repository or CLI environment does not have issue artifacts enabled, place and maintain the plan directly in the GitHub Issue body.
-  * If GitHub is unavailable after retrying, temporarily track the plan in a local Markdown file under `./docs/plans/` named `<issue-number>-short-description-implementation-plan.md`.
+  * If GitHub is unavailable after retrying, temporarily track the plan in a local Markdown file under `./docs/plans/` named `PLAN_YYYYMMDD-short-description-implementation-plan.md`.
+    * If a fallback is needed, use the closest available system tool (e.g., terminal `date` command) to fetch the exact current timestamp.
 
 ## GitHub Issue and Plan Specifications
 * **Issue Title**: Follow conventional prefix format: `<type>: <short-kebab-or-sentence-description>` (e.g., `feat: add workout rest timer` or `fix: resolve memory leak in routine viewmodel`).
