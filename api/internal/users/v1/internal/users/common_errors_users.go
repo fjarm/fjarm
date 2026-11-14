@@ -16,6 +16,9 @@ var ErrAuthenticationIssue = fmt.Errorf("authentication issue")
 // `fjarm.users.v1.User` message.
 var ErrInvalidArgument = fmt.Errorf("supplied argument is invalid")
 
+// ErrLockAlreadyHeld is returned when a distributed lock for a resource is already held by another process.
+var ErrLockAlreadyHeld = fmt.Errorf("lock already held")
+
 // ErrOperationFailed is returned when a service method fails to complete an operation. It is typically used to hide a
 // more precise error message from the client like ErrAuthenticationIssue.
 var ErrOperationFailed = fmt.Errorf("operation failed")

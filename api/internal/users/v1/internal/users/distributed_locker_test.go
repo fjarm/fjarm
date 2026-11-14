@@ -25,7 +25,7 @@ func TestFakeRedisDistributedLocker_lock(t *testing.T) {
 			setupKey: "userservice:create:lock:user:2",
 			lockKey:  "userservice:create:lock:user:2",
 			err:      true,
-			kind:     cache.ErrKeyExists,
+			kind:     ErrLockAlreadyHeld,
 		},
 		"invalid_empty_key": {
 			lockKey: "",
