@@ -13,7 +13,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords"
-	"github.com/fjarm/fjarm/api/internal/cache"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
 )
@@ -25,8 +24,6 @@ const (
 	// way, if another operation like update creates the same cache key, it won't collide with the create operation.
 	createUserCacheKey = "userservice:create:idempotency:user"
 	createUserLockKey  = "userservice:create:lock:user"
-	idempotencyKeyTTL  = 24 * time.Hour   // Long-lived to ensure business idempotency
-	idempotencyLockTTL = 30 * time.Second // Short-lived to coordinate concurrent requests
 )
 
 // UserRepository orchestrates persisting a User entity to durable storage like a SQL database.
@@ -128,12 +125,12 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		}
 	}()
 
-	if err != nil && !errors.Is(err, cache.ErrKeyExists) {
+	if err != nil && !errors.Is(err, ErrLockAlreadyHeld) {
 		// This is a real Redis error, not a cache miss.
 		logger.ErrorContext(ctx, "failed to acquire lock in cache", slog.Any(logkeys.Err, err))
 		return ErrOperationFailed
 	}
-	if err != nil && errors.Is(err, cache.ErrKeyExists) {
+	if err != nil && errors.Is(err, ErrLockAlreadyHeld) {
 		// Another process already owns the lock. Retry with a backoff.
 		timeoutCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 		defer cancel()

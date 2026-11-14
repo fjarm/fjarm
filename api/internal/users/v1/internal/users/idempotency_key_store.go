@@ -3,10 +3,13 @@ package users
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/fjarm/fjarm/api/internal/cache"
 	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
 )
+
+const idempotencyKeyTTL = 24 * time.Hour // Long-lived to ensure business idempotency
 
 // fakeRedisIdempotencyKeyStore implements IdempotencyKeyStore backed by a FakeRedisCache.
 type fakeRedisIdempotencyKeyStore struct {

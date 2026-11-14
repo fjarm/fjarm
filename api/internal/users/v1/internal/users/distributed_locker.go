@@ -2,9 +2,14 @@ package users
 
 import (
 	"context"
+	"errors"
+	"time"
 
+	"github.com/fjarm/fjarm/api/internal/cache"
 	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
 )
+
+const idempotencyLockTTL = 30 * time.Second // Short-lived to coordinate concurrent requests
 
 // fakeRedisDistributedLocker implements DistributedLocker backed by a FakeRedisCache.
 type fakeRedisDistributedLocker struct {
@@ -18,7 +23,11 @@ func newFakeRedisDistributedLocker(locker *remote.FakeRedisCache) *fakeRedisDist
 }
 
 func (l *fakeRedisDistributedLocker) lock(ctx context.Context, key string) (string, error) {
-	return l.locker.AcquireLock(ctx, key, idempotencyLockTTL)
+	val, err := l.locker.AcquireLock(ctx, key, idempotencyLockTTL)
+	if errors.Is(err, cache.ErrKeyExists) {
+		return "", ErrLockAlreadyHeld
+	}
+	return val, err
 }
 
 func (l *fakeRedisDistributedLocker) unlock(ctx context.Context, key string, value string) error {
