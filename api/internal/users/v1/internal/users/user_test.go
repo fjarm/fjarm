@@ -4,192 +4,110 @@ import (
 	"errors"
 	"strings"
 	"testing"
-	"time"
+
+	"github.com/google/uuid"
 )
 
-func TestCalculateETag(t *testing.T) {
+func TestNewUser(t *testing.T) {
 	tests := map[string]struct {
-		u1    User
-		u2    User
-		equal bool
+		email          string
+		hashedPassword string
+		wantEmail      string
+		wantPrefix     string
+		wantErr        bool
+		wantErrKind    error
 	}{
-		"valid_two_empty_users": {
-			u1:    User{},
-			u2:    User{},
-			equal: true,
+		"valid_email_and_password": {
+			email:          "foo@bar.com",
+			hashedPassword: "hashed_password_123",
+			wantEmail:      "foo@bar.com",
+			wantPrefix:     "foo",
+			wantErr:        false,
 		},
-		"valid_two_non_empty_users": {
-			u1: User{
-				UserID:    "abc123",
-				UpdatedAt: time.Date(2024, time.December, 12, 12, 12, 12, 12, time.Local),
-				CreatedAt: time.Date(2024, time.December, 12, 12, 12, 7, 12, time.Local),
-			},
-			u2: User{
-				UserID:    "abc123",
-				UpdatedAt: time.Date(2024, time.December, 12, 12, 12, 12, 12, time.Local),
-				CreatedAt: time.Date(2024, time.December, 12, 12, 12, 7, 12, time.Local),
-			},
-			equal: true,
+		"valid_email_with_display_name_is_normalized": {
+			email:          "Foo Bar <foo@bar.com>",
+			hashedPassword: "hashed_password_123",
+			wantEmail:      "foo@bar.com",
+			wantPrefix:     "foo",
+			wantErr:        false,
 		},
-		"valid_different_passwords_similar_users": {
-			u1: User{
-				UserID:   "abc123",
-				Password: "password",
-			},
-			u2: User{
-				UserID:   "abc123",
-				Password: "password1",
-			},
-			equal: true,
+		"invalid_empty_email": {
+			email:          "",
+			hashedPassword: "hashed_password_123",
+			wantErr:        true,
+			wantErrKind:    ErrInvalidArgument,
 		},
-		"valid_nil_and_valid_passwords_similar_users": {
-			u1: User{
-				UserID:   "abc123",
-				Password: "password",
-			},
-			u2: User{
-				UserID: "abc123",
-			},
-			equal: true,
+		"invalid_whitespace_email": {
+			email:          "   ",
+			hashedPassword: "hashed_password_123",
+			wantErr:        true,
+			wantErrKind:    ErrInvalidArgument,
 		},
-		"invalid_two_non_empty_users": {
-			u1: User{
-				UserID:    "abc123",
-				UpdatedAt: time.Now(),
-				CreatedAt: time.Now(),
-			},
-			u2: User{
-				UserID:    "abc123",
-				UpdatedAt: time.Now(),
-				CreatedAt: time.Now(),
-			},
-			equal: false,
+		"invalid_malformed_email": {
+			email:          "not-an-email",
+			hashedPassword: "hashed_password_123",
+			wantErr:        true,
+			wantErrKind:    ErrInvalidArgument,
+		},
+		"invalid_empty_password": {
+			email:          "foo@bar.com",
+			hashedPassword: "",
+			wantErr:        true,
+			wantErrKind:    ErrInvalidArgument,
+		},
+		"invalid_whitespace_password": {
+			email:          "foo@bar.com",
+			hashedPassword: "   ",
+			wantErr:        true,
+			wantErrKind:    ErrInvalidArgument,
 		},
 	}
-	for name, tc := range tests {
-		t.Run(name, func(t *testing.T) {
-			eTag1, _ := calculateETag(&tc.u1)
-			eTag2, _ := calculateETag(&tc.u2)
-			if eTag1 != eTag2 && tc.equal {
-				t.Errorf("unexpected two unequal users")
-			}
-		})
-	}
-}
 
-func TestRedactedUserMessageString(t *testing.T) {
-	tests := map[string]struct {
-		usr      *User
-		contains []string
-		excludes []string
-		err      bool
-	}{
-		"valid_empty_user": {
-			usr:      &User{},
-			contains: []string{"{", "}", "user_id"},
-			excludes: []string{"password", "nil", "full_name", "handle", "email_address", "avatar", "last_updated", "created_at"},
-			err:      false,
-		},
-		"valid_nil_user": {
-			contains: []string{"nil"},
-			excludes: []string{"password", "{", "}", "user_id", "full_name", "handle", "email_address", "avatar"},
-			err:      true,
-		},
-		"valid_valid_password_and_salt_user": {
-			usr: &User{
-				Password: "abc123",
-			},
-			contains: []string{"{", "}", "user_id"},
-			excludes: []string{"password", "full_name", "handle", "email_address", "avatar", "abc123"},
-			err:      false,
-		},
-		"valid_valid_user_id_user": {
-			usr: &User{
-				UserID: "abc123",
-			},
-			contains: []string{"{", "}", "user_id", "abc123"},
-			excludes: []string{"password", "full_name", "handle", "email_address", "avatar"},
-			err:      false,
-		},
-	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			msg, err := storageUserToWireUser(tc.usr)
-			if err != nil && !tc.err {
-				t.Errorf("storageUserToWireUser got an unexpected error: %v", err)
-			}
-			if tc.err && err == nil {
-				t.Errorf("storageUserToWireUser did not return an error")
-			}
-			actual := redactedUserMessageString(msg)
-			for _, s := range tc.contains {
-				if !strings.Contains(actual, s) {
-					t.Errorf("redactedUserMessageString got: %v, must contain: %v", actual, tc.contains)
+			usr, err := NewUser(tc.email, tc.hashedPassword)
+			if tc.wantErr {
+				if err == nil {
+					t.Fatalf("NewUser(%q, %q) expected error, got nil", tc.email, tc.hashedPassword)
 				}
-			}
-			for _, s := range tc.excludes {
-				if strings.Contains(actual, s) {
-					t.Errorf("redactedUserMessageString got: %v, must exclude: %v", actual, tc.excludes)
+				if !errors.Is(err, tc.wantErrKind) {
+					t.Errorf("NewUser(%q, %q) error = %v, want error wrapping %v", tc.email, tc.hashedPassword, err, tc.wantErrKind)
 				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("NewUser(%q, %q) unexpected error: %v", tc.email, tc.hashedPassword, err)
+			}
+			if _, parseErr := uuid.Parse(usr.UserID); parseErr != nil {
+				t.Errorf("NewUser UserID %q is not a valid UUID: %v", usr.UserID, parseErr)
+			}
+			if usr.EmailAddress != tc.wantEmail {
+				t.Errorf("NewUser EmailAddress = %q, want %q", usr.EmailAddress, tc.wantEmail)
+			}
+			if usr.Password != tc.hashedPassword {
+				t.Errorf("NewUser Password = %q, want %q", usr.Password, tc.hashedPassword)
+			}
+			if !strings.HasPrefix(usr.Handle, tc.wantPrefix) || len(usr.Handle) <= len(tc.wantPrefix) {
+				t.Errorf("NewUser Handle = %q, expected prefix %q followed by FNV-64a hash", usr.Handle, tc.wantPrefix)
 			}
 		})
 	}
 }
 
-func TestStorageUserToWireUser_ErrorWrapping(t *testing.T) {
-	_, err := storageUserToWireUser(nil)
-	if !errors.Is(err, ErrInvalidArgument) {
-		t.Errorf("error is not wrapped correctly")
+func TestNewUser_DeterministicHandleAndUniqueID(t *testing.T) {
+	u1, err := NewUser("foo@bar.com", "hashed_pwd_1")
+	if err != nil {
+		t.Fatalf("NewUser unexpected error: %v", err)
 	}
-}
-
-func TestStorageUserToWireUser_EtagCalculation(t *testing.T) {
-	tests := map[string]struct {
-		usr User
-		err bool
-	}{
-		"valid_empty_user": {
-			usr: User{},
-			err: false,
-		},
-		"valid_non_empty_user": {
-			usr: User{
-				UserID: "abc123",
-			},
-			err: false,
-		},
+	u2, err := NewUser("Foo <foo@bar.com>", "hashed_pwd_2")
+	if err != nil {
+		t.Fatalf("NewUser unexpected error: %v", err)
 	}
-	for name, tc := range tests {
-		t.Run(name, func(t *testing.T) {
-			msg, err := storageUserToWireUser(&tc.usr)
-			if err != nil && !tc.err {
-				t.Errorf("storageUserToWireUser got an unexpected error: %v", err)
-			}
-			if tc.err && err == nil {
-				t.Errorf("storageUserToWireUser did not return an error")
-			}
 
-			eTag, err := calculateETag(&tc.usr)
-			if err != nil && !tc.err {
-				t.Errorf("calculateETag got an unexpected error: %v", err)
-			}
-			if tc.err && err == nil {
-				t.Errorf("calculateETag did not return an error")
-			}
-			if msg.GetETag().GetEntityTag() != eTag {
-				t.Errorf(
-					"unexpected etag calculation got %v, want %v",
-					msg.GetETag().GetEntityTag(),
-					eTag,
-				)
-			}
-		})
+	if u1.Handle != u2.Handle {
+		t.Errorf("expected identical handles for same normalized email, got %q and %q", u1.Handle, u2.Handle)
 	}
-}
-
-func TestWireUserToStorageUser_ErrorWrapping(t *testing.T) {
-	_, err := wireUserToStorageUser(nil)
-	if !errors.Is(err, ErrInvalidArgument) {
-		t.Errorf("error is not wrapped correctly")
+	if u1.UserID == u2.UserID {
+		t.Errorf("expected distinct UserIDs across NewUser calls, got %q", u1.UserID)
 	}
 }

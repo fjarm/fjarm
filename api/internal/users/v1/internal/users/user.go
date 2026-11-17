@@ -1,14 +1,13 @@
 package users
 
 import (
-	"crypto/sha256"
-	"encoding/base64"
 	"fmt"
+	"hash/fnv"
+	"net/mail"
+	"strings"
 	"time"
 
-	consistencypb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/consistency/v1"
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
-	"google.golang.org/protobuf/proto"
+	"github.com/google/uuid"
 )
 
 // User defines the entity as represented in persisted storage like a SQL database.
@@ -25,56 +24,30 @@ type User struct {
 	CreatedAt    time.Time `db:"created_at"`
 }
 
-func calculateETag(usr *User) (string, error) {
-	if usr == nil {
-		return "", fmt.Errorf("%w: cannot calculate eTag for nil user", ErrOperationFailed)
+// NewUser validates the supplied email address and hashed password, derives a deterministic handle from the normalized
+// email address, generates a unique user ID, and returns a constructed User domain entity.
+func NewUser(email, hashedPassword string) (*User, error) {
+	if strings.TrimSpace(email) == "" {
+		return nil, fmt.Errorf("%w: email address is required", ErrInvalidArgument)
 	}
-
-	hasher := sha256.New()
-
-	// Note: We're explicitly ordering fields to ensure consistency
-	hasher.Write([]byte(usr.UserID))
-	hasher.Write([]byte(usr.Handle))
-	hasher.Write([]byte(usr.EmailAddress))
-	if usr.Avatar != nil {
-		hasher.Write([]byte(*usr.Avatar))
-	}
-	hasher.Write([]byte(usr.UpdatedAt.UTC().Format(time.RFC3339Nano)))
-	hasher.Write([]byte(usr.CreatedAt.UTC().Format(time.RFC3339Nano)))
-
-	// Convert hash to base64 for a shorter string representation
-	// Use RawURLEncoding to ensure URL-safe characters
-	return base64.RawURLEncoding.EncodeToString(hasher.Sum(nil)), nil
-}
-
-func storageUserToWireUser(storageUser *User) (*userspb.User, error) {
-	if storageUser == nil {
-		return nil, fmt.Errorf("%w: cannot convert nil user to user message", ErrInvalidArgument)
-	}
-	userMsg := userspb.User{
-		UserId:       &userspb.UserId{UserId: &storageUser.UserID},
-		Handle:       &userspb.UserHandle{Handle: &storageUser.Handle},
-		EmailAddress: &userspb.UserEmailAddress{EmailAddress: &storageUser.EmailAddress},
-		Avatar:       &userspb.UserAvatar{Avatar: storageUser.Avatar},
-	}
-	etag, err := calculateETag(storageUser)
+	addr, err := mail.ParseAddress(email)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("%w: invalid email address", ErrInvalidArgument)
 	}
-	userMsg.SetETag(&consistencypb.EntityTag{EntityTag: &etag})
+	if strings.TrimSpace(hashedPassword) == "" {
+		return nil, fmt.Errorf("%w: password is required", ErrInvalidArgument)
+	}
 
-	return &userMsg, nil
-}
+	parts := strings.Split(addr.Address, "@")
+	localName := parts[0]
+	h := fnv.New64a()
+	h.Write([]byte(addr.Address))
+	username := fmt.Sprintf("%s%d", localName, h.Sum64())
 
-func wireUserToStorageUser(msg *userspb.User) (*User, error) {
-	if msg == nil {
-		return nil, fmt.Errorf("%w: cannot convert nil user message to user", ErrInvalidArgument)
-	}
-	usr := User{
-		UserID:       msg.GetUserId().GetUserId(),
-		Handle:       msg.GetHandle().GetHandle(),
-		EmailAddress: msg.GetEmailAddress().GetEmailAddress(),
-		Avatar:       proto.String(msg.GetAvatar().GetAvatar()),
-	}
-	return &usr, nil
+	return &User{
+		UserID:       uuid.NewString(),
+		Handle:       username,
+		EmailAddress: addr.Address,
+		Password:     hashedPassword,
+	}, nil
 }
