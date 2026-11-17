@@ -20,6 +20,7 @@ You operate in a hierarchical environment. Before executing any task in a specif
 * **Planning via Issue Artifacts**:
   * Create an issue artifact of type `plan` named `<issue-number>-short-description-implementation-plan` if one does not already exist on the target issue using:
     `gh issue artifact create <issue-number> --type plan --name "<issue-number>-short-description-implementation-plan" --body-file <file-path>` (Note: pass "-" as the argument to `--body-file` to read from standard input).
+  * If the plan contents are created from a file and not standard input (which should only happen if the `gh` CLI is unavailable and the plan is excessively long to be placed in standard input), place the contents of the file in `./docs/plans`.
 * **Progress Tracking**:
   * When using a Markdown checklist to list tasks, use `- [x]` to indicate a completed task.
   * Use `- [/]` to indicate a blocked task.
