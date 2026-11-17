@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"net/mail"
 	"strings"
 	"time"
 
@@ -79,8 +80,16 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	if strings.TrimSpace(idemKey) == "" {
 		return fmt.Errorf("%w: idempotency key is required", ErrInvalidArgument)
 	}
-	if _, err := uuid.Parse(idemKey); err != nil {
+	_, err := uuid.Parse(idemKey)
+	if err != nil {
 		return fmt.Errorf("%w: idempotency key must be a valid UUID", ErrInvalidArgument)
+	}
+	if strings.TrimSpace(email) == "" {
+		return fmt.Errorf("%w: email address is required", ErrInvalidArgument)
+	}
+	addr, err := mail.ParseAddress(email)
+	if err != nil {
+		return fmt.Errorf("%w: invalid email address", ErrInvalidArgument)
 	}
 	if strings.TrimSpace(password) == "" {
 		return fmt.Errorf("%w: password is required", ErrInvalidArgument)
@@ -176,7 +185,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		return ErrOperationFailed
 	}
 
-	user, err := NewUser(email, pwd)
+	user, err := NewUser(addr.Address, pwd)
 	if err != nil {
 		return err
 	}
