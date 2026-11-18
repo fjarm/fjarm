@@ -55,13 +55,13 @@ func TestCalculateETag(t *testing.T) {
 		"invalid_two_non_empty_users": {
 			u1: User{
 				UserID:    "abc123",
-				UpdatedAt: time.Now(),
-				CreatedAt: time.Now(),
+				UpdatedAt: time.Date(2024, time.December, 12, 12, 12, 12, 12, time.Local),
+				CreatedAt: time.Date(2024, time.December, 12, 12, 12, 7, 12, time.Local),
 			},
 			u2: User{
 				UserID:    "abc123",
 				UpdatedAt: time.Now(),
-				CreatedAt: time.Now(),
+				CreatedAt: time.Date(2024, time.December, 12, 12, 12, 7, 12, time.Local),
 			},
 			equal: false,
 		},
@@ -72,6 +72,9 @@ func TestCalculateETag(t *testing.T) {
 			eTag2, _ := calculateETag(&tc.u2)
 			if eTag1 != eTag2 && tc.equal {
 				t.Errorf("unexpected two unequal users")
+			}
+			if eTag1 == eTag2 && !tc.equal {
+				t.Errorf("unexpected two equal users")
 			}
 		})
 	}
