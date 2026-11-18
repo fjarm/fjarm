@@ -5,6 +5,9 @@ import (
 	"strings"
 	"testing"
 	"time"
+
+	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
+	"google.golang.org/protobuf/proto"
 )
 
 func TestCalculateETag(t *testing.T) {
@@ -194,5 +197,56 @@ func TestWireUserToStorageUser_ErrorWrapping(t *testing.T) {
 	_, err := wireUserToStorageUser(nil)
 	if !errors.Is(err, ErrInvalidArgument) {
 		t.Errorf("error is not wrapped correctly")
+	}
+}
+
+func TestWireUserToStorageUser_Avatar(t *testing.T) {
+	tests := map[string]struct {
+		msg        *userspb.User
+		wantAvatar *string
+	}{
+		"nil_avatar_submessage": {
+			msg:        &userspb.User{},
+			wantAvatar: nil,
+		},
+		"empty_avatar_submessage_with_unset_field": {
+			msg: &userspb.User{
+				Avatar: &userspb.UserAvatar{},
+			},
+			wantAvatar: nil,
+		},
+		"explicit_empty_string_avatar": {
+			msg: &userspb.User{
+				Avatar: &userspb.UserAvatar{Avatar: proto.String("")},
+			},
+			wantAvatar: proto.String(""),
+		},
+		"valid_non_empty_avatar_url": {
+			msg: &userspb.User{
+				Avatar: &userspb.UserAvatar{Avatar: proto.String("https://fjarm.xyz/media/abcd1234/v1.png")},
+			},
+			wantAvatar: proto.String("https://fjarm.xyz/media/abcd1234/v1.png"),
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			usr, err := wireUserToStorageUser(tc.msg)
+			if err != nil {
+				t.Fatalf("wireUserToStorageUser got an unexpected error: %v", err)
+			}
+			if tc.wantAvatar == nil {
+				if usr.Avatar != nil {
+					t.Errorf("wireUserToStorageUser Avatar = %q, want nil", *usr.Avatar)
+				}
+				return
+			}
+			if usr.Avatar == nil {
+				t.Fatalf("wireUserToStorageUser Avatar = nil, want %q", *tc.wantAvatar)
+			}
+			if *usr.Avatar != *tc.wantAvatar {
+				t.Errorf("wireUserToStorageUser Avatar = %q, want %q", *usr.Avatar, *tc.wantAvatar)
+			}
+		})
 	}
 }

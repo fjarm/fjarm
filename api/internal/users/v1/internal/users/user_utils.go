@@ -58,11 +58,15 @@ func wireUserToStorageUser(msg *userspb.User) (*User, error) {
 	if msg == nil {
 		return nil, fmt.Errorf("%w: cannot convert nil user message to user", ErrInvalidArgument)
 	}
+	var avatar *string
+	if msg.GetAvatar().HasAvatar() {
+		avatar = proto.String(msg.GetAvatar().GetAvatar())
+	}
 	usr := User{
 		UserID:       msg.GetUserId().GetUserId(),
 		Handle:       msg.GetHandle().GetHandle(),
 		EmailAddress: msg.GetEmailAddress().GetEmailAddress(),
-		Avatar:       proto.String(msg.GetAvatar().GetAvatar()),
+		Avatar:       avatar,
 	}
 	return &usr, nil
 }
