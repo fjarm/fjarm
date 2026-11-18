@@ -38,16 +38,17 @@ func NewUser(email, hashedPassword string) (*User, error) {
 		return nil, fmt.Errorf("%w: password is required", ErrInvalidArgument)
 	}
 
-	parts := strings.Split(addr.Address, "@")
+	normalizedEmail := strings.ToLower(addr.Address)
+	parts := strings.Split(normalizedEmail, "@")
 	localName := parts[0]
 	h := fnv.New64a()
-	h.Write([]byte(addr.Address))
+	h.Write([]byte(normalizedEmail))
 	username := fmt.Sprintf("%s%d", localName, h.Sum64())
 
 	return &User{
 		UserID:       uuid.NewString(),
 		Handle:       username,
-		EmailAddress: addr.Address,
+		EmailAddress: normalizedEmail,
 		Password:     hashedPassword,
 	}, nil
 }

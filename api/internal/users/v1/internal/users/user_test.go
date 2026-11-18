@@ -31,6 +31,13 @@ func TestNewUser(t *testing.T) {
 			wantPrefix:     "foo",
 			wantErr:        false,
 		},
+		"valid_email_with_mixed_case_is_normalized": {
+			email:          "Foo@Bar.com",
+			hashedPassword: "hashed_password_123",
+			wantEmail:      "foo@bar.com",
+			wantPrefix:     "foo",
+			wantErr:        false,
+		},
 		"invalid_empty_email": {
 			email:          "",
 			hashedPassword: "hashed_password_123",
@@ -99,7 +106,7 @@ func TestNewUser_DeterministicHandleAndUniqueID(t *testing.T) {
 	if err != nil {
 		t.Fatalf("NewUser unexpected error: %v", err)
 	}
-	u2, err := NewUser("Foo <foo@bar.com>", "hashed_pwd_2")
+	u2, err := NewUser("Foo <Foo@Bar.com>", "hashed_pwd_2")
 	if err != nil {
 		t.Fatalf("NewUser unexpected error: %v", err)
 	}
