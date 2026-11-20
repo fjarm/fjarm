@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"hash/fnv"
 	"log/slog"
 	"net/mail"
 	"strings"
@@ -81,7 +80,8 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	if strings.TrimSpace(idemKey) == "" {
 		return fmt.Errorf("%w: idempotency key is required", ErrInvalidArgument)
 	}
-	if _, err := uuid.Parse(idemKey); err != nil {
+	_, err := uuid.Parse(idemKey)
+	if err != nil {
 		return fmt.Errorf("%w: idempotency key must be a valid UUID", ErrInvalidArgument)
 	}
 	if strings.TrimSpace(email) == "" {
@@ -175,12 +175,6 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		return ErrOperationFailed
 	}
 
-	parts := strings.Split(addr.Address, "@")
-	localName := parts[0]
-	h := fnv.New64a()
-	h.Write([]byte(addr.Address))
-	username := fmt.Sprintf("%s%d", localName, h.Sum64())
-
 	pwd, err := passwords.HashPassword(password)
 	if err != nil {
 		logger.ErrorContext(
@@ -191,14 +185,12 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		return ErrOperationFailed
 	}
 
-	user := User{
-		UserID:       uuid.NewString(),
-		EmailAddress: addr.Address,
-		Password:     pwd,
-		Handle:       username,
+	user, err := NewUser(addr.Address, pwd)
+	if err != nil {
+		return err
 	}
 
-	err = uc.repo.create(ctx, &user)
+	err = uc.repo.create(ctx, user)
 	if err != nil && errors.Is(err, ErrAlreadyExists) {
 		logger.WarnContext(ctx, "attempted to create duplicate user", slog.Any(logkeys.Err, err))
 	} else if err != nil {
