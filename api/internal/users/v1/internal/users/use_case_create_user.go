@@ -2,9 +2,10 @@ package users
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"errors"
 	"fmt"
-	"hash/fnv"
 	"log/slog"
 	"net/mail"
 	"strings"
@@ -175,11 +176,16 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		return ErrOperationFailed
 	}
 
-	parts := strings.Split(addr.Address, "@")
-	localName := parts[0]
-	h := fnv.New64a()
-	h.Write([]byte(addr.Address))
-	username := fmt.Sprintf("%s%d", localName, h.Sum64())
+	var b [8]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		logger.ErrorContext(
+			ctx,
+			"failed to generate random user handle",
+			slog.Any(logkeys.Err, err),
+		)
+		return ErrOperationFailed
+	}
+	username := fmt.Sprintf("user_%s", hex.EncodeToString(b[:]))
 
 	pwd, err := passwords.HashPassword(password)
 	if err != nil {
