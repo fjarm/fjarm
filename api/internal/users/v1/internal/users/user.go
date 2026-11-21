@@ -1,8 +1,9 @@
 package users
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
-	"hash/fnv"
 	"net/mail"
 	"strings"
 	"time"
@@ -39,11 +40,12 @@ func NewUser(email, hashedPassword string) (*User, error) {
 	}
 
 	normalizedEmail := strings.ToLower(addr.Address)
-	parts := strings.Split(normalizedEmail, "@")
-	localName := parts[0]
-	h := fnv.New64a()
-	h.Write([]byte(normalizedEmail))
-	username := fmt.Sprintf("%s%d", localName, h.Sum64())
+	var b [16]byte
+	_, err = rand.Read(b[:])
+	if err != nil {
+		return nil, ErrOperationFailed
+	}
+	username := fmt.Sprintf("user_%s", hex.EncodeToString(b[:]))
 
 	return &User{
 		UserID:       uuid.NewString(),
