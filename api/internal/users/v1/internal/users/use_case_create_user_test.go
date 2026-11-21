@@ -186,7 +186,7 @@ func TestUserUseCase_createUser_Handle(t *testing.T) {
 			for _, u := range repo.users {
 				seenHandles[u.Handle] = struct{}{}
 				for _, exp := range tc.expected {
-					if !strings.Contains(u.Handle, exp) {
+					if !strings.HasPrefix(u.Handle, exp) {
 						t.Errorf("createUser handle got: %v, want: %v", u.Handle, tc.expected)
 					}
 				}
