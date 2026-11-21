@@ -10,9 +10,6 @@ import (
 	"strings"
 	"testing"
 
-	userspb "buf.build/gen/go/fjarm/fjarm/protocolbuffers/go/fjarm/users/v1"
-	"google.golang.org/protobuf/proto"
-
 	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
 )
 
@@ -25,210 +22,91 @@ func TestUserUseCase_createUser(t *testing.T) {
 	uc := NewUserUseCase(logger, idemStore, distLocker, repo)
 
 	tests := map[string]struct {
-		reqs []*userspb.CreateUserRequest
-		errs []bool
-		kind []error
+		idemKeys  []string
+		emails    []string
+		passwords []string
+		errs      []bool
+		kind      []error
 	}{
 		"validation_one_valid_user": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{false},
-			kind: []error{nil},
+			idemKeys:  []string{"123e4567-e89b-12d3-a456-426614174999"},
+			emails:    []string{"foo1@bar.com"},
+			passwords: []string{"password"},
+			errs:      []bool{false},
+			kind:      []error{nil},
 		},
 		"validation_one_nil_user": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User:           nil, // The User field is required but is nil here.
-				},
-			},
-			errs: []bool{true},
-			kind: []error{ErrInvalidArgument},
+			idemKeys:  []string{"123e4567-e89b-12d3-a456-426614174999"},
+			emails:    []string{""},
+			passwords: []string{""},
+			errs:      []bool{true},
+			kind:      []error{ErrInvalidArgument},
 		},
 		"validation_one_no_password_user": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{},
-					},
-				},
-			},
-			errs: []bool{true},
-			kind: []error{ErrInvalidArgument},
-		},
-		"validation_one_unset_idempotency_key_request": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{true},
-			kind: []error{ErrInvalidArgument},
+			idemKeys:  []string{"123e4567-e89b-12d3-a456-426614174999"},
+			emails:    []string{"foo1@bar.com"},
+			passwords: []string{""},
+			errs:      []bool{true},
+			kind:      []error{ErrInvalidArgument},
 		},
 		"validation_one_no_idempotency_key_request": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String(""),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{true},
-			kind: []error{ErrInvalidArgument},
+			idemKeys:  []string{""},
+			emails:    []string{"foo1@bar.com"},
+			passwords: []string{"password"},
+			errs:      []bool{true},
+			kind:      []error{ErrInvalidArgument},
 		},
 		"validation_one_invalid_idempotency_key_request": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("not-a-uuid"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{true},
-			kind: []error{ErrInvalidArgument},
+			idemKeys:  []string{"not-a-uuid"},
+			emails:    []string{"foo1@bar.com"},
+			passwords: []string{"password"},
+			errs:      []bool{true},
+			kind:      []error{ErrInvalidArgument},
 		},
 		"validation_one_no_email_user": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{true},
-			kind: []error{ErrInvalidArgument},
+			idemKeys:  []string{"123e4567-e89b-12d3-a456-426614174999"},
+			emails:    []string{""},
+			passwords: []string{"password"},
+			errs:      []bool{true},
+			kind:      []error{ErrInvalidArgument},
 		},
 		"validation_one_invalid_email_user": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("not-an-email")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{true},
-			kind: []error{ErrInvalidArgument},
+			idemKeys:  []string{"123e4567-e89b-12d3-a456-426614174999"},
+			emails:    []string{"not-an-email"},
+			passwords: []string{"password"},
+			errs:      []bool{true},
+			kind:      []error{ErrInvalidArgument},
 		},
 		"idempotency_two_distinct_valid_users": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo1@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key.
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4568-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper2")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{false, false},
-			kind: []error{nil, nil},
+			idemKeys:  []string{"123e4567-e89b-12d3-a456-426614174999", "123e4567-e89b-12d3-a456-426614174888"},
+			emails:    []string{"foo1@bar.com", "foo@bar.com"},
+			passwords: []string{"password", "password"},
+			errs:      []bool{false, false},
+			kind:      []error{nil, nil},
 		},
 		"idempotency_two_identical_email_users": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper1")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key - ends with 888 instead of 999.
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")}, // User ID here matches the user ID in the request message.
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-			},
-			errs: []bool{false, false},
-			kind: []error{nil, nil},
+			idemKeys:  []string{"123e4567-e89b-12d3-a456-426614174999", "123e4567-e89b-12d3-a456-426614174888"},
+			emails:    []string{"foo@bar.com", "foo@bar.com"},
+			passwords: []string{"password", "password"},
+			errs:      []bool{false, false},
+			kind:      []error{nil, nil},
 		},
 		"idempotency_retry_identical_email_user_with_same_idempotency_key": {
-			reqs: []*userspb.CreateUserRequest{
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper1")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Different idempotency key triggers ErrAlreadyExists internally and caches the key.
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
-				{
-					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"), // Retrying with the same idempotency key hits the idempotency cache.
-					User: &userspb.User{
-						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")},
-						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
-						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
-						Password:     &userspb.UserPassword{Password: proto.String("password")},
-					},
-				},
+			idemKeys: []string{
+				"123e4567-e89b-12d3-a456-426614174999",
+				"123e4567-e89b-12d3-a456-426614174888",
+				"123e4567-e89b-12d3-a456-426614174888",
 			},
-			errs: []bool{false, false, false},
-			kind: []error{nil, nil, nil},
+			emails:    []string{"foo@bar.com", "foo@bar.com", "foo@bar.com"},
+			passwords: []string{"password", "password", "password"},
+			errs:      []bool{false, false, false},
+			kind:      []error{nil, nil, nil},
 		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
-			for i, req := range tc.reqs {
-				err := uc.createUser(context.Background(), req.GetIdempotencyKey(), req.GetUser().GetEmailAddress().GetEmailAddress(), req.GetUser().GetPassword().GetPassword())
+			for i := range tc.idemKeys {
+				err := uc.createUser(context.Background(), tc.idemKeys[i], tc.emails[i], tc.passwords[i])
 				if err != nil && !tc.errs[i] {
 					t.Errorf("createUser got an unexpected error: %v", err)
 				}
@@ -239,7 +117,7 @@ func TestUserUseCase_createUser(t *testing.T) {
 					t.Errorf("createUser got an unexpected error type: %v", err)
 				}
 				if !tc.errs[i] {
-					idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, req.GetIdempotencyKey())
+					idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, tc.idemKeys[i])
 					dup, dupErr := idemStore.isDuplicate(context.Background(), idempotencyKey)
 					if dupErr != nil {
 						t.Errorf("isDuplicate got an unexpected error: %v", dupErr)
@@ -264,7 +142,6 @@ func TestUserUseCase_createUser_Handle(t *testing.T) {
 		expected          []string
 		excluded          []string
 		wantUniqueHandles int
-		errs              []bool
 	}{
 		"valid_single_user_handle_excludes_email_local_name": {
 			idemKeys:          []string{"123e4567-e89b-12d3-a456-426614174999"},
@@ -273,7 +150,6 @@ func TestUserUseCase_createUser_Handle(t *testing.T) {
 			expected:          []string{"user_"},
 			excluded:          []string{"foo1", "bar.com"},
 			wantUniqueHandles: 1,
-			errs:              []bool{false},
 		},
 		"valid_two_distinct_users_generate_unique_handles": {
 			idemKeys:          []string{"123e4567-e89b-12d3-a456-426614174999", "123e4567-e89b-12d3-a456-426614174888"},
@@ -282,42 +158,6 @@ func TestUserUseCase_createUser_Handle(t *testing.T) {
 			expected:          []string{"user_"},
 			excluded:          []string{"foo1", "foo2", "bar.com"},
 			wantUniqueHandles: 2,
-			errs:              []bool{false, false},
-		},
-		"invalid_empty_idempotency_key": {
-			idemKeys:          []string{""},
-			emails:            []string{"foo1@bar.com"},
-			passwords:         []string{"password"},
-			wantUniqueHandles: 0,
-			errs:              []bool{true},
-		},
-		"invalid_malformed_idempotency_key": {
-			idemKeys:          []string{"not-a-uuid"},
-			emails:            []string{"foo1@bar.com"},
-			passwords:         []string{"password"},
-			wantUniqueHandles: 0,
-			errs:              []bool{true},
-		},
-		"invalid_empty_email": {
-			idemKeys:          []string{"123e4567-e89b-12d3-a456-426614174999"},
-			emails:            []string{""},
-			passwords:         []string{"password"},
-			wantUniqueHandles: 0,
-			errs:              []bool{true},
-		},
-		"invalid_malformed_email": {
-			idemKeys:          []string{"123e4567-e89b-12d3-a456-426614174999"},
-			emails:            []string{"not-an-email"},
-			passwords:         []string{"password"},
-			wantUniqueHandles: 0,
-			errs:              []bool{true},
-		},
-		"invalid_empty_password": {
-			idemKeys:          []string{"123e4567-e89b-12d3-a456-426614174999"},
-			emails:            []string{"foo1@bar.com"},
-			passwords:         []string{""},
-			wantUniqueHandles: 0,
-			errs:              []bool{true},
 		},
 	}
 
@@ -337,11 +177,8 @@ func TestUserUseCase_createUser_Handle(t *testing.T) {
 					tc.emails[i],
 					tc.passwords[i],
 				)
-				if err != nil && !tc.errs[i] {
+				if err != nil {
 					t.Errorf("createUser got an unexpected error: %v", err)
-				}
-				if err == nil && tc.errs[i] {
-					t.Errorf("createUser expected an error but got nil")
 				}
 			}
 
