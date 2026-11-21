@@ -25,8 +25,8 @@ type User struct {
 	CreatedAt    time.Time `db:"created_at"`
 }
 
-// NewUser validates the supplied email address and hashed password, derives a deterministic handle from the normalized
-// email address, generates a unique user ID, and returns a constructed User domain entity.
+// NewUser validates and normalizes the supplied email address, validates the hashed password, generates a random user
+// handle and unique user ID, and returns a constructed User domain entity.
 func NewUser(email, hashedPassword string) (*User, error) {
 	if strings.TrimSpace(email) == "" {
 		return nil, fmt.Errorf("%w: email address is required", ErrInvalidArgument)
