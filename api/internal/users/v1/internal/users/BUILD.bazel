@@ -12,7 +12,7 @@ go_library(
         "user.go",
         "user_repository.go",
         "user_repository_create_user.go",
-        "users_utils.go",
+        "user_utils.go",
     ],
     importpath = "github.com/fjarm/fjarm/api/internal/users/v1/internal/users",
     visibility = ["//api:__subpackages__"],
@@ -41,6 +41,7 @@ go_test(
         "idempotency_key_store_test.go",
         "use_case_create_user_test.go",
         "user_test.go",
+        "user_utils_test.go",
     ],
     embed = [":users"],
     deps = [
@@ -51,6 +52,7 @@ go_test(
         "@build_buf_gen_go_fjarm_fjarm_protocolbuffers_go//fjarm/users/v1:users",
         "@build_buf_go_protovalidate//:protovalidate",
         "@com_connectrpc_connect//:connect",
+        "@com_github_google_uuid//:uuid",
         "@org_golang_google_protobuf//proto",
     ],
 )

@@ -2,8 +2,6 @@ package users
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -82,7 +80,8 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 	if strings.TrimSpace(idemKey) == "" {
 		return fmt.Errorf("%w: idempotency key is required", ErrInvalidArgument)
 	}
-	if _, err := uuid.Parse(idemKey); err != nil {
+	_, err := uuid.Parse(idemKey)
+	if err != nil {
 		return fmt.Errorf("%w: idempotency key must be a valid UUID", ErrInvalidArgument)
 	}
 	if strings.TrimSpace(email) == "" {
@@ -176,17 +175,6 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		return ErrOperationFailed
 	}
 
-	var b [16]byte
-	if _, err := rand.Read(b[:]); err != nil {
-		logger.ErrorContext(
-			ctx,
-			"failed to generate random user handle",
-			slog.Any(logkeys.Err, err),
-		)
-		return ErrOperationFailed
-	}
-	username := fmt.Sprintf("user_%s", hex.EncodeToString(b[:]))
-
 	pwd, err := passwords.HashPassword(password)
 	if err != nil {
 		logger.ErrorContext(
@@ -197,14 +185,12 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		return ErrOperationFailed
 	}
 
-	user := User{
-		UserID:       uuid.NewString(),
-		EmailAddress: addr.Address,
-		Password:     pwd,
-		Handle:       username,
+	user, err := NewUser(addr.Address, pwd)
+	if err != nil {
+		return err
 	}
 
-	err = uc.repo.create(ctx, &user)
+	err = uc.repo.create(ctx, user)
 	if err != nil && errors.Is(err, ErrAlreadyExists) {
 		logger.WarnContext(ctx, "attempted to create duplicate user", slog.Any(logkeys.Err, err))
 	} else if err != nil {
