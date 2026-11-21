@@ -176,7 +176,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		return ErrOperationFailed
 	}
 
-	var b [8]byte
+	var b [16]byte
 	if _, err := rand.Read(b[:]); err != nil {
 		logger.ErrorContext(
 			ctx,

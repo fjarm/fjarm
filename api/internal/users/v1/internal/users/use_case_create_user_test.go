@@ -359,7 +359,7 @@ func TestUserUseCase_createUser_Handle(t *testing.T) {
 					}
 				}
 				suffix := strings.TrimPrefix(u.Handle, "user_")
-				if decoded, err := hex.DecodeString(suffix); err != nil || len(decoded) != 8 {
+				if decoded, err := hex.DecodeString(suffix); err != nil || len(decoded) != 16 {
 					t.Errorf("createUser handle got invalid hex suffix %q: %v", suffix, err)
 				}
 			}
