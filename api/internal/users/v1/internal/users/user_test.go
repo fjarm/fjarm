@@ -1,6 +1,7 @@
 package users
 
 import (
+	"encoding/hex"
 	"errors"
 	"strings"
 	"testing"
@@ -21,21 +22,21 @@ func TestNewUser(t *testing.T) {
 			email:          "foo@bar.com",
 			hashedPassword: "hashed_password_123",
 			wantEmail:      "foo@bar.com",
-			wantPrefix:     "foo",
+			wantPrefix:     "user_",
 			wantErr:        false,
 		},
 		"valid_email_with_display_name_is_normalized": {
 			email:          "Foo Bar <foo@bar.com>",
 			hashedPassword: "hashed_password_123",
 			wantEmail:      "foo@bar.com",
-			wantPrefix:     "foo",
+			wantPrefix:     "user_",
 			wantErr:        false,
 		},
 		"valid_email_with_mixed_case_is_normalized": {
 			email:          "Foo@Bar.com",
 			hashedPassword: "hashed_password_123",
 			wantEmail:      "foo@bar.com",
-			wantPrefix:     "foo",
+			wantPrefix:     "user_",
 			wantErr:        false,
 		},
 		"invalid_empty_email": {
@@ -94,27 +95,55 @@ func TestNewUser(t *testing.T) {
 			if usr.Password != tc.hashedPassword {
 				t.Errorf("NewUser Password = %q, want %q", usr.Password, tc.hashedPassword)
 			}
-			if !strings.HasPrefix(usr.Handle, tc.wantPrefix) || len(usr.Handle) <= len(tc.wantPrefix) {
-				t.Errorf("NewUser Handle = %q, expected prefix %q followed by FNV-64a hash", usr.Handle, tc.wantPrefix)
+			if !strings.HasPrefix(usr.Handle, tc.wantPrefix) {
+				t.Errorf("NewUser Handle = %q, expected prefix %q", usr.Handle, tc.wantPrefix)
+			}
+			suffix := strings.TrimPrefix(usr.Handle, tc.wantPrefix)
+			if decoded, hexErr := hex.DecodeString(suffix); hexErr != nil || len(decoded) != 16 {
+				t.Errorf("NewUser Handle = %q, expected 16-byte hex suffix, got %q (err: %v)", usr.Handle, suffix, hexErr)
 			}
 		})
 	}
 }
 
-func TestNewUser_DeterministicHandleAndUniqueID(t *testing.T) {
-	u1, err := NewUser("foo@bar.com", "hashed_pwd_1")
-	if err != nil {
-		t.Fatalf("NewUser unexpected error: %v", err)
-	}
-	u2, err := NewUser("Foo <Foo@Bar.com>", "hashed_pwd_2")
-	if err != nil {
-		t.Fatalf("NewUser unexpected error: %v", err)
+func TestNewUser_UniqueHandleAndUniqueID(t *testing.T) {
+	tests := map[string]struct {
+		emails          []string
+		hashedPasswords []string
+		wantUniqueCount int
+	}{
+		"valid_identical_normalized_emails_produce_unique_handles_and_ids": {
+			emails:          []string{"foo@bar.com", "Foo <Foo@Bar.com>"},
+			hashedPasswords: []string{"hashed_pwd_1", "hashed_pwd_2"},
+			wantUniqueCount: 2,
+		},
+		"valid_distinct_emails_produce_unique_handles_and_ids": {
+			emails:          []string{"foo1@bar.com", "foo2@bar.com"},
+			hashedPasswords: []string{"hashed_pwd_1", "hashed_pwd_2"},
+			wantUniqueCount: 2,
+		},
 	}
 
-	if u1.Handle != u2.Handle {
-		t.Errorf("expected identical handles for same normalized email, got %q and %q", u1.Handle, u2.Handle)
-	}
-	if u1.UserID == u2.UserID {
-		t.Errorf("expected distinct UserIDs across NewUser calls, got %q", u1.UserID)
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			seenHandles := make(map[string]struct{})
+			seenUserIDs := make(map[string]struct{})
+
+			for i := range tc.emails {
+				usr, err := NewUser(tc.emails[i], tc.hashedPasswords[i])
+				if err != nil {
+					t.Fatalf("NewUser(%q, %q) unexpected error: %v", tc.emails[i], tc.hashedPasswords[i], err)
+				}
+				seenHandles[usr.Handle] = struct{}{}
+				seenUserIDs[usr.UserID] = struct{}{}
+			}
+
+			if len(seenHandles) != tc.wantUniqueCount {
+				t.Errorf("NewUser unique handles got: %d, want: %d", len(seenHandles), tc.wantUniqueCount)
+			}
+			if len(seenUserIDs) != tc.wantUniqueCount {
+				t.Errorf("NewUser unique UserIDs got: %d, want: %d", len(seenUserIDs), tc.wantUniqueCount)
+			}
+		})
 	}
 }

@@ -86,6 +86,30 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 			errs: []bool{true},
 			code: []connect.Code{connect.CodeInvalidArgument},
 		},
+		"validation_one_nil_user_field": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
+					User:           nil,
+				},
+			},
+			errs: []bool{true},
+			code: []connect.Code{connect.CodeInvalidArgument},
+		},
+		"validation_one_unset_idempotency_key_user": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+			},
+			errs: []bool{true},
+			code: []connect.Code{connect.CodeInvalidArgument},
+		},
 		"validation_one_no_idempotency_key_user": {
 			reqs: []*userspb.CreateUserRequest{
 				{
@@ -95,6 +119,21 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
 						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
 						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+			},
+			errs: []bool{true},
+			code: []connect.Code{connect.CodeInvalidArgument},
+		},
+		"validation_one_no_password_user": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{},
 					},
 				},
 			},
@@ -164,6 +203,39 @@ func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
 				},
 			},
 			errs: []bool{false, false},
+			code: []connect.Code{},
+		},
+		"idempotency_retry_identical_email_user_with_same_idempotency_key": {
+			reqs: []*userspb.CreateUserRequest{
+				{
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174999"),
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174000")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper1")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+				{
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"),
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+				{
+					IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174888"),
+					User: &userspb.User{
+						UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174999")},
+						EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("foo@bar.com")},
+						Handle:       &userspb.UserHandle{Handle: proto.String("gleeper")},
+						Password:     &userspb.UserPassword{Password: proto.String("password")},
+					},
+				},
+			},
+			errs: []bool{false, false, false},
 			code: []connect.Code{},
 		},
 	}

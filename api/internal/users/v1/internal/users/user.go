@@ -1,8 +1,9 @@
 package users
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
-	"hash/fnv"
 	"net/mail"
 	"strings"
 	"time"
@@ -24,8 +25,8 @@ type User struct {
 	CreatedAt    time.Time `db:"created_at"`
 }
 
-// NewUser validates the supplied email address and hashed password, derives a deterministic handle from the normalized
-// email address, generates a unique user ID, and returns a constructed User domain entity.
+// NewUser validates and normalizes the supplied email address, validates the hashed password, generates a random user
+// handle and unique user ID, and returns a constructed User domain entity.
 func NewUser(email, hashedPassword string) (*User, error) {
 	if strings.TrimSpace(email) == "" {
 		return nil, fmt.Errorf("%w: email address is required", ErrInvalidArgument)
@@ -39,11 +40,12 @@ func NewUser(email, hashedPassword string) (*User, error) {
 	}
 
 	normalizedEmail := strings.ToLower(addr.Address)
-	parts := strings.Split(normalizedEmail, "@")
-	localName := parts[0]
-	h := fnv.New64a()
-	h.Write([]byte(normalizedEmail))
-	username := fmt.Sprintf("%s%d", localName, h.Sum64())
+	var b [16]byte
+	_, err = rand.Read(b[:])
+	if err != nil {
+		return nil, ErrOperationFailed
+	}
+	username := fmt.Sprintf("user_%s", hex.EncodeToString(b[:]))
 
 	return &User{
 		UserID:       uuid.NewString(),
