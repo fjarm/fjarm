@@ -3,6 +3,7 @@ package users
 import (
 	"bytes"
 	"context"
+	"errors"
 	"log/slog"
 	"net/http"
 	"net/http/httptest"
@@ -21,8 +22,9 @@ import (
 )
 
 var (
-	srv *httptest.Server = nil
-	buf bytes.Buffer
+	srv       *httptest.Server = nil
+	buf       bytes.Buffer
+	pwdHasher *fakePasswordHasher
 )
 
 func TestMain(m *testing.M) {
@@ -45,7 +47,8 @@ func TestMain(m *testing.M) {
 	repo := newUserStore()
 	idemStore := newFakeRedisIdempotencyKeyStore(cache)
 	distLocker := newFakeRedisDistributedLocker(cache)
-	dom := NewUserUseCase(logger, idemStore, distLocker, repo)
+	pwdHasher = newFakePasswordHasher()
+	dom := NewUserUseCase(logger, idemStore, distLocker, repo, pwdHasher)
 	connectRPCHandler := NewConnectRPCHandler(logger, dom, validator)
 	path, handler := usersv1connect.NewUserServiceHandler(connectRPCHandler)
 
@@ -351,5 +354,49 @@ func TestConnectRPCHandler_CreateUser_LogOutput(t *testing.T) {
 				}
 			}
 		})
+	}
+}
+
+func TestConnectRPCHandler_CreateUser_HashingFailure(t *testing.T) {
+	buf.Reset()
+	pwdHasher.setErr(errors.New("simulated hashing failure"))
+	t.Cleanup(pwdHasher.reset)
+
+	client := usersv1connect.NewUserServiceClient(http.DefaultClient, srv.URL, connect.WithGRPC())
+	req := &userspb.CreateUserRequest{
+		IdempotencyKey: proto.String("123e4567-e89b-12d3-a456-426614174705"),
+		User: &userspb.User{
+			UserId:       &userspb.UserId{UserId: proto.String("123e4567-e89b-12d3-a456-426614174005")},
+			EmailAddress: &userspb.UserEmailAddress{EmailAddress: proto.String("hashfail@bar.com")},
+			Handle:       &userspb.UserHandle{Handle: proto.String("gleeper_hashfail")},
+			Password:     &userspb.UserPassword{Password: proto.String("secret_password_5")},
+		},
+	}
+
+	_, err := client.CreateUser(context.Background(), req)
+	if err == nil {
+		t.Fatal("CreateUser expected an error when password hashing fails, got nil")
+	}
+	if connect.CodeOf(err) != connect.CodeInternal {
+		t.Errorf("CreateUser got code %v, want %v", connect.CodeOf(err), connect.CodeInternal)
+	}
+	if strings.Contains(err.Error(), "simulated hashing failure") {
+		t.Errorf("CreateUser leaked internal hashing error to client: %v", err)
+	}
+
+	logOutput := buf.String()
+	for _, expected := range []string{
+		"ERROR",
+		"msg=\"failed to hash credentials supplied in user message\"",
+		"msg=\"failed to create user entity\"",
+	} {
+		if !strings.Contains(logOutput, expected) {
+			t.Errorf("CreateUser log output missing %q; got: %s", expected, logOutput)
+		}
+	}
+	for _, excluded := range []string{"secret_password_5", "hashfail@bar.com", "gleeper_hashfail"} {
+		if strings.Contains(logOutput, excluded) {
+			t.Errorf("CreateUser log output leaked sensitive field %q; got: %s", excluded, logOutput)
+		}
 	}
 }

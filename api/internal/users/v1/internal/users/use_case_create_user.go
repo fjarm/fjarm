@@ -11,7 +11,6 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/fjarm/fjarm/api/internal/authentication/v1/pkg/passwords"
 	"github.com/fjarm/fjarm/api/internal/logkeys"
 	"github.com/fjarm/fjarm/api/internal/tracing"
 )
@@ -46,6 +45,11 @@ type DistributedLocker interface {
 	verifyLockAcquired(cxt context.Context, lockKey string, lockVal string) (bool, error)
 }
 
+// PasswordHasher hashes plain-text user credentials into an encoded representation suitable for durable storage.
+type PasswordHasher interface {
+	hash(ctx context.Context, password string) (string, error)
+}
+
 // UserUseCase orchestrates business logic for user-related operations like creating a user, reading a user, updating a
 // user, and deleting a user.
 type UserUseCase struct {
@@ -53,6 +57,7 @@ type UserUseCase struct {
 	idemKeyStore IdempotencyKeyStore
 	distLock     DistributedLocker
 	repo         UserRepository
+	pwdHasher    PasswordHasher
 }
 
 // NewUserUseCase creates an instance of UserUseCase.
@@ -61,12 +66,14 @@ func NewUserUseCase(
 	idemKeyStore IdempotencyKeyStore,
 	distLock DistributedLocker,
 	repo UserRepository,
+	pwdHasher PasswordHasher,
 ) *UserUseCase {
 	return &UserUseCase{
 		logger:       logger,
 		idemKeyStore: idemKeyStore,
 		distLock:     distLock,
 		repo:         repo,
+		pwdHasher:    pwdHasher,
 	}
 }
 
@@ -175,7 +182,7 @@ func (uc *UserUseCase) createUser(ctx context.Context, idemKey string, email str
 		return ErrOperationFailed
 	}
 
-	pwd, err := passwords.HashPassword(password)
+	pwd, err := uc.pwdHasher.hash(ctx, password)
 	if err != nil {
 		logger.ErrorContext(
 			ctx,
