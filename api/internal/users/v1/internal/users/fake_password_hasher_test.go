@@ -31,8 +31,9 @@ func (f *fakePasswordHasher) reset() {
 }
 
 func (f *fakePasswordHasher) hash(ctx context.Context, password string) (string, error) {
-	if err := ctx.Err(); err != nil {
-		return "", err
+	ctxErr := ctx.Err()
+	if ctxErr != nil {
+		return "", ctxErr
 	}
 	f.mu.RLock()
 	err := f.err
