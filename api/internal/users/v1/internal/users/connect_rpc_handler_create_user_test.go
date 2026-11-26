@@ -24,13 +24,14 @@ import (
 var (
 	srv       *httptest.Server = nil
 	buf       bytes.Buffer
-	pwdHasher *fakePasswordHasher
+	validator protovalidate.Validator
 )
 
 func TestMain(m *testing.M) {
 	logger := slog.New(slog.NewTextHandler(&buf, nil))
 
-	validator, err := protovalidate.New(
+	var err error
+	validator, err = protovalidate.New(
 		protovalidate.WithDisableLazy(),
 		protovalidate.WithFailFast(),
 		protovalidate.WithMessages(
@@ -47,8 +48,7 @@ func TestMain(m *testing.M) {
 	repo := newUserStore()
 	idemStore := newFakeRedisIdempotencyKeyStore(cache)
 	distLocker := newFakeRedisDistributedLocker(cache)
-	pwdHasher = newFakePasswordHasher()
-	dom := NewUserUseCase(logger, idemStore, distLocker, repo, pwdHasher)
+	dom := NewUserUseCase(logger, idemStore, distLocker, repo, newFakePasswordHasher())
 	connectRPCHandler := NewConnectRPCHandler(logger, dom, validator)
 	path, handler := usersv1connect.NewUserServiceHandler(connectRPCHandler)
 
@@ -59,6 +59,23 @@ func TestMain(m *testing.M) {
 	defer srv.Close()
 
 	os.Exit(m.Run())
+}
+
+func newTestServer(t *testing.T, logger *slog.Logger, pwdHasher PasswordHasher) *httptest.Server {
+	t.Helper()
+	cache := remote.NewFakeRedisCache()
+	repo := newUserStore()
+	idemStore := newFakeRedisIdempotencyKeyStore(cache)
+	distLocker := newFakeRedisDistributedLocker(cache)
+	dom := NewUserUseCase(logger, idemStore, distLocker, repo, pwdHasher)
+
+	path, handler := usersv1connect.NewUserServiceHandler(NewConnectRPCHandler(logger, dom, validator))
+	mux := http.NewServeMux()
+	mux.Handle(path, handler)
+
+	testSrv := httptest.NewServer(mux)
+	t.Cleanup(testSrv.Close)
+	return testSrv
 }
 
 func TestConnectRPCHandler_CreateUser_gRPCClient(t *testing.T) {
@@ -408,10 +425,10 @@ func TestConnectRPCHandler_CreateUser_HashingFailure(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			// Given
-			buf.Reset()
-			pwdHasher.setErr(tc.givenHashErr)
-			t.Cleanup(pwdHasher.reset)
-			client := usersv1connect.NewUserServiceClient(http.DefaultClient, srv.URL, connect.WithGRPC())
+			var logBuf bytes.Buffer
+			logger := slog.New(slog.NewTextHandler(&logBuf, nil))
+			testSrv := newTestServer(t, logger, &fakePasswordHasher{err: tc.givenHashErr})
+			client := usersv1connect.NewUserServiceClient(testSrv.Client(), testSrv.URL, connect.WithGRPC())
 
 			// When
 			_, err := client.CreateUser(context.Background(), tc.givenReq)
@@ -430,7 +447,7 @@ func TestConnectRPCHandler_CreateUser_HashingFailure(t *testing.T) {
 				t.Errorf("CreateUser leaked internal hashing error %q to client: %v", tc.wantErrExcludes, err)
 			}
 
-			logOutput := buf.String()
+			logOutput := logBuf.String()
 			for _, expected := range tc.wantLogContains {
 				if !strings.Contains(logOutput, expected) {
 					t.Errorf("CreateUser log output missing %q; got: %s", expected, logOutput)

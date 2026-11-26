@@ -15,12 +15,6 @@ import (
 
 func TestUserUseCase_createUser(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	cache := remote.NewFakeRedisCache()
-	repo := newUserStore()
-	idemStore := newFakeRedisIdempotencyKeyStore(cache)
-	distLocker := newFakeRedisDistributedLocker(cache)
-	pwdHasher := newFakePasswordHasher()
-	uc := NewUserUseCase(logger, idemStore, distLocker, repo, pwdHasher)
 
 	tests := map[string]struct {
 		idemKeys  []string
@@ -116,12 +110,12 @@ func TestUserUseCase_createUser(t *testing.T) {
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			// Given
-			t.Cleanup(func() {
-				cache.Reset()
-				repo.reset()
-				pwdHasher.reset()
-			})
-			pwdHasher.setErr(tc.hashErr)
+			cache := remote.NewFakeRedisCache()
+			repo := newUserStore()
+			idemStore := newFakeRedisIdempotencyKeyStore(cache)
+			distLocker := newFakeRedisDistributedLocker(cache)
+			pwdHasher := &fakePasswordHasher{err: tc.hashErr}
+			uc := NewUserUseCase(logger, idemStore, distLocker, repo, pwdHasher)
 
 			for i := range tc.idemKeys {
 				// When
@@ -225,8 +219,7 @@ func TestUserUseCase_createUser_SideEffectsAndLogs(t *testing.T) {
 			repo := newUserStore()
 			idemStore := newFakeRedisIdempotencyKeyStore(cache)
 			distLocker := newFakeRedisDistributedLocker(cache)
-			pwdHasher := newFakePasswordHasher()
-			pwdHasher.setErr(tc.givenHashErr)
+			pwdHasher := &fakePasswordHasher{err: tc.givenHashErr}
 			uc := NewUserUseCase(logger, idemStore, distLocker, repo, pwdHasher)
 			ctx := context.Background()
 
