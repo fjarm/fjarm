@@ -43,7 +43,7 @@ navigation3 = "1.1.5"
 lifecycleViewModelNavigation3 = "2.11.0"
 
 ## Robolectric
-robolectric = "4.18"
+robolectric = "4.18.1"
 
 ## Roborazzi
 roborazzi = "1.79.0"
