@@ -10,3 +10,5 @@ common --incompatible_enable_proto_toolchain_resolution
 # This tells Bazel how to interact with the version control system
 # Enable this with --config=release
 build:release --stamp --workspace_status_command=./scripts/bazel_stamp_vars.sh
+
+test --build_tests_only
