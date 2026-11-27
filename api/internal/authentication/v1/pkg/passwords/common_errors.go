@@ -13,6 +13,9 @@ var ErrInvalidHashAlgorithmVersionFormat = fmt.Errorf("invalid hash algorithm ve
 // error and should result in connect.CodeInternal being returned to the client.
 var ErrInvalidHashFormat = fmt.Errorf("invalid hash format")
 
+// ErrInvalidMaxConcurrency is returned when configuring a Hasher with a non-positive concurrency limit (< 1).
+var ErrInvalidMaxConcurrency = fmt.Errorf("invalid max concurrency")
+
 // ErrUnsupportedHashAlgorithm is returned when a hash is not using the Argon2ID algorithm. This is an unrecoverable
 // error and should result in connect.CodeInternal being returned to the client.
 var ErrUnsupportedHashAlgorithm = fmt.Errorf("unsupported hash algorithm")
