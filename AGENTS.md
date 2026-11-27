@@ -85,5 +85,7 @@ Explicit commands and test scenarios to prove success (e.g., unit test commands,
 ### 2. New or Modified Step 2 Implementation Details
 ```
 
+* **Diagrams**: Whenever it is needed, add architecture or design diagrams to task implementation details to help visualize complex tasks. Prefer ASCII diagrams over Mermaid.js diagrams.
+
 ## Pull Request Linking
 * Any PR associated with the task must reference the issue in its description (e.g., `Fixes #<issue-number>` or `Closes #<issue-number>`).

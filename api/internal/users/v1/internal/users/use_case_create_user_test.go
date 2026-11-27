@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"strings"
 	"testing"
 
 	"github.com/fjarm/fjarm/api/internal/cache/v1/pkg/remote"
@@ -13,16 +14,12 @@ import (
 
 func TestUserUseCase_createUser(t *testing.T) {
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
-	cache := remote.NewFakeRedisCache()
-	repo := newUserStore()
-	idemStore := newFakeRedisIdempotencyKeyStore(cache)
-	distLocker := newFakeRedisDistributedLocker(cache)
-	uc := NewUserUseCase(logger, idemStore, distLocker, repo)
 
 	tests := map[string]struct {
 		idemKeys  []string
 		emails    []string
 		passwords []string
+		hashErr   error
 		errs      []bool
 		kind      []error
 	}{
@@ -100,11 +97,30 @@ func TestUserUseCase_createUser(t *testing.T) {
 			errs:      []bool{false, false, false},
 			kind:      []error{nil, nil, nil},
 		},
+		"hashing_failure_returns_operation_failed": {
+			idemKeys:  []string{"123e4567-e89b-12d3-a456-426614174999"},
+			emails:    []string{"foo1@bar.com"},
+			passwords: []string{"password"},
+			hashErr:   ErrAuthenticationIssue,
+			errs:      []bool{true},
+			kind:      []error{ErrOperationFailed},
+		},
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
+			// Given
+			cache := remote.NewFakeRedisCache()
+			repo := newUserStore()
+			idemStore := newFakeRedisIdempotencyKeyStore(cache)
+			distLocker := newFakeRedisDistributedLocker(cache)
+			pwdHasher := &fakePasswordHasher{err: tc.hashErr}
+			uc := NewUserUseCase(logger, idemStore, distLocker, repo, pwdHasher)
+
 			for i := range tc.idemKeys {
+				// When
 				err := uc.createUser(context.Background(), tc.idemKeys[i], tc.emails[i], tc.passwords[i])
+
+				// Then
 				if err != nil && !tc.errs[i] {
 					t.Errorf("createUser got an unexpected error: %v", err)
 				}
@@ -123,11 +139,52 @@ func TestUserUseCase_createUser(t *testing.T) {
 					if !dup {
 						t.Errorf("createUser expected idempotency key %q to be cached, but it was not", idempotencyKey)
 					}
+
+					repo.mu.RLock()
+					userCount := len(repo.users)
+					for _, storedUser := range repo.users {
+						if storedUser.Password == tc.passwords[i] {
+							t.Errorf("createUser stored plaintext password %q; expected hashed output", storedUser.Password)
+						}
+						wantHash := fmt.Sprintf("fake_hashed:%s", tc.passwords[i])
+						if storedUser.Password != wantHash {
+							t.Errorf("createUser stored password = %q, want %q", storedUser.Password, wantHash)
+						}
+					}
+					repo.mu.RUnlock()
+					if userCount == 0 {
+						t.Error("createUser expected user to be persisted in repository, got 0 users")
+					}
+				} else {
+					repo.mu.RLock()
+					userCount := len(repo.users)
+					repo.mu.RUnlock()
+					if userCount != 0 {
+						t.Errorf("createUser persisted %d users on error, want 0", userCount)
+					}
+
+					if strings.TrimSpace(tc.idemKeys[i]) != "" && !strings.Contains(tc.idemKeys[i], " ") {
+						idempotencyKey := fmt.Sprintf("%s:%s", createUserCacheKey, tc.idemKeys[i])
+						dup, dupErr := idemStore.isDuplicate(context.Background(), idempotencyKey)
+						if dupErr != nil {
+							t.Errorf("isDuplicate got an unexpected error: %v", dupErr)
+						}
+						if dup {
+							t.Errorf("createUser cached idempotency key %q despite error", idempotencyKey)
+						}
+
+						lockKey := fmt.Sprintf("%s:%s", createUserLockKey, tc.idemKeys[i])
+						lockVal, lockErr := distLocker.lock(context.Background(), lockKey)
+						if lockErr != nil {
+							t.Errorf("distLocker.lock failed after createUser error (lock was not released): %v", lockErr)
+						}
+						if lockVal == "" {
+							t.Error("distLocker.lock returned empty lockVal after createUser error")
+						}
+						_ = distLocker.unlock(context.Background(), lockKey, lockVal)
+					}
 				}
 			}
 		})
-		// Reset the database for each test run.
-		cache.Reset()
-		repo.reset()
 	}
 }
