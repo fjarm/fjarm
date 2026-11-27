@@ -2,6 +2,7 @@ package users
 
 import (
 	"context"
+	"errors"
 	"strings"
 	"testing"
 
@@ -9,46 +10,74 @@ import (
 )
 
 func TestArgon2idPasswordHasher_hash(t *testing.T) {
+	sharedHasher := passwords.NewHasher()
+
 	tests := map[string]struct {
-		givenPassword string
-		wantPrefix    string
-		wantErr       bool
+		givenHasher      *passwords.Hasher
+		givenPassword    string
+		givenCanceledCtx bool
+		wantErr          bool
+		wantErrKind      error
 	}{
-		"valid_alphabetic_password": {
-			givenPassword: "password",
-			wantPrefix:    "$argon2id$v=19$",
-			wantErr:       false,
+		"valid_password_with_injected_hasher": {
+			givenHasher:      sharedHasher,
+			givenPassword:    "password",
+			givenCanceledCtx: false,
+			wantErr:          false,
 		},
-		"valid_mixed_character_password": {
-			givenPassword: "$$%%$abcd$efgh$%%%",
-			wantPrefix:    "$argon2id$v=19$",
-			wantErr:       false,
+		"valid_password_with_nil_default_hasher": {
+			givenHasher:      nil,
+			givenPassword:    "password",
+			givenCanceledCtx: false,
+			wantErr:          false,
+		},
+		"canceled_context_returns_context_canceled": {
+			givenHasher:      sharedHasher,
+			givenPassword:    "password",
+			givenCanceledCtx: true,
+			wantErr:          true,
+			wantErrKind:      context.Canceled,
 		},
 	}
 
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
 			// Given
-			hasher := NewArgon2idPasswordHasher()
+			adapter := NewArgon2idPasswordHasher(tc.givenHasher)
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			if tc.givenCanceledCtx {
+				cancel()
+			}
 
 			// When
-			hashed, err := hasher.hash(context.Background(), tc.givenPassword)
+			hashed, err := adapter.hash(ctx, tc.givenPassword)
 
 			// Then
-			if tc.wantErr && err == nil {
-				t.Fatal("hash expected an error, got nil")
+			if tc.wantErr {
+				if err == nil {
+					t.Fatal("hash expected an error, got nil")
+				}
+				if !errors.Is(err, tc.wantErrKind) {
+					t.Errorf("hash got error %v, want %v", err, tc.wantErrKind)
+				}
+				if hashed != "" {
+					t.Errorf("hash expected empty string on error, got %q", hashed)
+				}
+				return
 			}
-			if !tc.wantErr && err != nil {
+
+			if err != nil {
 				t.Fatalf("hash got an unexpected error: %v", err)
 			}
 			if hashed == "" || hashed == tc.givenPassword {
 				t.Fatalf("hash returned invalid digest %q", hashed)
 			}
-			if !strings.HasPrefix(hashed, tc.wantPrefix) {
-				t.Errorf("hash expected %s prefix, got: %q", tc.wantPrefix, hashed)
+			if !strings.HasPrefix(hashed, "$argon2id$v=19$") {
+				t.Errorf("hash expected $argon2id$v=19$ prefix, got: %q", hashed)
 			}
 
-			matched, verifyErr := passwords.VerifyPassword(tc.givenPassword, hashed)
+			matched, verifyErr := sharedHasher.VerifyPassword(context.Background(), tc.givenPassword, hashed)
 			if verifyErr != nil {
 				t.Fatalf("VerifyPassword got an unexpected error: %v", verifyErr)
 			}

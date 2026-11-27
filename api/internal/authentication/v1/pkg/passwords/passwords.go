@@ -1,9 +1,11 @@
 package passwords
 
 import (
+	"context"
 	"crypto/subtle"
 	"encoding/base64"
 	"fmt"
+	"runtime"
 	"strings"
 
 	"golang.org/x/crypto/argon2"
@@ -19,24 +21,87 @@ type decodedHash struct {
 	hash   []byte
 }
 
-// HashPassword creates a new hash of a plain-text password using Argon2id.
-func HashPassword(password string) (string, error) {
-	params := defaultParams()
+// Hasher bounds concurrent Argon2id password hashing and verification operations using an in-memory semaphore
+// so traffic spikes cannot exhaust host memory or starve CPU cores.
+type Hasher struct {
+	semaphore chan struct{}
+	params    *hashParams
+}
 
-	salt, err := generateSalt(params.saltLength)
+func defaultMaxConcurrency(params *hashParams) int {
+	parallelism := max(1, int(params.parallelism))
+	return max(1, runtime.GOMAXPROCS(0)/parallelism)
+}
+
+// NewHasher creates a Hasher with default Argon2id parameters whose concurrency limit defaults to
+// max(1, GOMAXPROCS / parallelism).
+func NewHasher() *Hasher {
+	params := defaultParams()
+	maxConcurrency := defaultMaxConcurrency(params)
+	return &Hasher{
+		semaphore: make(chan struct{}, maxConcurrency),
+		params:    params,
+	}
+}
+
+// NewHasherWithMaxConcurrency creates a Hasher that permits at most maxConcurrency concurrent Argon2id
+// operations across HashPassword and VerifyPassword. Returns ErrInvalidMaxConcurrency if maxConcurrency < 1.
+func NewHasherWithMaxConcurrency(maxConcurrency int) (*Hasher, error) {
+	if maxConcurrency < 1 {
+		return nil, fmt.Errorf("%w: got %d, must be >= 1", ErrInvalidMaxConcurrency, maxConcurrency)
+	}
+	return &Hasher{
+		semaphore: make(chan struct{}, maxConcurrency),
+		params:    defaultParams(),
+	}, nil
+}
+
+// MaxConcurrency returns the maximum number of Argon2id operations allowed to execute concurrently.
+func (h *Hasher) MaxConcurrency() int {
+	return cap(h.semaphore)
+}
+
+func (h *Hasher) derive(ctx context.Context, password []byte, salt []byte, params *hashParams) ([]byte, error) {
+	err := ctx.Err()
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	// Hash the password using Argon2id
+	select {
+	case h.semaphore <- struct{}{}:
+		defer func() { <-h.semaphore }()
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	}
+
 	hash := argon2.IDKey(
-		[]byte(password),
+		password,
 		salt,
 		params.iterations,
 		params.memory,
 		params.parallelism,
 		params.keyLength,
 	)
+	return hash, nil
+}
+
+// HashPassword creates a new Argon2id hash of a plain-text password, blocking until a concurrency slot is
+// available or ctx is canceled.
+func (h *Hasher) HashPassword(ctx context.Context, password string) (string, error) {
+	err := ctx.Err()
+	if err != nil {
+		return "", err
+	}
+
+	salt, err := generateSalt(h.params.saltLength)
+	if err != nil {
+		return "", err
+	}
+
+	hash, err := h.derive(ctx, []byte(password), salt, h.params)
+	if err != nil {
+		return "", err
+	}
 
 	// Convert the hash and salt to base64 encoded strings.
 	b64Salt := base64.RawStdEncoding.EncodeToString(salt)
@@ -49,7 +114,7 @@ func HashPassword(password string) (string, error) {
 		"",                                  // Leading delimiter
 		"argon2id",                          // Hashing algorithm
 		fmt.Sprintf("v=%d", argon2.Version), // Hashing algorithm version (should be 19)
-		fmt.Sprintf("m=%d,t=%d,p=%d", params.memory, params.iterations, params.parallelism),
+		fmt.Sprintf("m=%d,t=%d,p=%d", h.params.memory, h.params.iterations, h.params.parallelism),
 		b64Salt,
 		b64Hash,
 	}, delimiter)
@@ -57,24 +122,24 @@ func HashPassword(password string) (string, error) {
 	return encodedHash, nil
 }
 
-// VerifyPassword checks if a supplied password matches a generated hash. Return `1` if the password matches the hash,
-// and `0` if it does not.
-func VerifyPassword(password string, encodedCredential string) (bool, error) {
-	// Parse the parameters, salt, and hash from the encoded string
+// VerifyPassword checks in constant time whether password matches encodedCredential, blocking until a
+// concurrency slot is available or ctx is canceled.
+func (h *Hasher) VerifyPassword(ctx context.Context, password string, encodedCredential string) (bool, error) {
+	err := ctx.Err()
+	if err != nil {
+		return false, err
+	}
+
+	// Parse and validate the encoded hash format before waiting on an Argon2id concurrency slot.
 	creds, err := decodeHash(encodedCredential)
 	if err != nil {
 		return false, err
 	}
 
-	// Hash the password with the same parameters and salt
-	otherHash := argon2.IDKey(
-		[]byte(password),
-		creds.salt,
-		creds.params.iterations,
-		creds.params.memory,
-		creds.params.parallelism,
-		creds.params.keyLength,
-	)
+	otherHash, err := h.derive(ctx, []byte(password), creds.salt, creds.params)
+	if err != nil {
+		return false, err
+	}
 
 	// Compare the hashes in constant time to prevent timing attacks
 	return subtle.ConstantTimeCompare(creds.hash, otherHash) == 1, nil
