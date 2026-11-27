@@ -30,8 +30,7 @@ var (
 func TestMain(m *testing.M) {
 	logger := slog.New(slog.NewTextHandler(&buf, nil))
 
-	var err error
-	validator, err = protovalidate.New(
+	v, err := protovalidate.New(
 		protovalidate.WithDisableLazy(),
 		protovalidate.WithFailFast(),
 		protovalidate.WithMessages(
@@ -43,6 +42,7 @@ func TestMain(m *testing.M) {
 		logger.Error("failed to create message validator", slog.Any(logkeys.Err, err))
 		os.Exit(1)
 	}
+	validator = v
 
 	cache := remote.NewFakeRedisCache()
 	repo := newUserStore()
@@ -376,13 +376,13 @@ func TestConnectRPCHandler_CreateUser_LogOutput(t *testing.T) {
 
 func TestConnectRPCHandler_CreateUser_HashingFailure(t *testing.T) {
 	tests := map[string]struct {
-		givenReq          *userspb.CreateUserRequest
-		givenHashErr      error
-		wantErr           bool
-		wantCode          connect.Code
-		wantErrExcludes   string
-		wantLogContains   []string
-		wantLogExcludes   []string
+		givenReq        *userspb.CreateUserRequest
+		givenHashErr    error
+		wantErr         bool
+		wantCode        connect.Code
+		wantErrExcludes string
+		wantLogContains []string
+		wantLogExcludes []string
 	}{
 		"hashing_failure_returns_internal_error_and_redacts_logs": {
 			givenReq: &userspb.CreateUserRequest{
